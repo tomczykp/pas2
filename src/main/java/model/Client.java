@@ -7,6 +7,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "client")
 public class Client {
@@ -17,6 +20,10 @@ public class Client {
 	private int id;
 
 	@NotNull
+	@Column(unique = true)
+	private String login;
+
+	@NotNull
 	@Column
 	private String name;
 
@@ -24,11 +31,16 @@ public class Client {
 	@Column
 	private String surname;
 
+	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+	protected Set<Reservation> reservations = new HashSet<>();
+
+
 	public Client () {}
 
 	public Client (String n, String s) {
 		this.name = n;
 		this.surname = s;
+		this.login = n.charAt(0) + s.substring(1);
 	}
 
 	public String getName () {
