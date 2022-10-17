@@ -3,14 +3,15 @@ package model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
-
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "client")
 public class Reservation {
 
-
+	@Id
 	@Column(name = "resId")
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -18,15 +19,28 @@ public class Reservation {
 
 	@NotNull
 	@Column
-	private Date startDate;
+	private LocalDateTime startDate;
 
 	@NotNull
 	@Column
-	private Date endDate;
+	private LocalDateTime endDate;
 
 	@NotNull
 	@ManyToOne
 	private Client client;
 
+	@OneToMany
+	@NotNull
+	private List<Product> product = new ArrayList<>();
 
+	public Reservation(LocalDateTime endDate, Client client, List<Product> product) {
+		this.startDate = LocalDateTime.now();
+		this.endDate = endDate;
+		this.client = client;
+		this.product = product;
+	}
+
+	public Reservation() {
+
+	}
 }
