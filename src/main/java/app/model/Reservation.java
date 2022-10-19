@@ -1,7 +1,9 @@
-package model;
+package app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +22,21 @@ public class Reservation {
 	@NotNull
 	@Column
 	private LocalDateTime startDate;
+
+	@Override
+	public boolean equals (Object o) {
+		if (this == o) return true;
+
+		if (o.getClass() != this.getClass()) return false;
+		Reservation that = (Reservation) o;
+
+		return new EqualsBuilder().append(id, that.id).append(startDate, that.startDate).append(endDate, that.endDate).append(client, that.client).append(product, that.product).isEquals();
+	}
+
+	@Override
+	public int hashCode () {
+		return new HashCodeBuilder(17, 37).append(id).append(startDate).append(endDate).append(client).append(product).toHashCode();
+	}
 
 	@NotNull
 	@Column

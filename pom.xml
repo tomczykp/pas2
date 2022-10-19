@@ -7,7 +7,6 @@
     <name>PAS zadanie2</name>
     <packaging>war</packaging>
 
-
     <developers>
         <developer>
             <id>236676</id>
@@ -23,8 +22,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -89,13 +88,18 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>9.0.0</version>
+            <version>9.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.distributions</groupId>
+            <artifactId>payara</artifactId>
+            <version>5.2022.3</version>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>restapi</finalName>
+        <finalName>zadanie2</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

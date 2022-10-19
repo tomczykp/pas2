@@ -11,4 +11,12 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./tmp:/var/lib/postgresql/data
+      - ./tmp/postgres:/var/lib/postgresql/data
+  payara:
+    image: payara/server-full:5.2022.2-jdk11
+    ports:
+          - 4848:4848
+          - 8080:8080
+          - 8181:8181
+    volumes:
+      - ./tmp/payara:/tmp/data
