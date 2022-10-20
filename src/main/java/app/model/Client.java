@@ -5,85 +5,118 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "client")
 @Table(name = "client")
+@Access(AccessType.FIELD)
 public class Client {
-	@Id
-	@Column(name = "clientId")
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private int id;
 
-	@NotNull
-	@Column(unique = true)
-	private String login;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int clientId;
 
-	@NotNull
-	@Column
-	private String name;
+    @Version
+    private Integer version;
 
-	@NotNull
-	@Column
-	private String surname;
+    @Column
+    private double income;
 
-	@NotNull
-	@Column
-	private boolean active;
+    @Column(unique = true)
+    @NotNull
+    private String phoneNumber;
 
-	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-	protected Set<Reservation> reservations = new HashSet<>();
+    @Embedded
+    @AttributeOverrides(
+            {
+                    @AttributeOverride( name = "country", column = @Column(name = "addressCountry")),
+                    @AttributeOverride( name = "city", column = @Column(name = "addressCity")),
+                    @AttributeOverride( name = "street", column = @Column(name = "addressStreet")),
+                    @AttributeOverride( name = "number", column = @Column(name = "addressNumber"))
+            }
+    )
+    private Address adress;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    protected Set<Account> accounts = new HashSet<>();
 
-	public Client () {}
+    public Client() {}
 
-	public Client (String n, String s) {
-		this.name = n;
-		this.surname = s;
-		this.active = true;
-		this.login = n.charAt(0) + s.substring(1);
-	}
+    public Client(double income, String phoneNumber, Address address) {
+        this.income = income;
+        this.phoneNumber = phoneNumber;
+        this.adress = address;
+    }
 
-	public String getName () {
-		return name;
-	}
+    public int getId() {
+        return clientId;
+    }
 
-	public String getSurname () {
-		return surname;
-	}
+    public double getIncome() {
+        return income;
+    }
 
-	public int get () {
-		return id;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	@Override
-	public boolean equals (Object o) {
-		if (this == o) return true;
+    public Address getAdress() {
+        return adress;
+    }
 
-		if (o.getClass() != this.getClass()) return false;
-		Client client = (Client)o;
+    public void setIncome(double income) {
+        this.income = income;
+    }
 
-		return new EqualsBuilder().append(get(), client.get()).append(getName(), client.getName()).append(getSurname(), client.getSurname()).isEquals();
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	@Override
-	public int hashCode () {
-		return new HashCodeBuilder(17, 37).append(get()).append(getName()).append(getSurname()).toHashCode();
-	}
+    public void setAdress(Address adress) {
+        this.adress = adress;
+    }
 
-	@Override
-	public String toString () {
-		return new ToStringBuilder(this)
-				.append("id", id)
-				.append("name", name)
-				.append("surname", surname)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", clientId)
+                .append("income", income)
+                .append("phoneNumber", phoneNumber)
+                .append("adress", adress)
+                .toString();
+    }
 
+   public String getNip() {
+        return "Nip";
+    }
+
+    public String getSurname() {
+        return "Surname";
+    }
+
+    public String getPersonalNumber() {
+        return "Personal Number";
+    }
+
+    public String getName() {
+        return "Name";
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof Client client)) return false;
+
+        return new EqualsBuilder().append(clientId, client.clientId).append(getIncome(), client.getIncome()).append(version, client.version).append(getPhoneNumber(), client.getPhoneNumber()).append(getAdress(), client.getAdress()).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(clientId).toHashCode();
+    }
 }
-
-
