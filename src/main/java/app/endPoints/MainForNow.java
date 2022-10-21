@@ -12,7 +12,6 @@ import app.model.AccountType;
 @Path("/main")
 public class MainForNow {
 
-    @
     private static AccountManager manager;
 
     public MainForNow() {
@@ -37,7 +36,6 @@ public class MainForNow {
             return Response.ok("Nothing here yet").build();
         }
         return Response.ok(manager.getMap().toString()).build();
-
     }
 
     @DELETE
