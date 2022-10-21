@@ -9,18 +9,17 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import app.model.AccountType;
 
+import java.util.Objects;
+
 @Path("/main")
 public class MainForNow {
-
-    @
     private static AccountManager manager;
-
     public MainForNow() {
         manager = new AccountManager();
     }
 
     @PUT
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public String put(@QueryParam("name") String n, @QueryParam("surname") String s) {
         if (n == null || s == null) {
             return "Could not create user, missing parameters";
@@ -33,7 +32,7 @@ public class MainForNow {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@QueryParam("id") String id) {
-        if (id == "" || id == null) {
+        if (Objects.equals(id, "") || id == null) {
             return Response.ok("Nothing here yet").build();
         }
         return Response.ok(manager.getMap().toString()).build();
@@ -41,6 +40,7 @@ public class MainForNow {
     }
 
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@QueryParam("id") String id) {
         manager.deleteAccount(id);
         return Response.ok("Success").build();
