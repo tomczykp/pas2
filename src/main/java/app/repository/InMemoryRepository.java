@@ -2,8 +2,8 @@ package app.repository;
 
 import jakarta.persistence.Id;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class InMemoryRepository<K, V> implements Repository<K, V> {
@@ -24,6 +24,10 @@ public class InMemoryRepository<K, V> implements Repository<K, V> {
 		return this.lista.get(k);
 	}
 
+	private V getObj(V v) throws Exception {
+		return this.get((item) -> item.equals(v)).get(0);
+	}
+
 	@Override
 	public HashMap<K, V> getMap() {
 		return this.lista;
@@ -36,22 +40,22 @@ public class InMemoryRepository<K, V> implements Repository<K, V> {
 	}
 
 	@Override
-	public V get (Predicate<V> pred) throws Exception {
-		for (Map.Entry<K, V> t : this.lista.entrySet()) {
+	public List<V> get (Predicate<V> pred) {
+		List<V> res = new ArrayList<>();
+		for (Map.Entry<K, V> t : this.lista.entrySet())
 			if (pred.test(t.getValue()))
-				return t.getValue();
-		}
-		throw new Exception("Not found");
+				res.add(t.getValue());
+
+		return res;
 	}
 
 	@Override
-	public V modify (K k) {
-		V obj = this.lista.get(k);
+	public V modify (K k, Function<V, V> func) throws Exception {
 		if (this.lista.containsKey(k)) {
-			this.lista.remove(k);
-			this.lista.put(k, obj);
+			V v = this.lista.get(k);
+			return func.apply(v);
 		}
-		return obj;
+		throw new Exception("Object with this id not found" + k.toString());
 	}
 
 	@Override

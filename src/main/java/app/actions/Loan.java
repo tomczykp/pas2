@@ -153,9 +153,7 @@ public class Loan implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof Loan)) return false;
-
-        Loan loan = (Loan) o;
+        if (!(o instanceof Loan loan)) return false;
 
         return new EqualsBuilder().append(getLoanId(), loan.getLoanId()).isEquals();
     }

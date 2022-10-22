@@ -84,9 +84,7 @@ public class Transfer {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof Transfer)) return false;
-
-        Transfer transfer = (Transfer) o;
+        if (!(o instanceof Transfer transfer)) return false;
 
         return new EqualsBuilder().append(getTransferId(), transfer.getTransferId()).isEquals();
     }

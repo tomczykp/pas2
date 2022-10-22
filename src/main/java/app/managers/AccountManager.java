@@ -8,27 +8,25 @@ import app.repository.InMemoryRepository;
 import app.repository.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class AccountManager {
 
-    private Repository<String, Account> repository;
-    private String accountIdGenerator = "0";
+    private final Repository<String, Account> repository;
+    private final String accountIdGenerator = "0";
 
     public AccountManager() {
         this.repository = new InMemoryRepository<>();
     }
 
-    public Account createAccount(double percentage, AccountType accountType, Client owner){
-        try {
-            Account newAccount = new Account(percentage, accountType, owner);
-            String accountId = accountIdGenerator + repository.getLenght();
-            this.repository.insert(accountId, newAccount);
-            return newAccount;
-        } catch (Exception e) {
-            System.out.println("Could not create Account");
-        }
-        return null;
+    public Account createAccount(double percentage, AccountType accountType, Client owner) throws Exception {
+
+        Account newAccount = new Account(percentage, accountType, owner);
+        String accountId = accountIdGenerator + repository.getLenght();
+        this.repository.insert(accountId, newAccount);
+        return newAccount;
+
     }
 
     public HashMap<String, Account> getMap() {
@@ -43,7 +41,7 @@ public class AccountManager {
         return this.repository.get(id);
     }
 
-    public Account get(Predicate<Account> predicate) {
+    public List<Account> get (Predicate<Account> predicate) {
         try {
             return this.repository.get(predicate);
         } catch (Exception e) {
@@ -52,15 +50,21 @@ public class AccountManager {
         return null;
     }
 
-    public void withdraw(double val, String id) {
-        try {
-            this.get(id).withdraw(val);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void withdraw(double val, String id) throws Exception {
+        this.repository.modify(id, (account) -> {
+            try {
+                account.withdraw(val);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return account;
+        });
     }
 
-    public void deposit(double val, String id) {
-        this.get(id).deposit(val);
+    public void deposit(double val, String id) throws Exception {
+        this.repository.modify(id, (account) -> {
+            account.deposit(val);
+            return account;
+        });
     }
 }

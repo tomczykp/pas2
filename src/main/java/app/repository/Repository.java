@@ -1,15 +1,20 @@
 package app.repository;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public interface Repository<K, V> {
 
+	// CRUD methods
 	V insert (K k, V v);
-	V get (Predicate<V> pred) throws Exception;
-	V modify (K k);
-	int getLenght();
-	void delete(K k);
-	HashMap<K, V> getMap();
+	List<V> get (Predicate<V> pred);
 	V get(K k);
+	V modify (K k, Function<V, V> func) throws Exception;
+	void delete(K k);
+
+	// utility methods
+	int getLenght();
+	HashMap<K, V> getMap();
 }
