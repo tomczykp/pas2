@@ -7,7 +7,7 @@ import io.restassured.specification.RequestSpecification;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-public class AccountEndpointTest {
+public class ProductEndpointTest {
 
 	private static final RequestSpecification req = RestAssured.given()
 			.baseUri("http://localhost")
@@ -17,15 +17,10 @@ public class AccountEndpointTest {
 	@Test
 	public void getTest() {
 		req
-				.get("/account").then()
+				.get("/product").then()
 				.statusCode(Matchers.is(200))
 				.body(Matchers.anyOf(Matchers.is("{}")));
 
-		req
-				.queryParam("id", "param")
-				.get("/account").then()
-				.statusCode(Matchers.is(200))
-				.body(Matchers.is("null: hello : param"));
 	}
 
 	@Test
@@ -33,13 +28,7 @@ public class AccountEndpointTest {
 		req
 				.put("/account").then()
 				.statusCode(Matchers.is(200))
-				.body(Matchers.is("Could not create user, missing parameters"));
-
-		req
-				.queryParam("name","Jan")
-				.queryParam("surname","Kowalski")
-				.put("/account").then()
-				.statusCode(Matchers.is(200));
+				.body(Matchers.is("Could not create product, missing parameter, price"));
 
 	}
 

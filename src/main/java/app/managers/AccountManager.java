@@ -24,9 +24,7 @@ public class AccountManager {
 
         Account newAccount = new Account(percentage, accountType, owner);
         String accountId = accountIdGenerator + repository.getLenght();
-        this.repository.insert(accountId, newAccount);
-        return newAccount;
-
+        return this.repository.insert(accountId, newAccount);
     }
 
     public HashMap<String, Account> getMap() {
