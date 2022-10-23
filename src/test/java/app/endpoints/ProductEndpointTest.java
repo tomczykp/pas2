@@ -19,14 +19,24 @@ public class ProductEndpointTest {
 		req
 				.get("/product").then()
 				.statusCode(Matchers.is(200))
-				.body(Matchers.anyOf(Matchers.is("{}")));
+				.body(Matchers.is("{}"));
+
+		req
+				.get("/product/1").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("Product not found"));
+
+//		req
+//				.get("/product/1o").then()
+//				.statusCode(Matchers.is(500))
+//				.body(, Matchers.equalTo("java.lang.NumberFormatException"));
 
 	}
 
 	@Test
 	public void putTest() {
 		req
-				.put("/account").then()
+				.put("/product").then()
 				.statusCode(Matchers.is(200))
 				.body(Matchers.is("Could not create product, missing parameter, price"));
 
