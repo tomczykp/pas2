@@ -40,7 +40,6 @@ public class ProductEndpoint {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get (@PathParam("id") String id) {
-
 		try {
 			Product product = manager.get(Integer.parseInt(id));
 			if (product == null)
@@ -73,6 +72,4 @@ public class ProductEndpoint {
 			return Response.ok(e).status(500).build();
 		}
 	}
-
-
 }

@@ -30,6 +30,8 @@ public class ReservationManager {
 	}
 
 	public void delete(int id) {
+		this.repository.get(id).getCustomer().getReservations().remove(this.repository.get(id));
+		this.repository.get(id).getProduct().getReservations().remove(this.repository.get(id));
 		this.repository.delete(id);
 	}
 

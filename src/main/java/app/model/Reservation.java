@@ -26,6 +26,22 @@ public class Reservation {
 	@Column
 	private LocalDateTime endDate;
 
+	public Customer getCustomer () {
+		return customer;
+	}
+
+	public void setCustomer (Customer customer) {
+		this.customer = customer;
+	}
+
+	public Product getProduct () {
+		return product;
+	}
+
+	public void setProduct (Product product) {
+		this.product = product;
+	}
+
 	@NotNull
 	@ManyToOne
 	private Customer customer;
@@ -39,6 +55,8 @@ public class Reservation {
 		this.endDate = endDate;
 		this.customer = customer;
 		this.product = product;
+		this.product.addReservation(this);
+		this.customer.addReservation(this);
 	}
 
 	public Reservation () {}

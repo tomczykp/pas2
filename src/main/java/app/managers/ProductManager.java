@@ -48,4 +48,9 @@ public class ProductManager {
 	public HashMap<Integer, Product> getMap() {
 		return this.repository.getMap();
 	}
+
+	public int getLength() {
+		return this.repository.getLenght();
+	}
+
 }

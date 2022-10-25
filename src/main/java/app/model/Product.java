@@ -44,8 +44,9 @@ public class Product {
 		return price;
 	}
 
-	public void setPrice (long price) {
+	public Product setPrice (long price) {
 		this.price = price;
+		return this;
 	}
 
 	public List<Reservation> getReservations () {

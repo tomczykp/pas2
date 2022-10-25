@@ -56,6 +56,11 @@ public class Customer {
 		return new HashCodeBuilder(17, 37).append(getCustomerID()).append(getUsername()).append(getEmail()).toHashCode();
 	}
 
+	public void addReservation (Reservation reservation) {
+		this.reservations.add(reservation);
+	}
+
+
 	public Long getCustomerID () {
 		return customerID;
 	}
@@ -68,16 +73,17 @@ public class Customer {
 		return username;
 	}
 
-	public void setUsername (String username) {
-		this.username = username;
+	public Customer setUsername (String username) {
+		this.username = username; return this;
 	}
 
 	public String getEmail () {
 		return email;
 	}
 
-	public void setEmail (String email) {
+	public Customer setEmail (String email) {
 		this.email = email;
+		return this;
 	}
 
 }

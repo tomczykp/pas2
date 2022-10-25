@@ -46,4 +46,7 @@ public class CustomerManager {
 		return this.repository.getMap();
 	}
 
+	public int getLength() {
+		return this.repository.getLenght();
+	}
 }

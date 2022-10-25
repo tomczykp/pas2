@@ -1,5 +1,6 @@
 package app.repository;
 
+import app.model.Customer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -7,21 +8,18 @@ public class InMemoryRepoTest {
 
 	@Test
 	public void getTest() {
-		Repository<Integer, Client> repo = new InMemoryRepository<>();
-		Address a1 = new Address("Poland", "Lodz", "Politechniki", "6A");
-		Client client = new Client(100, "+48 908067", a1);
+		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Customer client = new Customer("username", "email@email");
 		Assertions.assertEquals(InMemoryRepository.class, repo.getClass());
-		Assertions.assertNotNull(a1);
 		Assertions.assertNotNull(client);
 		Assertions.assertEquals(repo.getLenght(), 0);
 	}
 
 	@Test
 	public void insertTest() {
-		Repository<Integer, Client> repo = new InMemoryRepository<>();
-		Address a1 = new Address("Poland", "Lodz", "Politechniki", "6A");
-		Client client = new Client(100, "+48 908067", a1);
-		Client client1 = new Client(10000, "+48 9080667", a1);
+		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Customer client = new Customer("user1", "asd");
+		Customer client1 = new Customer("user2", "asdwdadw");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client, repo.get(1));
@@ -39,10 +37,9 @@ public class InMemoryRepoTest {
 
 	@Test
 	public void deleteTest() {
-		Repository<Integer, Client> repo = new InMemoryRepository<>();
-		Address a1 = new Address("Poland", "Lodz", "Politechniki", "6A");
-		Client client = new Client(100, "+48 908067", a1);
-		Client client1 = new Client(10000, "+48 9080667", a1);
+		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Customer client = new Customer("user1", "asd");
+		Customer client1 = new Customer("user2", "asdwdadw");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client1, repo.insert(2, client1));
@@ -64,10 +61,9 @@ public class InMemoryRepoTest {
 
 	@Test
 	public void modifyTest() throws Exception {
-		Repository<Integer, Client> repo = new InMemoryRepository<>();
-		Address a1 = new Address("Poland", "Lodz", "Politechniki", "6A");
-		Client client = new Client(100, "+48 908067", a1);
-		Client client1 = new Client(10000, "+48 9080667", a1);
+		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Customer client = new Customer("user1", "asd");
+		Customer client1 = new Customer("user2", "asdwdadw");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client1, repo.insert(2, client1));
@@ -77,21 +73,21 @@ public class InMemoryRepoTest {
 
 		Assertions.assertDoesNotThrow(() -> {
 				repo.modify(1, (c) -> {
-						c.setIncome(100);
+						c.setEmail("asdawe");
 						return c;
 					});
 				});
 
-		Client m1 = repo.modify(1, (c) -> {
-			c.setIncome(100);
+		Customer m1 = repo.modify(1, (c) -> {
+			c.setUsername("username");
 			return c;
 		});
 
 		Assertions.assertEquals(2, repo.getLenght());
 		Assertions.assertEquals(m1, repo.get(1));
 		Assertions.assertEquals(client1, repo.get(2));
-		Assertions.assertEquals(100, repo.get(1).getIncome());
-		Assertions.assertEquals(100, m1.getIncome());
+		Assertions.assertEquals("username", repo.get(1).getUsername());
+		Assertions.assertEquals("username", m1.getUsername());
 
 	}
 }
