@@ -18,47 +18,51 @@ public class Product {
 	@Column(name = "productId")
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private int id;
-
+	private int productID;
 	@NotNull
 	@Column
 	private long price;
 
 	@OneToMany
-	private final List<Reservation> reservations  = new ArrayList<>();
+	private final List<Reservation> reservations = new ArrayList<>();
 
-	public Product(long price) {
+	public Product (long price) {
 		this.price = price;
 	}
 
-	public Product() {}
+	public Product () {}
 
-	public int getId() {
-		return id;
+	public int getId () {
+		return productID;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setId (int id) {
+		this.productID = id;
 	}
 
-	public long getPrice() {
+	public long getPrice () {
 		return price;
 	}
 
-	public void setPrice(long price) {
+	public void setPrice (long price) {
 		this.price = price;
 	}
 
-	public List<Reservation> getReservations() {
+	public List<Reservation> getReservations () {
 		return this.reservations;
 	}
 
-	public void addReservation(Reservation reservation) {
+	public void addReservation (Reservation reservation) {
 		this.reservations.add(reservation);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public int hashCode () {
+		return new HashCodeBuilder(17, 37).append(getId()).append(getPrice()).append(getReservations()).toHashCode();
+	}
+
+	@Override
+	public boolean equals (Object o) {
 		if (this == o) return true;
 
 		if (this.getClass() != o.getClass()) return false;
@@ -69,17 +73,13 @@ public class Product {
 	}
 
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(getId()).append(getPrice()).append(getReservations()).toHashCode();
-	}
-
-	@Override
-	public String toString() {
+	public String toString () {
 		return new ToStringBuilder(this)
-				.append("id", id)
+				.append("id", productID)
 				.append("price", price)
 				.append("reservation", reservations)
 				.toString();
 	}
+
 }
 

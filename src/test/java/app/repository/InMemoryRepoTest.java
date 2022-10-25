@@ -1,7 +1,5 @@
 package app.repository;
 
-import app.model.Address;
-import app.model.Client;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

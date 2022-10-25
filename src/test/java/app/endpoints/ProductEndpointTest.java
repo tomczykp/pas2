@@ -26,10 +26,10 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(404))
 				.body("status", Matchers.equalTo("Product not found"));
 
-//		req
-//				.get("/product/1o").then()
-//				.statusCode(Matchers.is(500))
-//				.body(, Matchers.equalTo("java.lang.NumberFormatException"));
+		req
+				.get("/product/1o").then()
+				.statusCode(Matchers.is(500))
+				.body(Matchers.containsString("java.lang.NumberFormatException"));
 
 	}
 

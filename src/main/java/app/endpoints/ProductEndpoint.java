@@ -3,12 +3,10 @@ package app.endpoints;
 import app.managers.ProductManager;
 import app.model.*;
 import jakarta.inject.Inject;
-import jakarta.json.bind.JsonbBuilder;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 @Path("/product")
@@ -55,7 +53,7 @@ public class ProductEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getRoot() {
+	public Response getAll() {
 		return Response.ok(this.manager.getMap()).build();
 	}
 
@@ -75,22 +73,6 @@ public class ProductEndpoint {
 			return Response.ok(e).status(500).build();
 		}
 	}
-
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response update(@QueryParam("price") String p) {
-//		if (Objects.equals(p, "") || p == null)
-//			return Response.ok("{'status':'missing argument `price`'}")
-//					.status(404).build();
-//
-//		try {
-//			int t = Integer.parseInt(p);
-//			Product product = manager.create(t);
-//			return Response.ok(product).build();
-//
-//		} catch (NumberFormatException e) {
-//			return Response.ok(e).status(500).build();
-//		}
-//	}
 
 
 }
