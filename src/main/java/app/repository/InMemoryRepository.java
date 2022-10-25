@@ -1,7 +1,5 @@
 package app.repository;
 
-import jakarta.persistence.Id;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
