@@ -1,4 +1,4 @@
-package app.repository;
+package app.repositories;
 
 import app.model.a.Customer;
 import org.junit.jupiter.api.Assertions;

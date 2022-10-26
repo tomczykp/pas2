@@ -1,8 +1,10 @@
-package app.managers;
+package app.managers.a;
 
 import app.model.a.Product;
-import app.repository.InMemoryRepository;
-import app.repository.Repository;
+import app.repositories.InMemoryRepository;
+import app.repositories.ProductRepository;
+import app.repositories.Repository;
+import jakarta.inject.Inject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +13,11 @@ import java.util.function.Predicate;
 
 public class ProductManager {
 
-	private final Repository<Integer, Product> repository;
+	@Inject
+	private ProductRepository repository;
 	private int counter;
 
 	public ProductManager () {
-		this.repository = new InMemoryRepository<>();
 		this.counter = 0;
 	}
 

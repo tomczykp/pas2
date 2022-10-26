@@ -1,6 +1,6 @@
-package app.endpoints;
+package app.endpoints.a;
 
-import app.managers.ProductManager;
+import app.managers.a.ProductManager;
 import app.model.a.Product;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -17,7 +17,6 @@ public class ProductEndpoint {
 	private ProductManager manager;
 
 	public ProductEndpoint () {
-		this.manager = new ProductManager();
 	}
 
 	@PUT
@@ -58,6 +57,7 @@ public class ProductEndpoint {
 	}
 
 	@DELETE
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@PathParam("id") String id) {
 		if (Objects.equals(id, "") || id == null)

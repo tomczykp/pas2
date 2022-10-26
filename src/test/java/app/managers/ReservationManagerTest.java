@@ -1,5 +1,8 @@
 package app.managers;
 
+import app.managers.a.CustomerManager;
+import app.managers.a.ProductManager;
+import app.managers.a.ReservationManager;
 import app.model.a.Customer;
 import app.model.a.Product;
 import org.junit.jupiter.api.Assertions;
@@ -95,7 +98,11 @@ public class ReservationManagerTest {
 		Assertions.assertEquals(1, p1.getReservations().size());
 		Assertions.assertEquals(0, c1.getReservations().size());
 
-		rm.delete(0);
+		try {
+			rm.delete(0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		Assertions.assertEquals(1, c0.getReservations().size());
 		Assertions.assertEquals(0, p0.getReservations().size());
 		Assertions.assertEquals(1, p1.getReservations().size());

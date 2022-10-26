@@ -1,4 +1,4 @@
-package app.repository;
+package app.repositories;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,10 +1,10 @@
-package app.managers;
+package app.managers.a;
 
 import app.model.a.Customer;
 import app.model.a.Product;
 import app.model.a.Reservation;
-import app.repository.InMemoryRepository;
-import app.repository.Repository;
+import app.repositories.ReservationRepository;
+import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -14,11 +14,11 @@ import java.util.function.Predicate;
 
 public class ReservationManager {
 
-	private final Repository<Integer, Reservation> repository;
+	@Inject
+	private ReservationRepository repository;
 	private int counter;
 
 	public ReservationManager() {
-		this.repository = new InMemoryRepository<>();
 		this.counter = 0;
 	}
 
@@ -29,7 +29,10 @@ public class ReservationManager {
 		return this.repository.insert(this.counter++, new Reservation(e, c, p));
 	}
 
-	public void delete(int id) {
+	public void delete(int id) throws Exception{
+		if (this.repository.get(id).getEndDate().isAfter(LocalDateTime.now())) {
+			throw new Exception("Product still in reservation!");
+		}
 		this.repository.get(id).getCustomer().getReservations().remove(this.repository.get(id));
 		this.repository.get(id).getProduct().getReservations().remove(this.repository.get(id));
 		this.repository.delete(id);

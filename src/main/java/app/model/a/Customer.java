@@ -60,7 +60,6 @@ public class Customer {
 		this.reservations.add(reservation);
 	}
 
-
 	public Long getCustomerID () {
 		return customerID;
 	}

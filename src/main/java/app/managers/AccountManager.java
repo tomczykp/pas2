@@ -4,8 +4,8 @@ package app.managers;
 import app.model.Account;
 import app.model.AccountType;
 import app.model.Client;
-import app.repository.InMemoryRepository;
-import app.repository.Repository;
+import app.repositories.InMemoryRepository;
+import app.repositories.Repository;
 
 import java.util.HashMap;
 import java.util.List;

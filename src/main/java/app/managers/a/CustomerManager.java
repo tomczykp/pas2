@@ -1,8 +1,11 @@
-package app.managers;
+package app.managers.a;
 
 import app.model.a.Customer;
-import app.repository.InMemoryRepository;
-import app.repository.Repository;
+import app.repositories.CustomerRepository;
+import app.repositories.InMemoryRepository;
+import app.repositories.Repository;
+import jakarta.inject.Inject;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -10,10 +13,10 @@ import java.util.function.Predicate;
 
 public class CustomerManager {
 
-	private final Repository<Integer, Customer> repository;
+	@Inject
+	private CustomerRepository repository;
 	private int counter;
 	public CustomerManager() {
-		this.repository = new InMemoryRepository<>();
 		this.counter = 0;
 	}
 
