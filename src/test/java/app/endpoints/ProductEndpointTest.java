@@ -17,6 +17,11 @@ public class ProductEndpointTest {
 	@Test
 	public void getTest() {
 		req
+				.delete("/product").then()
+				.statusCode(200)
+				.body("status", Matchers.equalTo("Successfull clearing"));
+
+		req
 				.get("/product").then()
 				.statusCode(Matchers.is(200))
 				.body(Matchers.is("{}"));
@@ -36,9 +41,14 @@ public class ProductEndpointTest {
 	@Test
 	public void putTest() {
 		req
+				.delete("/product").then()
+				.statusCode(200)
+				.body("status", Matchers.equalTo("Successfull clearing"));
+
+		req
 				.put("/product").then()
 				.statusCode(Matchers.is(404))
-				.body("status", Matchers.equalTo("missing parameter `price`"));
+				.body("status", Matchers.equalTo("missing parameter price"));
 
 		req
 				.queryParam("price", 200)

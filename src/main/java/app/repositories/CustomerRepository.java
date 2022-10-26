@@ -8,13 +8,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class CustomerRepository extends InMemoryRepository<Integer, Customer> {
     public CustomerRepository() {
         super();
-        this.counter = 0;
+        this.counter = 1;
     }
 
     private Integer counter;
 
     @Override
     public Customer insert (Customer v) {
+        v.setCustomerID(Long.valueOf(counter));
         return super.insert(counter++, v);
     }
 }

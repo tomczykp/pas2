@@ -9,13 +9,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class ReservationRepository extends InMemoryRepository<Integer, Reservation>{
     public ReservationRepository() {
         super();
-        this.counter = 0;
+        this.counter = 1;
     }
 
     private Integer counter;
 
     @Override
     public Reservation insert (Reservation v) {
+        v.setId(counter);
         return super.insert(counter++, v);
     }
 }

@@ -30,6 +30,9 @@ public class Reservation {
 		return customer;
 	}
 
+	public void setId(int id) {
+		this.reservationID = id;
+	}
 	public void setCustomer (Customer customer) {
 		this.customer = customer;
 	}

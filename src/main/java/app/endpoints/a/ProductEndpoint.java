@@ -50,6 +50,15 @@ public class ProductEndpoint {
 		}
 	}
 
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteAll() {
+		this.manager.getMap().clear();
+		return Response.ok(
+				new JSONObject().put("status", "Successfull clearing").toString())
+				.build();
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll() {
