@@ -1,8 +1,8 @@
 package app.managers;
 
-import app.model.Customer;
-import app.model.Product;
-import app.model.Reservation;
+import app.model.a.Customer;
+import app.model.a.Product;
+import app.model.a.Reservation;
 import app.repository.InMemoryRepository;
 import app.repository.Repository;
 

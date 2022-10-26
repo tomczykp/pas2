@@ -1,7 +1,7 @@
 package app.managers;
 
-import app.model.Customer;
-import app.model.Product;
+import app.model.a.Customer;
+import app.model.a.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

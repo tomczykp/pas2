@@ -1,6 +1,6 @@
 package app.managers;
 
-import app.model.Customer;
+import app.model.a.Customer;
 import app.repository.InMemoryRepository;
 import app.repository.Repository;
 import java.util.HashMap;

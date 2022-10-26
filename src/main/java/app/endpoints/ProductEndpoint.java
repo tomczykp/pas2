@@ -1,11 +1,12 @@
 package app.endpoints;
 
 import app.managers.ProductManager;
-import app.model.*;
+import app.model.a.Product;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -43,7 +44,7 @@ public class ProductEndpoint {
 		try {
 			Product product = manager.get(Integer.parseInt(id));
 			if (product == null)
-				return Response.ok("{\"status\":\"Product not found\"}").status(404).build();
+				return Response.ok(new JSONObject().put("status", "Product not found").toString()).status(404).build();
 			return Response.ok(product).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();

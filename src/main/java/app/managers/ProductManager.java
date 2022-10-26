@@ -1,9 +1,8 @@
 package app.managers;
 
-import app.model.Product;
+import app.model.a.Product;
 import app.repository.InMemoryRepository;
 import app.repository.Repository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.util.HashMap;
 import java.util.List;

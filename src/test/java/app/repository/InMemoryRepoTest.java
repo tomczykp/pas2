@@ -1,6 +1,6 @@
 package app.repository;
 
-import app.model.Customer;
+import app.model.a.Customer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
