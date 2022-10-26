@@ -1,6 +1,6 @@
-package app.endpoints;
+package app.endpoints.a;
 
-import app.managers.CustomerManager;
+import app.managers.a.CustomerManager;
 import app.model.a.Customer;
 import app.model.a.Product;
 import jakarta.ws.rs.*;
