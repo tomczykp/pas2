@@ -15,14 +15,9 @@ public class ProductManager {
 
 	@Inject
 	private ProductRepository repository;
-	private int counter;
-
-	public ProductManager () {
-		this.counter = 0;
-	}
 
 	public Product create(int price) {
-		return this.repository.insert(this.counter++, new Product(price));
+		return this.repository.insert(new Product(price));
 	}
 
 	public void delete(int id) {

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Path("/account")
 public class AccountEndpoint {
-
+        /*
     @Inject
     private AccountManager manager;
 
@@ -53,4 +53,6 @@ public class AccountEndpoint {
         manager.deleteAccount(id);
         return Response.ok("Success").build();
     }
+
+         */
 }

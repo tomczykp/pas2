@@ -5,14 +5,39 @@ import app.managers.a.ProductManager;
 import app.managers.a.ReservationManager;
 import app.model.a.Customer;
 import app.model.a.Product;
+import app.repositories.CustomerRepository;
+import app.repositories.ProductRepository;
+import app.repositories.ReservationRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+@ExtendWith(MockitoExtension.class)
 public class ReservationManagerTest {
+
+	@Mock
+	ProductRepository prepository;
+	@Mock
+	CustomerRepository crepository;
+	@Mock
+	ReservationRepository rrepository;
+
+	@InjectMocks
+	ProductManager pm = new ProductManager();
+	@InjectMocks
+	CustomerManager cm = new CustomerManager();
+	@InjectMocks
+	ReservationManager rm = new ReservationManager();
+
 
 	@Test
 	public void sanityTest()  {

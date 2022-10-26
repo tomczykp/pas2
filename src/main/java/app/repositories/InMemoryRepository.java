@@ -1,12 +1,14 @@
 package app.repositories;
 
+import jakarta.annotation.PostConstruct;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class InMemoryRepository<K, V> implements Repository<K, V> {
+public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 
-	private final HashMap<K, V> lista;
+	private HashMap<K, V> lista;
 
 	public InMemoryRepository() {
 		this.lista = new HashMap<>();

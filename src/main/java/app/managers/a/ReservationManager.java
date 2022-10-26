@@ -16,17 +16,12 @@ public class ReservationManager {
 
 	@Inject
 	private ReservationRepository repository;
-	private int counter;
-
-	public ReservationManager() {
-		this.counter = 0;
-	}
 
 	public Reservation create(LocalDateTime e, Customer c, Product p) throws Exception {
 		for (Reservation res: p.getReservations())
 			if (res.getEndDate().isAfter(LocalDateTime.now()))
 				throw new Exception("Product still in reservation");
-		return this.repository.insert(this.counter++, new Reservation(e, c, p));
+		return this.repository.insert(new Reservation(e, c, p));
 	}
 
 	public void delete(int id) throws Exception{

@@ -13,11 +13,11 @@ import java.util.function.Predicate;
 
 public class AccountManager {
 
-    private final Repository<String, Account> repository;
+  /*  private final Repository<String, Account> repository;
     private final String accountIdGenerator = "0";
 
     public AccountManager() {
-        this.repository = new InMemoryRepository<>();
+       // this.repository = new InMemoryRepository<>();
     }
 
     public Account createAccount(double percentage, AccountType accountType, Client owner) throws Exception {
@@ -65,4 +65,6 @@ public class AccountManager {
             return account;
         });
     }
+
+   */
 }

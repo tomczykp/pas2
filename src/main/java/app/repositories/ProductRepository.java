@@ -8,5 +8,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class ProductRepository extends InMemoryRepository<Integer, Product> {
     public ProductRepository(){
         super();
+        this.counter = 0;
+    }
+
+    private Integer counter;
+
+    @Override
+    public Product insert (Product v) {
+        return super.insert(counter++, v);
     }
 }

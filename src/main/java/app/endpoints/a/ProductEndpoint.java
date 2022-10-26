@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Path("/product")
 public class ProductEndpoint {
-	
+
 	@Inject
 	private ProductManager manager;
 

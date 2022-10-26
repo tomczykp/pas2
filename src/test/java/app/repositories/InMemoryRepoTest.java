@@ -8,16 +8,16 @@ public class InMemoryRepoTest {
 
 	@Test
 	public void getTest() {
-		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Repository<Integer, Customer> repo = new CustomerRepository();
 		Customer client = new Customer("username", "email@email");
-		Assertions.assertEquals(InMemoryRepository.class, repo.getClass());
+		Assertions.assertEquals(CustomerRepository.class, repo.getClass());
 		Assertions.assertNotNull(client);
 		Assertions.assertEquals(repo.getLenght(), 0);
 	}
 
 	@Test
 	public void insertTest() {
-		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Repository<Integer, Customer> repo = new CustomerRepository();
 		Customer client = new Customer("user1", "asd");
 		Customer client1 = new Customer("user2", "asdwdadw");
 
@@ -37,7 +37,7 @@ public class InMemoryRepoTest {
 
 	@Test
 	public void deleteTest() {
-		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Repository<Integer, Customer> repo = new CustomerRepository();
 		Customer client = new Customer("user1", "asd");
 		Customer client1 = new Customer("user2", "asdwdadw");
 
@@ -61,7 +61,7 @@ public class InMemoryRepoTest {
 
 	@Test
 	public void modifyTest() throws Exception {
-		Repository<Integer, Customer> repo = new InMemoryRepository<>();
+		Repository<Integer, Customer> repo = new CustomerRepository();
 		Customer client = new Customer("user1", "asd");
 		Customer client1 = new Customer("user2", "asdwdadw");
 

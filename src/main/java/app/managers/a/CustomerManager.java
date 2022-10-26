@@ -15,13 +15,9 @@ public class CustomerManager {
 
 	@Inject
 	private CustomerRepository repository;
-	private int counter;
-	public CustomerManager() {
-		this.counter = 0;
-	}
 
 	public Customer create(String username, String email) {
-		return this.repository.insert(this.counter++, new Customer(username, email));
+		return this.repository.insert(new Customer(username, email));
 	}
 
 	public void delete(int id) {
