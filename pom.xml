@@ -122,7 +122,7 @@
                 <version>2.19</version>
                 <configuration>
                     <excludes>
-                        <exclude>*EndpointTest.java</exclude>
+                        <exclude>*Test.java</exclude>
                     </excludes>
                 </configuration>
                 <dependencies>

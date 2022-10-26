@@ -3,6 +3,8 @@ package app.endpoints.a;
 import app.managers.a.CustomerManager;
 import app.model.a.Customer;
 import app.model.a.Product;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -12,8 +14,10 @@ import java.util.Map;
 import java.util.Objects;
 
 @Path("/customer")
+@ApplicationScoped
 public class CustomerEndpoint {
 
+	@Inject
 	private CustomerManager manager;
 	public CustomerEndpoint() {
 		this.manager = new CustomerManager();
@@ -22,7 +26,6 @@ public class CustomerEndpoint {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Response get (@PathParam("id") String id) {
 		try {
 			Customer customer = this.manager.get(Integer.parseInt(id));
@@ -34,7 +37,6 @@ public class CustomerEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getAll(@QueryParam("exact") String exact) {
 		Map<Integer, Customer> data = this.manager.getMap();
 		if (exact == null || exact.equals(""))
@@ -44,7 +46,6 @@ public class CustomerEndpoint {
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Response put(@QueryParam("username") String u, @QueryParam("email") String e) {
 		if ( Objects.equals(e, "") || e == null)
 			return Response.ok("{'status':'missing arguments `email` '}")

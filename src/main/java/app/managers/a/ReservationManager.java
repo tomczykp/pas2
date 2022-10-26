@@ -4,6 +4,7 @@ import app.model.a.Customer;
 import app.model.a.Product;
 import app.model.a.Reservation;
 import app.repositories.ReservationRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
@@ -15,35 +16,35 @@ import java.util.function.Predicate;
 public class ReservationManager {
 
 	@Inject
-	private ReservationRepository repository;
+	private ReservationRepository reservationRepository;
 
 	public Reservation create(LocalDateTime e, Customer c, Product p) throws Exception {
 		for (Reservation res: p.getReservations())
 			if (res.getEndDate().isAfter(LocalDateTime.now()))
 				throw new Exception("Product still in reservation");
-		return this.repository.insert(new Reservation(e, c, p));
+		return this.reservationRepository.insert(new Reservation(e, c, p));
 	}
 
-	public void delete(int id) throws Exception{
-		if (this.repository.get(id).getEndDate().isAfter(LocalDateTime.now())) {
+	public void delete(int id) throws Exception {
+		if (this.reservationRepository.get(id).getEndDate().isAfter(LocalDateTime.now())) {
 			throw new Exception("Product still in reservation!");
 		}
-		this.repository.get(id).getCustomer().getReservations().remove(this.repository.get(id));
-		this.repository.get(id).getProduct().getReservations().remove(this.repository.get(id));
-		this.repository.delete(id);
+		this.reservationRepository.get(id).getCustomer().getReservations().remove(this.reservationRepository.get(id));
+		this.reservationRepository.get(id).getProduct().getReservations().remove(this.reservationRepository.get(id));
+		this.reservationRepository.delete(id);
 	}
 
 	public Reservation modify (int id, Function<Reservation, Reservation> func) throws Exception {
-		return this.repository.modify(id, func);
+		return this.reservationRepository.modify(id, func);
 	}
 
 	public Reservation get(int id) {
-		return this.repository.get(id);
+		return this.reservationRepository.get(id);
 	}
 
 	public List<Reservation> get (Predicate<Reservation> predicate) {
 		try {
-			return this.repository.get(predicate);
+			return this.reservationRepository.get(predicate);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -51,7 +52,7 @@ public class ReservationManager {
 	}
 
 	public HashMap<Integer, Reservation> getMap () {
-		return this.repository.getMap();
+		return this.reservationRepository.getMap();
 	}
 
 

@@ -5,6 +5,7 @@ import app.managers.a.ProductManager;
 import app.managers.a.ReservationManager;
 import app.model.a.Product;
 import app.model.a.Reservation;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,10 +17,11 @@ import java.util.Objects;
 @Path("/reservation")
 public class ReservationEndpoint {
 
+    @Inject
     private ReservationManager reservationManager;
-
+    @Inject
     private CustomerManager customerManager;
-
+    @Inject
     private ProductManager productManager;
 
     public ReservationEndpoint() {

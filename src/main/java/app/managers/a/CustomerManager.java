@@ -2,8 +2,6 @@ package app.managers.a;
 
 import app.model.a.Customer;
 import app.repositories.CustomerRepository;
-import app.repositories.InMemoryRepository;
-import app.repositories.Repository;
 import jakarta.inject.Inject;
 
 import java.util.HashMap;
@@ -14,27 +12,27 @@ import java.util.function.Predicate;
 public class CustomerManager {
 
 	@Inject
-	private CustomerRepository repository;
+	private CustomerRepository customerRepository;
 
 	public Customer create(String username, String email) {
-		return this.repository.insert(new Customer(username, email));
+		return this.customerRepository.insert(new Customer(username, email));
 	}
 
 	public void delete(int id) {
-		this.repository.delete(id);
+		this.customerRepository.delete(id);
 	}
 
 	public Customer modify (int id, Function<Customer, Customer> func) throws Exception {
-		return this.repository.modify(id, func);
+		return this.customerRepository.modify(id, func);
 	}
 
 	public Customer get(int id) {
-		return this.repository.get(id);
+		return this.customerRepository.get(id);
 	}
 
 	public List<Customer> get (Predicate<Customer> predicate) {
 		try {
-			return this.repository.get(predicate);
+			return this.customerRepository.get(predicate);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -42,10 +40,10 @@ public class CustomerManager {
 	}
 
 	public HashMap<Integer, Customer> getMap () {
-		return this.repository.getMap();
+		return this.customerRepository.getMap();
 	}
 
 	public int getLength() {
-		return this.repository.getLenght();
+		return this.customerRepository.getLenght();
 	}
 }

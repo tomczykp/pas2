@@ -24,7 +24,7 @@ public class ProductEndpointTest {
 		req
 				.get("/product/1").then()
 				.statusCode(Matchers.is(404))
-				.body("status", Matchers.equalTo("Product not found"));
+				.body("status", Matchers.equalTo("product not found"));
 
 		req
 				.get("/product/1o").then()
@@ -37,8 +37,13 @@ public class ProductEndpointTest {
 	public void putTest() {
 		req
 				.put("/product").then()
-				.statusCode(Matchers.is(200))
-				.body(Matchers.is("Could not create product, missing parameter, price"));
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("missing parameter `price`"));
+
+		req
+				.queryParam("price", 200)
+				.put("/product").then()
+				.statusCode(Matchers.is(200));
 
 	}
 
