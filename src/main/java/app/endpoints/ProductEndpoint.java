@@ -1,6 +1,7 @@
 package app.endpoints.a;
 
 import app.managers.a.ProductManager;
+import app.model.a.Customer;
 import app.model.a.Product;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -8,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Path("/product")
@@ -61,8 +63,11 @@ public class ProductEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll() {
-		return Response.ok(this.manager.getMap()).build();
+	public Response getAll(@QueryParam("exact") String exact) {
+		Map<Integer, Product> data = this.manager.getMap();
+		if (exact == null || exact.equals(""))
+			return Response.ok(data).build();
+		return Response.ok(data.get(0)).build();
 	}
 
 	@DELETE

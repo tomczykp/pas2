@@ -19,16 +19,16 @@ public class CustomerEndpoint {
 
 	@Inject
 	private CustomerManager manager;
-	public CustomerEndpoint() {
-		this.manager = new CustomerManager();
-	}
+	public CustomerEndpoint() {}
 
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get (@PathParam("id") String id) {
 		try {
-			Customer customer = this.manager.get(Integer.parseInt(id));
+			Customer customer = manager.get(Integer.parseInt(id));
+			if (customer == null)
+				return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
 			return Response.ok(customer).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
@@ -57,6 +57,27 @@ public class CustomerEndpoint {
 
 		Customer product = manager.create(u, e);
 		return Response.ok(product).build();
+	}
+
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response delete(@PathParam("id") String id) {
+		if (Objects.equals(id, "") || id == null)
+			return Response.ok(
+							new JSONObject().put("status", "missing parameter id").toString())
+					.status(404).build();
+
+		try {
+			int t = Integer.parseInt(id);
+			manager.delete(t);
+			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
+
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (Exception e) {
+			return Response.ok(e.getMessage()).status(500).build();
+		}
 	}
 
 }
