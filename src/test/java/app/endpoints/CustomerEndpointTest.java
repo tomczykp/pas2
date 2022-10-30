@@ -1,10 +1,15 @@
 package app.endpoints;
 
+import app.model.Customer;
+import app.model.Product;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
 import jakarta.ws.rs.core.MediaType;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 public class CustomerEndpointTest {
 
@@ -73,4 +78,53 @@ public class CustomerEndpointTest {
 				.body("reservations", Matchers.hasSize(0));
 	}
 
+	@Test
+	public void deleteTest() {
+		req()
+				.delete("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("status", Matchers.equalTo("Successfull clearing"));
+
+		req()
+				.delete("/customer/6a").then()
+				.statusCode(Matchers.is(500))
+				.body(Matchers.containsString("java.lang.NumberFormatException"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("email", "emai@a.com")
+				.formParam("username", "emaia")
+				.put("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("id", Matchers.anything())
+				.body("email", Matchers.equalTo("emai@a.com"))
+				.body("username", Matchers.equalTo("emaia"))
+				.body("reservations", Matchers.hasSize(0));
+
+		Map<Integer, Customer> m = req().when().get("/customer").getBody().jsonPath().getMap("");
+		Assertions.assertFalse(m.isEmpty());
+
+		// to jest abominacja !!!!!!!!!!!!
+		long id = 1;
+		for (Map.Entry<Integer, Customer> entry: m.entrySet()) {
+			id = Integer.parseInt(String.valueOf(entry.getKey()));
+			break;
+		}
+
+		req().get("/customer/" + id).then()
+				.statusCode(Matchers.is(200))
+				.body("id", Matchers.anything())
+				.body("email", Matchers.equalTo("emai@a.com"))
+				.body("username", Matchers.equalTo("emaia"))
+				.body("reservations", Matchers.hasSize(0));
+
+		req()
+				.delete("/customer/" + id).then()
+				.body("status", Matchers.equalTo("deletion succesful"));
+
+		req()
+				.get("/customer/" + id).then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("customer not found"));
+	}
 }
