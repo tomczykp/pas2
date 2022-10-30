@@ -1,10 +1,10 @@
-package app.endpoints.a;
+package app.endpoints;
 
-import app.managers.a.CustomerManager;
-import app.managers.a.ProductManager;
-import app.managers.a.ReservationManager;
-import app.model.a.Product;
-import app.model.a.Reservation;
+import app.managers.CustomerManager;
+import app.managers.ProductManager;
+import app.managers.ReservationManager;
+import app.model.Product;
+import app.model.Reservation;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -17,17 +17,14 @@ import java.util.Objects;
 @Path("/reservation")
 public class ReservationEndpoint {
 
-    @Inject
     private ReservationManager reservationManager;
-    @Inject
     private CustomerManager customerManager;
-    @Inject
     private ProductManager productManager;
 
     public ReservationEndpoint() {
-        this.reservationManager = new ReservationManager();
-        this.customerManager = new CustomerManager();
-        this.productManager = new ProductManager();
+        reservationManager = new ReservationManager();
+        customerManager = new CustomerManager();
+        productManager = new ProductManager();
     }
 
     @PUT
@@ -40,9 +37,10 @@ public class ReservationEndpoint {
 
         try {
             LocalDateTime endDate = LocalDateTime.parse(d);
+			LocalDateTime startDate = LocalDateTime.now();
             int clientId = Integer.valueOf(cid);
             int productId = Integer.valueOf(pid);
-            Reservation reservation = new Reservation(endDate, this.customerManager.get(clientId), this.productManager.get(productId));
+            Reservation reservation = new Reservation(startDate, endDate, customerManager.get(clientId), productManager.get(productId));
             return Response.ok(reservation).build();
         } catch(NumberFormatException e) {
             return Response.ok(e).status(500).build();
@@ -52,7 +50,7 @@ public class ReservationEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        return Response.ok(this.reservationManager.getMap()).build();
+        return Response.ok(reservationManager.getMap()).build();
     }
 
     @GET
@@ -79,7 +77,7 @@ public class ReservationEndpoint {
 
         try {
             int i = Integer.valueOf(id);
-            reservationManager.delete(i);
+			reservationManager.delete(i);
             return Response.ok("{\"status\":\"Success\"}").build();
         } catch (Exception e) {
             return Response.ok(e).status(500).build();

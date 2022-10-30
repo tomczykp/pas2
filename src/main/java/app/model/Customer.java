@@ -1,4 +1,4 @@
-package app.model.a;
+package app.model;
 
 
 import jakarta.persistence.*;
@@ -25,6 +25,10 @@ public class Customer {
 	private String username;
 
 	@Column
+	@NotNull
+	private String password;
+
+	@Column
 	private String email;
 
 	@OneToMany
@@ -32,13 +36,14 @@ public class Customer {
 
 	public Customer () {}
 
-	public Customer (String u, String e) {
-		this.email = e;
-		this.username = u;
+	public Customer (String u, String e, String p) {
+		email = e;
+		username = u;
+		password = p;
 	}
 
 	public List<Reservation> getReservations () {
-		return this.reservations;
+		return reservations;
 	}
 
 	@Override
@@ -47,17 +52,22 @@ public class Customer {
 
 		if (!(o instanceof Customer customer)) return false;
 
-		return new EqualsBuilder().append(getCustomerID(), customer.getCustomerID()).append(getUsername(),
-				customer.getUsername()).append(getEmail(), customer.getEmail()).isEquals();
+		return new EqualsBuilder()
+				.append(customerID, customer.customerID)
+				.append(username, customer.username)
+				.append(email, customer.email).isEquals();
 	}
 
 	@Override
 	public int hashCode () {
-		return new HashCodeBuilder(17, 37).append(getCustomerID()).append(getUsername()).append(getEmail()).toHashCode();
+		return new HashCodeBuilder(17, 37)
+				.append(customerID)
+				.append(username)
+				.append(email).toHashCode();
 	}
 
 	public void addReservation (Reservation reservation) {
-		this.reservations.add(reservation);
+		reservations.add(reservation);
 	}
 
 	public Long getCustomerID () {
@@ -70,6 +80,10 @@ public class Customer {
 
 	public String getUsername () {
 		return username;
+	}
+
+	public Customer setPassword(String password) {
+		this.password = password; return this;
 	}
 
 	public Customer setUsername (String username) {

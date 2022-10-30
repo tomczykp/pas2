@@ -1,4 +1,4 @@
-package app.model.a;
+package app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -37,7 +37,7 @@ public class Product {
 	}
 
 	public void setId (int id) {
-		this.productID = id;
+		productID = id;
 	}
 
 	public long getPrice () {
@@ -50,27 +50,30 @@ public class Product {
 	}
 
 	public List<Reservation> getReservations () {
-		return this.reservations;
+		return reservations;
 	}
 
 	public void addReservation (Reservation reservation) {
-		this.reservations.add(reservation);
+		reservations.add(reservation);
 	}
 
 	@Override
 	public int hashCode () {
-		return new HashCodeBuilder(17, 37).append(getId()).append(getPrice()).append(getReservations()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(productID).append(price).append(reservations).toHashCode();
 	}
 
 	@Override
 	public boolean equals (Object o) {
 		if (this == o) return true;
 
-		if (this.getClass() != o.getClass()) return false;
+		if (getClass() != o.getClass()) return false;
 
 		Product product = (Product) o;
 
-		return new EqualsBuilder().append(getId(), product.getId()).append(getPrice(), product.getPrice()).append(getReservations(), product.getReservations()).isEquals();
+		return new EqualsBuilder()
+				.append(productID, product.productID)
+				.append(price, product.price)
+				.append(reservations, product.reservations).isEquals();
 	}
 
 	@Override

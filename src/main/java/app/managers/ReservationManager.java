@@ -1,8 +1,8 @@
-package app.managers.a;
+package app.managers;
 
-import app.model.a.Customer;
-import app.model.a.Product;
-import app.model.a.Reservation;
+import app.model.Customer;
+import app.model.Product;
+import app.model.Reservation;
 import app.repositories.ReservationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,33 +18,33 @@ public class ReservationManager {
 	@Inject
 	private ReservationRepository reservationRepository;
 
-	public Reservation create(LocalDateTime e, Customer c, Product p) throws Exception {
+	public Reservation create(LocalDateTime b, LocalDateTime e, Customer c, Product p) throws Exception {
 		for (Reservation res: p.getReservations())
 			if (res.getEndDate().isAfter(LocalDateTime.now()))
 				throw new Exception("Product still in reservation");
-		return this.reservationRepository.insert(new Reservation(e, c, p));
+		return reservationRepository.insert(new Reservation(b, e, c, p));
 	}
 
 	public void delete(int id) throws Exception {
-		if (this.reservationRepository.get(id).getEndDate().isAfter(LocalDateTime.now())) {
+		if (reservationRepository.get(id).getEndDate().isAfter(LocalDateTime.now())) {
 			throw new Exception("Product still in reservation!");
 		}
-		this.reservationRepository.get(id).getCustomer().getReservations().remove(this.reservationRepository.get(id));
-		this.reservationRepository.get(id).getProduct().getReservations().remove(this.reservationRepository.get(id));
-		this.reservationRepository.delete(id);
+		reservationRepository.get(id).getCustomer().getReservations().remove(reservationRepository.get(id));
+		reservationRepository.get(id).getProduct().getReservations().remove(reservationRepository.get(id));
+		reservationRepository.delete(id);
 	}
 
 	public Reservation modify (int id, Function<Reservation, Reservation> func) throws Exception {
-		return this.reservationRepository.modify(id, func);
+		return reservationRepository.modify(id, func);
 	}
 
 	public Reservation get(int id) {
-		return this.reservationRepository.get(id);
+		return reservationRepository.get(id);
 	}
 
 	public List<Reservation> get (Predicate<Reservation> predicate) {
 		try {
-			return this.reservationRepository.get(predicate);
+			return reservationRepository.get(predicate);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -52,7 +52,7 @@ public class ReservationManager {
 	}
 
 	public HashMap<Integer, Reservation> getMap () {
-		return this.reservationRepository.getMap();
+		return reservationRepository.getMap();
 	}
 
 

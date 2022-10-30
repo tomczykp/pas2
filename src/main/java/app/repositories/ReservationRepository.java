@@ -1,22 +1,22 @@
 package app.repositories;
 
-import app.model.a.Customer;
-import app.model.a.Product;
-import app.model.a.Reservation;
+import app.model.Reservation;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ReservationRepository extends InMemoryRepository<Integer, Reservation>{
-    public ReservationRepository() {
-        super();
-        this.counter = 1;
-    }
+
+	@PostConstruct
+	public void init() {
+		counter = 1;
+	}
 
     private Integer counter;
 
     @Override
     public Reservation insert (Reservation v) {
         v.setId(counter);
-        return super.insert(counter++, v);
+        return insert(counter++, v);
     }
 }

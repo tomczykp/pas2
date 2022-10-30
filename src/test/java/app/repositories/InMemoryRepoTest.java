@@ -1,6 +1,6 @@
 package app.repositories;
 
-import app.model.a.Customer;
+import app.model.Customer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ public class InMemoryRepoTest {
 	@Test
 	public void getTest() {
 		Repository<Integer, Customer> repo = new CustomerRepository();
-		Customer client = new Customer("username", "email@email");
+		Customer client = new Customer("username", "email@email", "passwd");
 		Assertions.assertEquals(CustomerRepository.class, repo.getClass());
 		Assertions.assertNotNull(client);
 		Assertions.assertEquals(repo.getLenght(), 0);
@@ -18,8 +18,8 @@ public class InMemoryRepoTest {
 	@Test
 	public void insertTest() {
 		Repository<Integer, Customer> repo = new CustomerRepository();
-		Customer client = new Customer("user1", "asd");
-		Customer client1 = new Customer("user2", "asdwdadw");
+		Customer client = new Customer("user1", "asd", "passwd");
+		Customer client1 = new Customer("user2", "asdwdadw", "passwd");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client, repo.get(1));
@@ -38,8 +38,8 @@ public class InMemoryRepoTest {
 	@Test
 	public void deleteTest() {
 		Repository<Integer, Customer> repo = new CustomerRepository();
-		Customer client = new Customer("user1", "asd");
-		Customer client1 = new Customer("user2", "asdwdadw");
+		Customer client = new Customer("user1", "asd", "passwd");
+		Customer client1 = new Customer("user2", "asdwdadw", "passwd");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client1, repo.insert(2, client1));
@@ -62,8 +62,8 @@ public class InMemoryRepoTest {
 	@Test
 	public void modifyTest() throws Exception {
 		Repository<Integer, Customer> repo = new CustomerRepository();
-		Customer client = new Customer("user1", "asd");
-		Customer client1 = new Customer("user2", "asdwdadw");
+		Customer client = new Customer("user1", "asd", "passwd");
+		Customer client1 = new Customer("user2", "asdwdadw", "passwd");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client1, repo.insert(2, client1));

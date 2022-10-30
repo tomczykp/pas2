@@ -1,8 +1,8 @@
-package app.endpoints.a;
+package app.endpoints;
 
-import app.managers.a.ProductManager;
-import app.model.a.Customer;
-import app.model.a.Product;
+import app.dto.ProductDTO;
+import app.managers.ProductManager;
+import app.model.Product;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -18,11 +18,10 @@ public class ProductEndpoint {
 	@Inject
 	private ProductManager manager;
 
-	public ProductEndpoint () {}
-
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response put(@QueryParam("price") String p) {
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response put(@FormParam("price") String p) {
 		if (Objects.equals(p, "") || p == null)
 			return Response.ok(
 					new JSONObject().put("status", "missing parameter price").toString())
@@ -31,7 +30,7 @@ public class ProductEndpoint {
 		try {
 			int t = Integer.parseInt(p);
 			Product product = manager.create(t);
-			return Response.ok(product).build();
+			return Response.ok(new ProductDTO(product)).build();
 
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
@@ -55,7 +54,7 @@ public class ProductEndpoint {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteAll() {
-		this.manager.getMap().clear();
+		manager.getMap().clear();
 		return Response.ok(
 				new JSONObject().put("status", "Successfull clearing").toString())
 				.build();
@@ -64,25 +63,23 @@ public class ProductEndpoint {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll(@QueryParam("exact") String exact) {
-		Map<Integer, Product> data = this.manager.getMap();
+		Map<Integer, Product> data = manager.getMap();
 		if (exact == null || exact.equals(""))
 			return Response.ok(data).build();
-		return Response.ok(data.get(0)).build();
+		return Response.ok(data).build();
 	}
 
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@PathParam("id") String id) {
-		if (Objects.equals(id, "") || id == null)
-			return Response.ok(
-							new JSONObject().put("status", "missing parameter id").toString())
-					.status(404).build();
 
 		try {
 			int t = Integer.parseInt(id);
 			manager.delete(t);
-			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
+			return Response.ok(
+					new JSONObject().put("status", "deletion succesful").toString())
+					.build();
 
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
