@@ -9,7 +9,7 @@ public interface Repository<K, V> {
 
 	// CRUD methods
 	V insert (K k, V v);
-	V insert(V v);
+	V insert(V v) throws Exception;
 	List<V> get (Predicate<V> pred);
 	V get(K k);
 	V modify (K k, Function<V, V> func) throws Exception;

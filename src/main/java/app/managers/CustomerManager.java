@@ -17,10 +17,6 @@ public class CustomerManager {
 	private CustomerRepository customerRepository;
 
 	public Customer create(String username, String email, String password) throws Exception{
-		for (Map.Entry<Integer, Customer> c: customerRepository.getMap().entrySet()) {
-			if (Objects.equals(c.getValue().getUsername(), username))
-				throw new Exception("Username already exist");
-		}
 		return customerRepository.insert(new Customer(username, email, password));
 	}
 

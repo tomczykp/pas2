@@ -76,6 +76,14 @@ public class CustomerEndpointTest {
 				.body("email", Matchers.equalTo("emai@a.com"))
 				.body("username", Matchers.equalTo("emaia"))
 				.body("reservations", Matchers.hasSize(0));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("email", "emai@a.com")
+				.formParam("username", "emaia")
+				.put("/customer").then()
+				.statusCode(500)
+				.body("message", Matchers.is("Username already exist"));
 	}
 
 	@Test
@@ -127,4 +135,62 @@ public class CustomerEndpointTest {
 				.statusCode(Matchers.is(404))
 				.body("status", Matchers.equalTo("customer not found"));
 	}
+
+	@Test
+	public void getAllTest() {
+		req()
+				.delete("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("status", Matchers.equalTo("Successfull clearing"));
+
+		Map<Integer, Customer> m = req().when().get("/customer").getBody().jsonPath().getMap("");
+		Assertions.assertTrue(m.isEmpty());
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("email", "emai@a.com")
+				.formParam("username", "user0")
+				.formParam("password", "haslo")
+				.put("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("id", Matchers.anything())
+				.body("email", Matchers.equalTo("emai@a.com"))
+				.body("username", Matchers.equalTo("user0"))
+				.body("reservations", Matchers.hasSize(0));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("email", "emai@a.com")
+				.formParam("username", "user1")
+				.formParam("password", "haslo")
+				.put("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("id", Matchers.anything())
+				.body("email", Matchers.equalTo("emai@a.com"))
+				.body("username", Matchers.equalTo("user1"))
+				.body("reservations", Matchers.hasSize(0));
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("email", "emai@a.com")
+				.formParam("username", "user2")
+				.formParam("password", "haslo")
+				.put("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("id", Matchers.anything())
+				.body("email", Matchers.equalTo("emai@a.com"))
+				.body("username", Matchers.equalTo("user2"))
+				.body("reservations", Matchers.hasSize(0));
+
+		m = req().when().get("/customer").getBody().jsonPath().getMap("");
+		Assertions.assertFalse(m.isEmpty());
+		Assertions.assertEquals(3, m.size());
+
+		for (Map.Entry<Integer, Customer> entry: m.entrySet()) {
+			Customer c = entry.getValue();
+			Assertions.assertEquals(Customer.class, c.getClass());
+		}
+
+	}
+
+
 }
