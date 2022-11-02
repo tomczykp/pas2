@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,11 +37,19 @@ public class CustomerEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll(@QueryParam("exact") String exact) {
-		Map<Integer, Customer> data = manager.getMap();
-		if (exact == null || exact.equals(""))
-			return Response.ok(data).build();
-		return Response.ok(data.get(0)).build();
+	public Response getAll(
+			@QueryParam("username") String username,
+			@QueryParam("exact") String exact) {
+		Map<Integer, Customer> data;
+
+		if ( Objects.equals(username, "") || username == null)
+			return Response.ok(manager.getMap()).build();
+		else if (exact == null || exact.equals(""))
+			data = manager.get((Customer c) -> (c.getUsername().contains(username)) || username.contains(c.getUsername()));
+		else
+			data = manager.get((Customer c) -> Objects.equals(c.getUsername(), username));
+
+		return Response.ok(data).build();
 	}
 
 	@PUT

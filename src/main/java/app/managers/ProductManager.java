@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -30,7 +31,7 @@ public class ProductManager {
 		return productRepository.get(id);
 	}
 
-	public List<Product> get (Predicate<Product> predicate) {
+	public Map<Integer, Product> get (Predicate<Product> predicate) {
 		try {
 			return productRepository.get(predicate);
 		} catch (Exception e) {

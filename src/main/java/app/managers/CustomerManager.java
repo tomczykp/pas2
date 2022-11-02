@@ -32,7 +32,7 @@ public class CustomerManager {
 		return customerRepository.get(id);
 	}
 
-	public List<Customer> get (Predicate<Customer> predicate) {
+	public Map<Integer, Customer> get (Predicate<Customer> predicate) {
 		try {
 			return customerRepository.get(predicate);
 		} catch (Exception e) {

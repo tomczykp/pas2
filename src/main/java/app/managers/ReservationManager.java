@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -42,7 +43,7 @@ public class ReservationManager {
 		return reservationRepository.get(id);
 	}
 
-	public List<Reservation> get (Predicate<Reservation> predicate) {
+	public Map<Integer, Reservation> get (Predicate<Reservation> predicate) {
 		try {
 			return reservationRepository.get(predicate);
 		} catch (Exception e) {

@@ -39,11 +39,11 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 	}
 
 	@Override
-	public List<V> get (Predicate<V> pred) {
-		List<V> res = new ArrayList<>();
+	public Map<K, V> get (Predicate<V> pred) {
+		Map<K, V> res = new HashMap<>();
 		for (Map.Entry<K, V> t : lista.entrySet())
 			if (pred.test(t.getValue()))
-				res.add(t.getValue());
+				res.put(t.getKey(), t.getValue());
 
 		return res;
 	}
