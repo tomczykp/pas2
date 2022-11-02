@@ -1,6 +1,5 @@
 package app.dto;
 
-import app.managers.CustomerManager;
 import app.model.Reservation;
 
 import java.time.LocalDateTime;
@@ -24,11 +23,11 @@ public class ReservationDTO {
 		return startDate;
 	}
 
-	private ProductDTO product;
-	private CustomerDTO customer;
-	private LocalDateTime endDate;
-	private LocalDateTime startDate;
-	private long id;
+	private final ProductDTO product;
+	private final CustomerDTO customer;
+	private final LocalDateTime endDate;
+	private final LocalDateTime startDate;
+	private final long id;
 
 	public long getId () {
 		return id;

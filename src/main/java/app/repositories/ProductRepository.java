@@ -1,6 +1,5 @@
 package app.repositories;
 
-import app.model.Customer;
 import app.model.Product;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;

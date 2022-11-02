@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Product {
 
 	public Product () {}
 
-	public int getId () {
+	public int getProductID () {
 		return productID;
 	}
 
@@ -51,6 +52,22 @@ public class Product {
 
 	public List<Reservation> getReservations () {
 		return reservations;
+	}
+
+
+	public List<Reservation> getCurrentReservations () {
+		List<Reservation> reservationList = new ArrayList<>();
+		for (Reservation r : reservations)
+			if (r.getEndDate().isAfter(LocalDateTime.now()))
+				reservationList.add(r);
+		return reservationList;
+	}
+	public List<Reservation> getPastReservations () {
+		List<Reservation> reservationList = new ArrayList<>();
+		for (Reservation r : reservations)
+			if (r.getEndDate().isBefore(LocalDateTime.now()))
+				reservationList.add(r);
+		return reservationList;
 	}
 
 	public void addReservation (Reservation reservation) {

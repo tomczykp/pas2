@@ -1,22 +1,7 @@
 package app.managers;
 
-import app.model.Customer;
-import app.model.Product;
-import app.repositories.CustomerRepository;
-import app.repositories.ProductRepository;
-import app.repositories.ReservationRepository;
-import jakarta.inject.Inject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
 
 @ExtendWith(MockitoExtension.class)
 public class ReservationManagerTest {

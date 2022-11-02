@@ -9,7 +9,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,6 +29,26 @@ public class CustomerEndpoint {
 						new JSONObject().put("status", "customer not found").toString())
 						.status(404).build();
 			return Response.ok(customer).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		}
+	}
+
+	@GET
+	@Path("/{id}/reservations")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
+		try {
+			Customer customer = manager.get(Integer.parseInt(id));
+			if (customer == null)
+				return Response.ok(
+						new JSONObject().put("status", "customer not found")
+						.toString()).status(404).build();
+
+			if (fromPast)
+				return Response.ok(customer.getPastReservations()).build();
+			else
+				return Response.ok(customer.getCurrentReservations()).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		}
@@ -76,27 +95,6 @@ public class CustomerEndpoint {
 			return Response.ok(e).status(500).build();
 		}
 
-	}
-
-	@DELETE
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") String id) {
-		if (Objects.equals(id, "") || id == null)
-			return Response.ok(
-							new JSONObject().put("status", "missing parameter id").toString())
-					.status(404).build();
-
-		try {
-			int t = Integer.parseInt(id);
-			manager.delete(t);
-			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
-
-		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
-		} catch (Exception e) {
-			return Response.ok(e.getMessage()).status(500).build();
-		}
 	}
 
 	@DELETE

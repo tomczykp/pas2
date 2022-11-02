@@ -1,11 +1,9 @@
 package app.endpoints;
 
 import app.model.Customer;
-import app.model.Product;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
-import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.MediaType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +42,7 @@ public class CustomerEndpointTest {
 		req()
 				.get("/customer/1o").then()
 				.statusCode(Matchers.is(500))
-				.body(Matchers.containsString("java.lang.NumberFormatException"));
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 
 	}
 
@@ -76,7 +74,7 @@ public class CustomerEndpointTest {
 				.formParam("username", "emaia")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo("emai@a.com"))
 				.body("username", Matchers.equalTo("emaia"))
 				.body("reservations", Matchers.hasSize(0));
@@ -88,64 +86,6 @@ public class CustomerEndpointTest {
 				.put("/customer").then()
 				.statusCode(500)
 				.body("message", Matchers.is("Username already exist"));
-	}
-
-	@Test
-	public void deleteTest() {
-		req()
-				.delete("/customer").then()
-				.statusCode(Matchers.is(200))
-				.body("status", Matchers.equalTo("Successfull clearing"));
-
-		req()
-				.delete("/customer/6a").then()
-				.statusCode(Matchers.is(500))
-				.body(Matchers.containsString("java.lang.NumberFormatException"));
-
-		req()
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.formParam("email", "emai@a.com")
-				.formParam("username", "emaia")
-				.put("/customer").then()
-				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
-				.body("email", Matchers.equalTo("emai@a.com"))
-				.body("username", Matchers.equalTo("emaia"))
-				.body("reservations", Matchers.hasSize(0));
-
-		req()
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.formParam("email", "emai@a.com")
-				.formParam("username", "emaia")
-				.put("/customer").then()
-				.statusCode(Matchers.is(500))
-				.body("message", Matchers.equalTo("Username already exist"));
-
-		Map<Integer, LinkedHashMap> m = req().when().get("/customer").getBody().jsonPath().getMap("", Integer.class, LinkedHashMap.class);
-		Assertions.assertFalse(m.isEmpty());
-
-		// to jest abominacja !!!!!!!!!!!!
-		int id = 1;
-		for (Map.Entry<Integer, LinkedHashMap> entry: m.entrySet()) {
-			id = (Integer) entry.getValue().get("customerID");
-			break;
-		}
-
-		req().get("/customer/" + id).then()
-				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
-				.body("email", Matchers.equalTo("emai@a.com"))
-				.body("username", Matchers.equalTo("emaia"))
-				.body("reservations", Matchers.hasSize(0));
-
-		req()
-				.delete("/customer/" + id).then()
-				.body("status", Matchers.equalTo("deletion succesful"));
-
-		req()
-				.get("/customer/" + id).then()
-				.statusCode(Matchers.is(404))
-				.body("status", Matchers.equalTo("customer not found"));
 	}
 
 	@Test
@@ -167,7 +107,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[0]))
 				.body("username", Matchers.equalTo(usernames[0]))
 				.body("reservations", Matchers.hasSize(0));
@@ -179,7 +119,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[1]))
 				.body("username", Matchers.equalTo(usernames[1]))
 				.body("reservations", Matchers.hasSize(0));
@@ -190,7 +130,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[2]))
 				.body("username", Matchers.equalTo(usernames[2]))
 				.body("reservations", Matchers.hasSize(0));
@@ -230,7 +170,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[0]))
 				.body("username", Matchers.equalTo(usernames[0]))
 				.body("reservations", Matchers.hasSize(0));
@@ -242,7 +182,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[1]))
 				.body("username", Matchers.equalTo(usernames[1]))
 				.body("reservations", Matchers.hasSize(0));
@@ -253,7 +193,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[2]))
 				.body("username", Matchers.equalTo(usernames[2]))
 				.body("reservations", Matchers.hasSize(0));
@@ -314,7 +254,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[0]))
 				.body("username", Matchers.equalTo(usernames[0]))
 				.body("reservations", Matchers.hasSize(0));
@@ -326,7 +266,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[1]))
 				.body("username", Matchers.equalTo(usernames[1]))
 				.body("reservations", Matchers.hasSize(0));
@@ -337,7 +277,7 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
-				.body("id", Matchers.anything())
+				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails[2]))
 				.body("username", Matchers.equalTo(usernames[2]))
 				.body("reservations", Matchers.hasSize(0));

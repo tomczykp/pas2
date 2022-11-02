@@ -44,8 +44,29 @@ public class ProductEndpoint {
 		try {
 			Product product = manager.get(Integer.parseInt(id));
 			if (product == null)
-				return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
+				return Response.ok(
+						new JSONObject().put("status", "product not found")
+						.toString()).status(404).build();
 			return Response.ok(product).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		}
+	}
+
+	@GET
+	@Path("/{id}/reservations")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
+		try {
+			Product product = manager.get(Integer.parseInt(id));
+			if (product == null)
+				return Response.ok(
+						new JSONObject().put("status", "product not found")
+								.toString()).status(404).build();
+			if (fromPast)
+				return Response.ok(product.getPastReservations()).build();
+			else
+				return Response.ok(product.getCurrentReservations()).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		}
@@ -62,10 +83,8 @@ public class ProductEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll(@QueryParam("exact") String exact) {
+	public Response getAll() {
 		Map<Integer, Product> data = manager.getMap();
-		if (exact == null || exact.equals(""))
-			return Response.ok(data).build();
 		return Response.ok(data).build();
 	}
 
@@ -77,14 +96,11 @@ public class ProductEndpoint {
 		try {
 			int t = Integer.parseInt(id);
 			manager.delete(t);
-			return Response.ok(
-					new JSONObject().put("status", "deletion succesful").toString())
-					.build();
+			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
 
-		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
 		} catch (Exception e) {
-			return Response.ok(e.getMessage()).status(500).build();
+			return Response.ok(e).status(500).build();
 		}
 	}
+
 }

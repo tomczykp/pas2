@@ -4,12 +4,10 @@ import app.model.Customer;
 import app.model.Product;
 import app.model.Reservation;
 import app.repositories.ReservationRepository;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,18 +18,29 @@ public class ReservationManager {
 	private ReservationRepository reservationRepository;
 
 	public Reservation create(LocalDateTime b, LocalDateTime e, Customer c, Product p) throws Exception {
-		for (Reservation res: p.getReservations())
-			if (res.getEndDate().isAfter(LocalDateTime.now()))
-				throw new Exception("Product still in reservation");
-		return reservationRepository.insert(new Reservation(b, e, c, p));
+
+		if (b.isBefore(LocalDateTime.now()) || e.isBefore(LocalDateTime.now()))
+			throw new Exception("cannot make reservation in the past");
+
+		if (e.isBefore(b))
+			throw new Exception("End date cannot be before start date");
+
+		if (!c.isActive() || !c.getCurrentReservations().isEmpty())
+			throw new Exception("customer has active reservations or is inactive");
+
+		if (p.getCurrentReservations().isEmpty())
+			return reservationRepository.insert(new Reservation(b, e, c, p));
+
+		throw new Exception("product is already reserved");
 	}
 
 	public void delete(int id) throws Exception {
-		if (reservationRepository.get(id).getEndDate().isAfter(LocalDateTime.now())) {
-			throw new Exception("Product still in reservation!");
-		}
-		reservationRepository.get(id).getCustomer().getReservations().remove(reservationRepository.get(id));
-		reservationRepository.get(id).getProduct().getReservations().remove(reservationRepository.get(id));
+		Reservation reservation = reservationRepository.get(id);
+		if (reservation.getStartDate().isAfter(LocalDateTime.now()))
+			throw new Exception("cannot remove already started reservation");
+
+		reservation.getCustomer().getReservations().remove(reservation);
+		reservation.getProduct().getReservations().remove(reservation);
 		reservationRepository.delete(id);
 	}
 

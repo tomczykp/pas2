@@ -23,10 +23,6 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 		return lista.get(k);
 	}
 
-	private V getObj(V v) throws Exception {
-		return get((item) -> item.equals(v)).get(0);
-	}
-
 	@Override
 	public HashMap<K, V> getMap() {
 		return lista;

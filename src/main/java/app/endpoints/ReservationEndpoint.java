@@ -1,8 +1,10 @@
 package app.endpoints;
 
+import app.dto.ReservationDTO;
 import app.managers.CustomerManager;
 import app.managers.ProductManager;
 import app.managers.ReservationManager;
+import app.model.Customer;
 import app.model.Product;
 import app.model.Reservation;
 import jakarta.inject.Inject;
@@ -17,70 +19,86 @@ import java.util.Objects;
 @Path("/reservation")
 public class ReservationEndpoint {
 
-    private ReservationManager reservationManager;
-    private CustomerManager customerManager;
-    private ProductManager productManager;
+	@Inject
+	private ReservationManager reservationManager;
+	@Inject
+	private CustomerManager customerManager;
+	@Inject
+	private ProductManager productManager;
 
-    public ReservationEndpoint() {
-        reservationManager = new ReservationManager();
-        customerManager = new CustomerManager();
-        productManager = new ProductManager();
-    }
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response put (
+			@FormParam("date") String start,
+			@FormParam("date") String end,
+			@FormParam("cid") String cid,
+			@FormParam("pid") String pid) {
+		if (Objects.equals(start, "") || Objects.equals(end, "")
+				|| Objects.equals(cid, "") || Objects.equals(pid, ""))
+			return Response.ok(
+					new JSONObject().put("status", "missing arguments")
+							.toString()).status(404).build();
 
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response put(@QueryParam("date") String d, @QueryParam("cid") String cid, @QueryParam("pid") String pid) {
-        if (Objects.equals(d, "") || Objects.equals(cid, "") || Objects.equals(pid, "")) {
-            return Response.ok("{'status':'missing argument `price`'}")
-                    .status(404).build();
-        }
+		try {
+			LocalDateTime endDate = LocalDateTime.parse(end);
+			LocalDateTime startDate = LocalDateTime.parse(start);
+			Customer customer = customerManager.get(Integer.parseInt(cid));
+			Product product = productManager.get(Integer.parseInt(pid));
+			Reservation reservation = reservationManager.create(startDate, endDate, customer, product);
+			return Response.ok(new ReservationDTO(reservation)).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (Exception e) {
+			return Response.ok(new JSONObject().put("status", e.getMessage())
+					.toString()).status(500).build();
+		}
+	}
 
-        try {
-            LocalDateTime endDate = LocalDateTime.parse(d);
-			LocalDateTime startDate = LocalDateTime.now();
-            int clientId = Integer.valueOf(cid);
-            int productId = Integer.valueOf(pid);
-            Reservation reservation = new Reservation(startDate, endDate, customerManager.get(clientId), productManager.get(productId));
-            return Response.ok(reservation).build();
-        } catch(NumberFormatException e) {
-            return Response.ok(e).status(500).build();
-        }
-    }
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAll () {
+		return Response.ok(reservationManager.getMap()).build();
+	}
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        return Response.ok(reservationManager.getMap()).build();
-    }
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get (@PathParam("id") String id) {
+		try {
+			Reservation reservation = reservationManager.get(Integer.parseInt(id));
+			if (reservation == null)
+				return Response.ok(
+								new JSONObject().put("status", "reservation not found").toString())
+						.status(404).build();
+			return Response.ok(reservation).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		}
+	}
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get (@PathParam("id") String id) {
-        try {
-            Reservation reservation = reservationManager.get(Integer.valueOf(id));
-            if (reservation == null)
-                return Response.ok(new JSONObject().put("status", "Product not found").toString()).status(404).build();
-            return Response.ok(reservation).build();
-        } catch (NumberFormatException e) {
-            return Response.ok(e).status(500).build();
-        }
-    }
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response delete(@PathParam("id") String id) {
 
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") String id) {
-        if (Objects.equals(id, "") || id == null) {
-            return  Response.ok("{\"status\":\"missing argument `price`\"}").status(404).build();
-        }
+		try {
+			int t = Integer.parseInt(id);
+			reservationManager.delete(t);
+			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
+		} catch (Exception e) {
+			return Response.ok(e).status(500).build();
+		}
+	}
 
-        try {
-            int i = Integer.valueOf(id);
-			reservationManager.delete(i);
-            return Response.ok("{\"status\":\"Success\"}").build();
-        } catch (Exception e) {
-            return Response.ok(e).status(500).build();
-        }
-    }
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteAll() {
+		reservationManager.getMap().clear();
+		productManager.getMap().clear();
+		customerManager.getMap().clear();
+		return Response.ok(
+						new JSONObject().put("status", "Successfull clearing").toString())
+				.build();
+	}
+
 }

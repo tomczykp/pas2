@@ -24,10 +24,10 @@ public class CustomerDTO {
 		return id;
 	}
 
-	private long id;
-	private String email;
-	private String username;
-	private List<ReservationDTO> reservations;
+	private final long id;
+	private final String email;
+	private final String username;
+	private final List<ReservationDTO> reservations;
 
 	public CustomerDTO(Customer c) {
 		email = c.getEmail();

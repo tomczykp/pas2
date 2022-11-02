@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,9 @@ public class Customer {
 	@Column
 	private String email;
 
+	@Column
+	private boolean isActive;
+
 	@OneToMany
 	private final List<Reservation> reservations = new ArrayList<>();
 
@@ -40,10 +44,26 @@ public class Customer {
 		email = e;
 		username = u;
 		password = p;
+		isActive = true;
 	}
 
 	public List<Reservation> getReservations () {
 		return reservations;
+	}
+
+	public List<Reservation> getCurrentReservations () {
+		List<Reservation> reservationList = new ArrayList<>();
+		for (Reservation r : reservations)
+			if (r.getEndDate().isAfter(LocalDateTime.now()))
+				reservationList.add(r);
+		return reservationList;
+	}
+	public List<Reservation> getPastReservations () {
+		List<Reservation> reservationList = new ArrayList<>();
+		for (Reservation r : reservations)
+			if (r.getEndDate().isBefore(LocalDateTime.now()))
+				reservationList.add(r);
+		return reservationList;
 	}
 
 	@Override
@@ -86,17 +106,24 @@ public class Customer {
 		this.password = password; return this;
 	}
 
-	public Customer setUsername (String username) {
-		this.username = username; return this;
+	public void setUsername (String username) {
+		this.username = username;
 	}
 
 	public String getEmail () {
 		return email;
 	}
 
-	public Customer setEmail (String email) {
+	public void setEmail (String email) {
 		this.email = email;
-		return this;
+	}
+
+	public boolean isActive () {
+		return isActive;
+	}
+
+	public void setActive (boolean active) {
+		isActive = active;
 	}
 
 }
