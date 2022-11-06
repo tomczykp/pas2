@@ -20,11 +20,11 @@ public class CustomerDTO {
 		return reservations;
 	}
 
-	public long getId () {
-		return id;
+	public long getCustomerID () {
+		return customerID;
 	}
 
-	private final long id;
+	private final long customerID;
 	private final String email;
 	private final String username;
 	private final List<ReservationDTO> reservations;
@@ -32,7 +32,7 @@ public class CustomerDTO {
 	public CustomerDTO(Customer c) {
 		email = c.getEmail();
 		username = c.getUsername();
-		id = c.getCustomerID();
+		customerID = c.getCustomerID();
 		reservations = new ArrayList<>();
 		for (Reservation r: c.getReservations())
 			reservations.add(new ReservationDTO(r));

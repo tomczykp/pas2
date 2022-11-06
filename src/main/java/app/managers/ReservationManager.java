@@ -23,15 +23,15 @@ public class ReservationManager {
 			throw new Exception("cannot make reservation in the past");
 
 		if (e.isBefore(b))
-			throw new Exception("End date cannot be before start date");
+			throw new Exception("end date cannot be before start date");
 
-		if (!c.isActive() || !c.getCurrentReservations().isEmpty())
+		if (!c.isActive() || c.isReserved())
 			throw new Exception("customer has active reservations or is inactive");
 
-		if (p.getCurrentReservations().isEmpty())
-			return reservationRepository.insert(new Reservation(b, e, c, p));
+		if (p.isReserved())
+			throw new Exception("product is already reserved");
 
-		throw new Exception("product is already reserved");
+		return reservationRepository.insert(new Reservation(b, e, c, p));
 	}
 
 	public void delete(int id) throws Exception {
@@ -48,7 +48,7 @@ public class ReservationManager {
 		return reservationRepository.modify(id, func);
 	}
 
-	public Reservation get(int id) {
+	public Reservation get(int id) throws Exception {
 		return reservationRepository.get(id);
 	}
 

@@ -11,7 +11,7 @@ public interface Repository<K, V> {
 	V insert (K k, V v);
 	V insert(V v) throws Exception;
 	Map<K, V> get (Predicate<V> pred);
-	V get(K k);
+	V get(K k) throws Exception;
 	V modify (K k, Function<V, V> func) throws Exception;
 	void delete(K k);
 

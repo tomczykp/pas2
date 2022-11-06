@@ -1,15 +1,19 @@
 package app.endpoints;
 
+import app.model.Product;
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.ws.rs.core.MediaType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProductEndpointTest {
 
 	private RequestSpecification req() {
@@ -19,20 +23,39 @@ public class ProductEndpointTest {
 				.port(8080);
 	}
 
+	List<JsonPath> ids;
+	@BeforeAll
+	public void init() {
+		ids = new ArrayList<>();
+		ids.add(req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("price", 200)
+				.put("/product").then()
+				.statusCode(Matchers.is(200))
+				.body("price", Matchers.equalTo(200))
+				.body("productID", Matchers.anything())
+				.body("reservations", Matchers.hasSize(0)).extract().response().jsonPath());
+
+		ids.add(req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("price", 300)
+				.put("/product").then()
+				.statusCode(Matchers.is(200))
+				.body("price", Matchers.equalTo(300))
+				.body("productID", Matchers.anything())
+				.body("reservations", Matchers.hasSize(0)).extract().response().jsonPath());
+	}
+
 	@Test
 	public void getTest() {
-		req()
-				.delete("/product").then()
-				.statusCode(Matchers.is(200))
-				.body("status", Matchers.equalTo("Successfull clearing"));
 
 		req()
 				.get("/product").then()
 				.statusCode(Matchers.is(200))
-				.body(Matchers.is("{}"));
+				.body(Matchers.anything());
 
 		req()
-				.get("/product/1").then()
+				.get("/product/-4").then()
 				.statusCode(Matchers.is(404))
 				.body("status", Matchers.equalTo("product not found"));
 
@@ -45,16 +68,12 @@ public class ProductEndpointTest {
 
 	@Test
 	public void putTest() {
-		req()
-				.delete("/product").then()
-				.statusCode(Matchers.is(200))
-				.body("status", Matchers.equalTo("Successfull clearing"));
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.put("/product").then()
 				.statusCode(Matchers.is(404))
-				.body("status", Matchers.equalTo("missing parameter price"));
+				.body("status", Matchers.equalTo("missing parameter 'price'"));
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -75,38 +94,28 @@ public class ProductEndpointTest {
 
 	@Test
 	public void deleteTest() {
-		req()
-				.delete("/product").then()
-				.statusCode(Matchers.is(200))
-				.body("status", Matchers.equalTo("Successfull clearing"));
-
-		req()
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.formParam("price", 300)
-				.put("/product").then()
-				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(300))
-				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0));
 
 		Map<Integer, LinkedHashMap> m = req().when().get("/product").getBody().jsonPath().getMap("", Integer.class, LinkedHashMap.class);
 		Assertions.assertFalse(m.isEmpty());
 
-		int productID = 1;
-		for (Map.Entry<Integer, LinkedHashMap> entry: m.entrySet()) {
-			productID = (Integer) entry.getValue().get("productID");
-			break;
-		}
-
-		req()
-				.delete("/product/" + productID +"a").then()
-				.statusCode(Matchers.is(500));
-//				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
+		int price = ids.get(0).get("price");
+		int productID = ids.get(0).get("productID");
 
 		req().get("/product/" + productID).then()
 				.statusCode(Matchers.is(200))
-				.body("productID", Matchers.anything())
-				.body("price", Matchers.equalTo(300))
+				.body("productID", Matchers.equalTo(productID))
+				.body("price", Matchers.equalTo(price))
+				.body("reservations", Matchers.hasSize(0));
+
+		req()
+				.delete("/product/" + productID +"a").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
+
+		req().get("/product/" + productID).then()
+				.statusCode(Matchers.is(200))
+				.body("productID", Matchers.equalTo(productID))
+				.body("price", Matchers.equalTo(price))
 				.body("reservations", Matchers.hasSize(0));
 
 		req()

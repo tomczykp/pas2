@@ -3,7 +3,6 @@ package app.managers;
 import app.model.Product;
 import app.repositories.ProductRepository;
 import jakarta.inject.Inject;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -20,7 +19,7 @@ public class ProductManager {
 
 	public void delete (int id) throws Exception {
 		Product p = productRepository.get(id);
-		if (p.getCurrentReservations().isEmpty())
+		if (p.getFutureReservations().isEmpty())
 			productRepository.delete(id);
 		else
 			throw new Exception("cannot delete product with ongoing reservations");
@@ -30,7 +29,7 @@ public class ProductManager {
 		return productRepository.modify(id, func);
 	}
 
-	public Product get (int id) {
+	public Product get (int id) throws Exception {
 		return productRepository.get(id);
 	}
 

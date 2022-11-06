@@ -27,10 +27,10 @@ public class ReservationDTO {
 	private final CustomerDTO customer;
 	private final LocalDateTime endDate;
 	private final LocalDateTime startDate;
-	private final long id;
+	private final long reservationID;
 
-	public long getId () {
-		return id;
+	public long getReservationID () {
+		return reservationID;
 	}
 
 	public ReservationDTO (Reservation r) {
@@ -38,6 +38,6 @@ public class ReservationDTO {
 		customer = new CustomerDTO(r.getCustomer());
 		endDate = r.getEndDate();
 		startDate = r.getStartDate();
-		id = r.getReservationID();
+		reservationID = r.getReservationID();
 	}
 }

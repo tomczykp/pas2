@@ -19,8 +19,11 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 	}
 
 	@Override
-	public V get(K k) {
-		return lista.get(k);
+	public V get(K k) throws Exception {
+		V t = lista.get(k);
+		if (t == null)
+			throw new Exception("object not found");
+		return t;
 	}
 
 	@Override

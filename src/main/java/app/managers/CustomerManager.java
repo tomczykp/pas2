@@ -26,7 +26,7 @@ public class CustomerManager {
 		return customerRepository.modify(id, func);
 	}
 
-	public Customer get(int id) {
+	public Customer get(int id) throws Exception {
 		return customerRepository.get(id);
 	}
 

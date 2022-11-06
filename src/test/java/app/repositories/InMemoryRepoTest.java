@@ -16,14 +16,14 @@ public class InMemoryRepoTest {
 	}
 
 	@Test
-	public void insertTest() {
+	public void insertTest() throws Exception {
 		Repository<Integer, Customer> repo = new CustomerRepository();
 		Customer client = new Customer("user1", "asd", "passwd");
 		Customer client1 = new Customer("user2", "asdwdadw", "passwd");
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(client, repo.get(1));
-		Assertions.assertNull(repo.get(2));
+		Assertions.assertThrows(Exception.class, () -> repo.get(2));
 		Assertions.assertEquals(1, repo.getLenght());
 
 		Assertions.assertEquals(client1, repo.insert(1, client1));
@@ -36,7 +36,7 @@ public class InMemoryRepoTest {
 	}
 
 	@Test
-	public void deleteTest() {
+	public void deleteTest() throws Exception {
 		Repository<Integer, Customer> repo = new CustomerRepository();
 		Customer client = new Customer("user1", "asd", "passwd");
 		Customer client1 = new Customer("user2", "asdwdadw", "passwd");
@@ -50,7 +50,7 @@ public class InMemoryRepoTest {
 		repo.delete(1);
 		Assertions.assertEquals(1, repo.getLenght());
 		Assertions.assertEquals(client1, repo.get(2));
-		Assertions.assertNull(repo.get(1));
+		Assertions.assertThrows(Exception.class, () -> repo.get(1));
 
 		Assertions.assertEquals(client, repo.insert(1, client));
 		Assertions.assertEquals(2, repo.getLenght());

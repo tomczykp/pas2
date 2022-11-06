@@ -55,7 +55,7 @@ public class Product {
 	}
 
 
-	public List<Reservation> getCurrentReservations () {
+	public List<Reservation> getFutureReservations () {
 		List<Reservation> reservationList = new ArrayList<>();
 		for (Reservation r : reservations)
 			if (r.getEndDate().isAfter(LocalDateTime.now()))
@@ -68,6 +68,13 @@ public class Product {
 			if (r.getEndDate().isBefore(LocalDateTime.now()))
 				reservationList.add(r);
 		return reservationList;
+	}
+
+	public boolean isReserved() {
+		for (Reservation r : reservations)
+			if (r.getStartDate().isBefore(LocalDateTime.now()) && r.getEndDate().isAfter(LocalDateTime.now()))
+				return true;
+		return false;
 	}
 
 	public void addReservation (Reservation reservation) {

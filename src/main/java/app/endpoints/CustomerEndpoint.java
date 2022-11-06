@@ -18,42 +18,11 @@ public class CustomerEndpoint {
 	@Inject
 	private CustomerManager manager;
 
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response get (@PathParam("id") String id) {
-		try {
-			Customer customer = manager.get(Integer.parseInt(id));
-			if (customer == null)
-				return Response.ok(
-						new JSONObject().put("status", "customer not found").toString())
-						.status(404).build();
-			return Response.ok(customer).build();
-		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
-		}
-	}
-
-	@GET
-	@Path("/{id}/reservations")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
-		try {
-			Customer customer = manager.get(Integer.parseInt(id));
-			if (customer == null)
-				return Response.ok(
-						new JSONObject().put("status", "customer not found")
-						.toString()).status(404).build();
-
-			if (fromPast)
-				return Response.ok(customer.getPastReservations()).build();
-			else
-				return Response.ok(customer.getCurrentReservations()).build();
-		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
-		}
-	}
-
+	/**
+	 * @param username:  to match or search exactly
+	 * @param exact: whether to search or match
+	 * @return Response, Map of matching data
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll(
@@ -69,6 +38,46 @@ public class CustomerEndpoint {
 			data = manager.get((Customer c) -> Objects.equals(c.getUsername(), username));
 
 		return Response.ok(data).build();
+	}
+
+	/**
+	 * @param id
+	 * @return Response
+	 */
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get (@PathParam("id") String id) {
+		try {
+			Customer customer = manager.get(Integer.parseInt(id));
+			return Response.ok(customer).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", "customer not found")
+							.toString()).status(404).build();
+		}
+	}
+
+	@GET
+	@Path("/{id}/reservations")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
+		try {
+			Customer customer = manager.get(Integer.parseInt(id));
+
+			if (fromPast)
+				return Response.ok(customer.getPastReservations()).build();
+			else
+				return Response.ok(customer.getFutureReservations()).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		}catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", "customer not found")
+							.toString()).status(404).build();
+		}
 	}
 
 	@PUT
@@ -95,15 +104,6 @@ public class CustomerEndpoint {
 			return Response.ok(e).status(500).build();
 		}
 
-	}
-
-	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteAll() {
-		manager.getMap().clear();
-		return Response.ok(
-						new JSONObject().put("status", "Successfull clearing").toString())
-				.build();
 	}
 
 }

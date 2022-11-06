@@ -16,18 +16,18 @@ public class ProductDTO {
 		return reservations;
 	}
 
-	public long getId () {
-		return id;
+	public long getProductID () {
+		return productID;
 	}
 
-	private final long id;
+	private final long productID;
 	private final long price;
 	private final List<ReservationDTO> reservations;
 
 	public ProductDTO(Product p) {
 		price = p.getPrice();
 		reservations = new ArrayList<>();
-		id = p.getProductID();
+		productID = p.getProductID();
 		for(Reservation r: p.getReservations())
 			reservations.add(new ReservationDTO(r));
 
