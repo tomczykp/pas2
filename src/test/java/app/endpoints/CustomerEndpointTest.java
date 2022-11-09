@@ -68,9 +68,11 @@ public class CustomerEndpointTest {
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
 				.body("customerID", Matchers.anything())
+				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
-				.body("reservations", Matchers.hasSize(0)).extract().jsonPath());
+				.body("reservations", Matchers.hasSize(0))
+				.extract().jsonPath());
 
 		ids.add(req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -80,9 +82,11 @@ public class CustomerEndpointTest {
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
 				.body("customerID", Matchers.anything())
+				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(1)))
 				.body("username", Matchers.equalTo(usernames.get(1)))
-				.body("reservations", Matchers.hasSize(0)).extract().jsonPath());
+				.body("reservations", Matchers.hasSize(0))
+				.extract().jsonPath());
 
 		ids.add(req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -91,10 +95,12 @@ public class CustomerEndpointTest {
 				.formParam("password", "haslo")
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
+				.body("active", Matchers.equalTo(true))
 				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails.get(2)))
 				.body("username", Matchers.equalTo(usernames.get(2)))
-				.body("reservations", Matchers.hasSize(0)).extract().jsonPath());
+				.body("reservations", Matchers.hasSize(0))
+				.extract().jsonPath());
 	}
 
 	@Test
@@ -115,6 +121,14 @@ public class CustomerEndpointTest {
 				.statusCode(Matchers.is(500))
 				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 
+		req()
+				.get("/customer/" + ids.get(2).get("customerID")).then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.anything())
+				.body("active", Matchers.equalTo(true))
+				.body("email", Matchers.equalTo(emails.get(2)))
+				.body("username", Matchers.equalTo(usernames.get(2)))
+				.body("reservations", Matchers.hasSize(0));
 	}
 
 	@Test
@@ -134,8 +148,7 @@ public class CustomerEndpointTest {
 				.put("/customer").then()
 				.statusCode(Matchers.is(404))
 				.body("status", Matchers.equalTo("missing arguments 'email'"));
-		for (JsonPath p: ids)
-			System.out.println("\t" + p.prettify());
+
 		int k = (int)(ids.get(ids.size() - 1).get("customerID")) + 1;
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -144,9 +157,10 @@ public class CustomerEndpointTest {
 				.put("/customer").then()
 				.statusCode(Matchers.is(200))
 				.body("customerID", Matchers.anything())
+				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo("emai@a.com"))
 				.body("username", Matchers.equalTo("emaia" + k))
-				.body("reservations", Matchers.hasSize(0)).extract().jsonPath();
+				.body("reservations", Matchers.hasSize(0));
 
 
 		req()
@@ -189,10 +203,8 @@ public class CustomerEndpointTest {
 				.getBody().jsonPath();
 
 		Assertions.assertFalse(dane.getMap("").isEmpty());
-		System.out.println(dane.prettify());
 
 		int i = 0;
-		System.out.println(emails);
 		for (Map.Entry<Integer, LinkedHashMap> entry: dane.getMap("", Integer.class, LinkedHashMap.class).entrySet()) {
 			LinkedHashMap<String, Object> tmp = entry.getValue();
 			Assertions.assertNotNull(tmp.get("customerID"));

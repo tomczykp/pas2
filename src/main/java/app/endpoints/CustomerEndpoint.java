@@ -41,7 +41,7 @@ public class CustomerEndpoint {
 	}
 
 	/**
-	 * @param id
+	 * @param id  customer number
 	 * @return Response
 	 */
 	@GET
@@ -79,6 +79,47 @@ public class CustomerEndpoint {
 							.toString()).status(404).build();
 		}
 	}
+
+	@PUT
+	@Path("/{id}/activate")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response setActive(@PathParam("id") String id) {
+		try {
+			Customer customer = manager.get(Integer.parseInt(id));
+			customer.setActive(true);
+			return Response.ok(
+					new JSONObject().put("status", "set to active")
+							.toString()).status(200).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", "customer not found")
+							.toString()).status(404).build();
+		}
+	}
+
+	@PUT
+	@Path("/{id}/deactivate")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response setDeactivate(@PathParam("id") String id) {
+		try {
+			Customer customer = manager.get(Integer.parseInt(id));
+			customer.setActive(false);
+			return Response.ok(
+					new JSONObject().put("status", "set to deactivate")
+							.toString()).status(200).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", "customer not found")
+							.toString()).status(404).build();
+		}
+	}
+
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)

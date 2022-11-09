@@ -34,7 +34,8 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(200))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0)).extract().response().jsonPath());
+				.body("reservations", Matchers.hasSize(0))
+				.extract().response().jsonPath());
 
 		ids.add(req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -43,7 +44,8 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(300))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0)).extract().response().jsonPath());
+				.body("reservations", Matchers.hasSize(0))
+				.extract().response().jsonPath());
 	}
 
 	@Test
