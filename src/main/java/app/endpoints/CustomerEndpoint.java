@@ -100,7 +100,7 @@ public class CustomerEndpoint {
 		}
 	}
 
-	@PUT
+	@PATCH
 	@Path("/{id}/deactivate")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -109,7 +109,7 @@ public class CustomerEndpoint {
 			Customer customer = manager.get(Integer.parseInt(id));
 			customer.setActive(false);
 			return Response.ok(
-					new JSONObject().put("status", "set to deactivate")
+					new JSONObject().put("status", "set to deactive")
 							.toString()).status(200).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();

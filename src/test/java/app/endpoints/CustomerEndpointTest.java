@@ -217,7 +217,75 @@ public class CustomerEndpointTest {
 
 	@Test
 	public void activateDeactivateTest() {
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.patch("/customer/-4/activate").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("customer not found"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.patch("/customer/1o/activate").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.patch("/customer/499999/deactivate").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("customer not found"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.patch("/customer/1o/deactivate").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
+
+
 		int id = ids.get(0).get("customerID");
+		req().when()
+				.get("/customer/" + id)
+				.then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.equalTo(id))
+				.body("active", Matchers.equalTo(true))
+				.body("email", Matchers.equalTo(emails.get(0)))
+				.body("username", Matchers.equalTo(usernames.get(0)))
+				.body("reservations", Matchers.hasSize(0));
+
+		req().when()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.patch("/customer/" + id + "/deactivate")
+				.then()
+				.body("status", Matchers.equalTo("set to deactive"));
+
+
+		req().when()
+				.get("/customer/" + id)
+				.then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.equalTo(id))
+				.body("active", Matchers.equalTo(false))
+				.body("email", Matchers.equalTo(emails.get(0)))
+				.body("username", Matchers.equalTo(usernames.get(0)))
+				.body("reservations", Matchers.hasSize(0));
+
+		req().when()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.patch("/customer/" + id + "/activate")
+				.then()
+				.body("status", Matchers.equalTo("set to active"));
+
+		req().when()
+				.get("/customer/" + id)
+				.then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.equalTo(id))
+				.body("active", Matchers.equalTo(true))
+				.body("email", Matchers.equalTo(emails.get(0)))
+				.body("username", Matchers.equalTo(usernames.get(0)))
+				.body("reservations", Matchers.hasSize(0));
 	}
 
 }

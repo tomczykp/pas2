@@ -18,3 +18,8 @@ GET: /customer/{id}/reservations -> reservations from past | from future
 
 
 
+PUT: /reservation -> make new reservation
+GET: /reservation -> get all reservations
+PATH: /reservation/{id} -> update reservation
+
+
