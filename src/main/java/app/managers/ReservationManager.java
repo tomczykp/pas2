@@ -1,5 +1,6 @@
 package app.managers;
 
+import app.dto.ReservationDTO;
 import app.model.Customer;
 import app.model.Product;
 import app.model.Reservation;
@@ -17,7 +18,7 @@ public class ReservationManager {
 	@Inject
 	private ReservationRepository reservationRepository;
 
-	public Reservation create(LocalDateTime b, LocalDateTime e, Customer c, Product p) throws Exception {
+	public ReservationDTO create(LocalDateTime b, LocalDateTime e, Customer c, Product p) throws Exception {
 
 		if (b.isBefore(LocalDateTime.now()) || e.isBefore(LocalDateTime.now()))
 			throw new Exception("cannot make reservation in the past");
@@ -31,7 +32,7 @@ public class ReservationManager {
 		if (p.isReserved())
 			throw new Exception("product is already reserved");
 
-		return reservationRepository.insert(new Reservation(b, e, c, p));
+		return new ReservationDTO(reservationRepository.insert(new Reservation(b, e, c, p)));
 	}
 
 	public void delete(int id) throws Exception {

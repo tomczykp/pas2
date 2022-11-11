@@ -214,4 +214,10 @@ public class CustomerEndpointTest {
 			i++;
 		}
 	}
+
+	@Test
+	public void activateDeactivateTest() {
+		int id = ids.get(0).get("customerID");
+	}
+
 }

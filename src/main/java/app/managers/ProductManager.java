@@ -1,5 +1,6 @@
 package app.managers;
 
+import app.dto.ProductDTO;
 import app.model.Product;
 import app.repositories.ProductRepository;
 import jakarta.inject.Inject;
@@ -13,8 +14,8 @@ public class ProductManager {
 	@Inject
 	private ProductRepository productRepository;
 
-	public Product create (int price) {
-		return productRepository.insert(new Product(price));
+	public ProductDTO create (int price) {
+		return new ProductDTO(productRepository.insert(new Product(price)));
 	}
 
 	public void delete (int id) throws Exception {

@@ -52,31 +52,42 @@ public class ReservationEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response put (
-			@FormParam("sdate") String start,
-			@FormParam("edate") String end,
-			@FormParam("cid") String cid,
-			@FormParam("pid") String pid) {
+						@FormParam("sdate") String start,
+						@FormParam("edate") String end,
+						@FormParam("cid") String cid,
+						@FormParam("pid") String pid) {
 
-		if (Objects.equals(start, "") || Objects.equals(end, "")
-				|| Objects.equals(cid, "") || Objects.equals(pid, ""))
+		if ( Objects.equals(start, "") || start == null)
 			return Response.ok(
-					new JSONObject().put("status", "missing parameters")
-							.toString()).status(404).build();
+							new JSONObject().put("status", "missing arguments 'sdate'").toString())
+					.status(404).build();
+		if ( Objects.equals(end, "") || end == null)
+			return Response.ok(
+							new JSONObject().put("status", "missing arguments 'edate'").toString())
+					.status(404).build();
+		if ( Objects.equals(cid, "") || cid == null)
+			return Response.ok(
+							new JSONObject().put("status", "missing arguments 'cid'").toString())
+					.status(404).build();
+		if ( Objects.equals(pid, "") || pid == null)
+			return Response.ok(
+							new JSONObject().put("status", "missing arguments 'pid'").toString())
+					.status(404).build();
 
 		try {
 			LocalDateTime endDate = LocalDateTime.parse(end);
 			LocalDateTime startDate = LocalDateTime.parse(start);
 			Customer customer = customerManager.get(Integer.parseInt(cid));
 			Product product = productManager.get(Integer.parseInt(pid));
-			Reservation reservation = reservationManager.create(startDate, endDate, customer, product);
+			ReservationDTO reservation = reservationManager.create(startDate, endDate, customer, product);
 
-			return Response.ok(new ReservationDTO(reservation)).build();
+			return Response.ok(reservation).build();
 
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		} catch (Exception e) {
 			return Response.ok(
-					new JSONObject().put("status", e.getMessage())
+					new JSONObject().put("status", e.getClass())
 							.toString()).status(500).build();
 		}
 	}

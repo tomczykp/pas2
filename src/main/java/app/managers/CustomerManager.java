@@ -1,5 +1,6 @@
 package app.managers;
 
+import app.dto.CustomerDTO;
 import app.model.Customer;
 import app.repositories.CustomerRepository;
 import jakarta.inject.Inject;
@@ -14,8 +15,8 @@ public class CustomerManager {
 	@Inject
 	private CustomerRepository customerRepository;
 
-	public Customer create(String username, String email, String password) throws Exception{
-		return customerRepository.insert(new Customer(username, email, password));
+	public CustomerDTO create (String username, String email, String password) throws Exception{
+		return new CustomerDTO(customerRepository.insert(new Customer(username, email, password)));
 	}
 
 	public void delete(int id) {

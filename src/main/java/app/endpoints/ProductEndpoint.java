@@ -70,8 +70,8 @@ public class ProductEndpoint {
 
 		try {
 			int t = Integer.parseInt(p);
-			Product product = manager.create(t);
-			return Response.ok(new ProductDTO(product)).build();
+			ProductDTO product = manager.create(t);
+			return Response.ok(product).build();
 
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();

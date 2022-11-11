@@ -1,0 +1,20 @@
+ROOT: localhost/rest/api
+
+PUT: /customer -> make new customer
+GET: /customer/{id} -> 1 user data 
+PATCH: customer/{id} -> update cutomer
+GET: /customer -> [ all | username similar match | username exact match ] 
+PATCH: /customer/{id}/activate -> set active to true
+PATCH: /customer/{id}/deactivate -> set active to false
+GET: /customer/{id}/reservations -> reservations from past | from future
+
+
+
+PUT: /product -> make new product
+GET: /product/{id} -> 1 product data
+PATCH: /product/{id} -> update product
+DELETE: /product/{id} -> delete 1 product
+GET: /customer/{id}/reservations -> reservations from past | from future
+
+
+

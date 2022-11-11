@@ -80,7 +80,7 @@ public class CustomerEndpoint {
 		}
 	}
 
-	@PUT
+	@PATCH
 	@Path("/{id}/activate")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -120,7 +120,6 @@ public class CustomerEndpoint {
 		}
 	}
 
-
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -139,8 +138,8 @@ public class CustomerEndpoint {
 					.status(404).build();
 
 		try {
-			Customer product = manager.create(username, email, password);
-			return Response.ok(new CustomerDTO(product)).build();
+			CustomerDTO customer = manager.create(username, email, password);
+			return Response.ok(customer).build();
 		} catch (Exception e) {
 			return Response.ok(e).status(500).build();
 		}
