@@ -38,17 +38,11 @@ public class Reservation {
 	public void setId(int id) {
 		reservationID = id;
 	}
-	public void setCustomer (Customer customer) {
-		this.customer = customer;
-	}
 
 	public Product getProduct () {
 		return product;
 	}
 
-	public void setProduct (Product product) {
-		this.product = product;
-	}
 
 	@NotNull
 	@ManyToOne

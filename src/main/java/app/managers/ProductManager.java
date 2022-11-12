@@ -20,7 +20,7 @@ public class ProductManager {
 
 	public void delete (int id) throws Exception {
 		Product p = productRepository.get(id);
-		if (p.getFutureReservations().isEmpty())
+		if (!p.isReserved() && p.getFutureReservations().isEmpty())
 			productRepository.delete(id);
 		else
 			throw new Exception("cannot delete product with ongoing reservations");

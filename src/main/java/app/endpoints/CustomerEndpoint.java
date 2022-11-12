@@ -107,6 +107,8 @@ public class CustomerEndpoint {
 	public Response setDeactivate(@PathParam("id") String id) {
 		try {
 			Customer customer = manager.get(Integer.parseInt(id));
+			if (customer.isReserved())
+				throw new Exception("cannot deactivate user with ongoing reservations");
 			customer.setActive(false);
 			return Response.ok(
 					new JSONObject().put("status", "set to deactive")
