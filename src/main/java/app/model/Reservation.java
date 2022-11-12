@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "reservation")
@@ -25,11 +25,11 @@ public class Reservation {
 
 	@NotNull
 	@Column
-	private LocalDateTime startDate;
+	private LocalDate startDate;
 
 	@NotNull
 	@Column
-	private LocalDateTime endDate;
+	private LocalDate endDate;
 
 	public Customer getCustomer () {
 		return customer;
@@ -52,7 +52,7 @@ public class Reservation {
 	@NotNull
 	private Product product;
 
-	public Reservation (LocalDateTime startDate, LocalDateTime endDate, Customer customer, Product product) {
+	public Reservation (LocalDate startDate, LocalDate endDate, Customer customer, Product product) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.customer = customer;
@@ -88,11 +88,11 @@ public class Reservation {
 				.append(product, that.product).isEquals();
 	}
 
-	public LocalDateTime getStartDate () {
+	public LocalDate getStartDate () {
 		return startDate;
 	}
 
-	public LocalDateTime getEndDate () {
+	public LocalDate getEndDate () {
 		return endDate;
 	}
 

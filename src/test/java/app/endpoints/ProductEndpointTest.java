@@ -1,6 +1,5 @@
 package app.endpoints;
 
-import app.model.Product;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
@@ -11,12 +10,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProductEndpointTest {
 
-	private RequestSpecification req() {
+	private RequestSpecification req () {
 		return RestAssured.given()
 				.baseUri("http://localhost")
 				.basePath("/rest/api")
@@ -24,8 +26,9 @@ public class ProductEndpointTest {
 	}
 
 	List<JsonPath> ids;
+
 	@BeforeAll
-	public void init() {
+	public void init () {
 		ids = new ArrayList<>();
 		ids.add(req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -49,7 +52,7 @@ public class ProductEndpointTest {
 	}
 
 	@Test
-	public void getTest() {
+	public void getTest () {
 
 		req()
 				.get("/product").then()
@@ -69,7 +72,7 @@ public class ProductEndpointTest {
 	}
 
 	@Test
-	public void putTest() {
+	public void putTest () {
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -95,9 +98,10 @@ public class ProductEndpointTest {
 	}
 
 	@Test
-	public void deleteTest() {
+	public void deleteTest () {
 
-		Map<Integer, LinkedHashMap> m = req().when().get("/product").getBody().jsonPath().getMap("", Integer.class, LinkedHashMap.class);
+		Map<Integer, LinkedHashMap> m = req().when().get("/product").getBody().jsonPath().getMap("", Integer.class,
+				LinkedHashMap.class);
 		Assertions.assertFalse(m.isEmpty());
 
 		int price = ids.get(0).get("price");
@@ -110,7 +114,7 @@ public class ProductEndpointTest {
 				.body("reservations", Matchers.hasSize(0));
 
 		req()
-				.delete("/product/" + productID +"a").then()
+				.delete("/product/" + productID + "a").then()
 				.statusCode(Matchers.is(500))
 				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 

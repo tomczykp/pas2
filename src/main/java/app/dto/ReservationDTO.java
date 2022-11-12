@@ -2,7 +2,7 @@ package app.dto;
 
 import app.model.Reservation;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class ReservationDTO {
 
@@ -15,18 +15,18 @@ public class ReservationDTO {
 		return customer;
 	}
 
-	public LocalDateTime getEndDate () {
+	public LocalDate getEndDate () {
 		return endDate;
 	}
 
-	public LocalDateTime getStartDate () {
+	public LocalDate getStartDate () {
 		return startDate;
 	}
 
 	private final ProductDTO product;
 	private final CustomerDTO customer;
-	private final LocalDateTime endDate;
-	private final LocalDateTime startDate;
+	private LocalDate endDate;
+	private LocalDate startDate;
 	private final long reservationID;
 
 	public long getReservationID () {
@@ -40,4 +40,5 @@ public class ReservationDTO {
 		startDate = r.getStartDate();
 		reservationID = r.getReservationID();
 	}
+
 }

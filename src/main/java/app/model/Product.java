@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,21 +58,21 @@ public class Product {
 	public List<Reservation> getFutureReservations () {
 		List<Reservation> reservationList = new ArrayList<>();
 		for (Reservation r : reservations)
-			if (r.getEndDate().isAfter(LocalDateTime.now()))
+			if (r.getEndDate().isAfter(LocalDate.now()))
 				reservationList.add(r);
 		return reservationList;
 	}
 	public List<Reservation> getPastReservations () {
 		List<Reservation> reservationList = new ArrayList<>();
 		for (Reservation r : reservations)
-			if (r.getEndDate().isBefore(LocalDateTime.now()))
+			if (r.getEndDate().isBefore(LocalDate.now()))
 				reservationList.add(r);
 		return reservationList;
 	}
 
 	public boolean isReserved() {
 		for (Reservation r : reservations)
-			if (r.getStartDate().isBefore(LocalDateTime.now()) && r.getEndDate().isAfter(LocalDateTime.now()))
+			if (r.getStartDate().isBefore(LocalDate.now()) && r.getEndDate().isAfter(LocalDate.now()))
 				return true;
 		return false;
 	}

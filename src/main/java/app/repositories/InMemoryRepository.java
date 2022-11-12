@@ -1,6 +1,8 @@
 package app.repositories;
 
 
+import app.exceptions.NotFoundException;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -19,10 +21,10 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 	}
 
 	@Override
-	public V get(K k) throws Exception {
+	public V get(K k) throws NotFoundException {
 		V t = lista.get(k);
 		if (t == null)
-			throw new Exception("object not found");
+			throw new NotFoundException();
 		return t;
 	}
 
@@ -48,13 +50,14 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 	}
 
 	@Override
-	public V modify (K k, Function<V, V> func) throws Exception {
+	public V modify (K k, Function<V, V> func) throws NotFoundException {
 		if (lista.containsKey(k)) {
 			V v = lista.get(k);
 			return func.apply(v);
 		}
-		throw new Exception("Object with this id not found" + k.toString());
+		throw new NotFoundException();
 	}
+
 
 	@Override
 	public void delete (K k) {

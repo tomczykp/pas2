@@ -1,6 +1,7 @@
 package app.managers;
 
 import app.dto.CustomerDTO;
+import app.exceptions.NotFoundException;
 import app.model.Customer;
 import app.repositories.CustomerRepository;
 import jakarta.inject.Inject;
@@ -23,11 +24,11 @@ public class CustomerManager {
 		customerRepository.delete(id);
 	}
 
-	public Customer modify (int id, Function<Customer, Customer> func) throws Exception {
+	public Customer modify (int id, Function<Customer, Customer> func) throws NotFoundException {
 		return customerRepository.modify(id, func);
 	}
 
-	public Customer get(int id) throws Exception {
+	public Customer get(int id) throws NotFoundException {
 		return customerRepository.get(id);
 	}
 

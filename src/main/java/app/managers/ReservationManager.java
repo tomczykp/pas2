@@ -1,12 +1,14 @@
 package app.managers;
 
 import app.dto.ReservationDTO;
+import app.exceptions.NotFoundException;
 import app.model.Customer;
 import app.model.Product;
 import app.model.Reservation;
 import app.repositories.ReservationRepository;
 import jakarta.inject.Inject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +20,9 @@ public class ReservationManager {
 	@Inject
 	private ReservationRepository reservationRepository;
 
-	public ReservationDTO create(LocalDateTime b, LocalDateTime e, Customer c, Product p) throws Exception {
+	public ReservationDTO create (LocalDate b, LocalDate e, Customer c, Product p) throws Exception {
 
-		if (b.isBefore(LocalDateTime.now()) || e.isBefore(LocalDateTime.now()))
+		if (b.isBefore(LocalDate.now()) || e.isBefore(LocalDate.now()))
 			throw new Exception("cannot make reservation in the past");
 
 		if (e.isBefore(b))
@@ -37,7 +39,7 @@ public class ReservationManager {
 
 	public void delete(int id) throws Exception {
 		Reservation reservation = reservationRepository.get(id);
-		if (reservation.getStartDate().isAfter(LocalDateTime.now()))
+		if (reservation.getStartDate().isAfter(LocalDate.now()))
 			throw new Exception("cannot remove already started reservation");
 
 		reservation.getCustomer().getReservations().remove(reservation);
@@ -45,11 +47,11 @@ public class ReservationManager {
 		reservationRepository.delete(id);
 	}
 
-	public Reservation modify (int id, Function<Reservation, Reservation> func) throws Exception {
+	public Reservation modify (int id, Function<Reservation, Reservation> func) throws NotFoundException {
 		return reservationRepository.modify(id, func);
 	}
 
-	public Reservation get(int id) throws Exception {
+	public Reservation get(int id) throws NotFoundException {
 		return reservationRepository.get(id);
 	}
 

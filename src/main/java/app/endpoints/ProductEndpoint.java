@@ -1,6 +1,7 @@
 package app.endpoints;
 
 import app.dto.ProductDTO;
+import app.exceptions.NotFoundException;
 import app.managers.ProductManager;
 import app.model.Product;
 import jakarta.inject.Inject;
@@ -9,7 +10,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
-import java.util.Map;
 import java.util.Objects;
 
 @Path("/product")
@@ -20,7 +20,7 @@ public class ProductEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll() {
+	public Response getAll () {
 		return Response.ok(manager.getMap()).build();
 	}
 
@@ -33,10 +33,8 @@ public class ProductEndpoint {
 			return Response.ok(product).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
-		} catch (Exception e) {
-			return Response.ok(
-					new JSONObject().put("status", "product not found")
-							.toString()).status(404).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
 		}
 	}
 
@@ -52,17 +50,15 @@ public class ProductEndpoint {
 				return Response.ok(product.getFutureReservations()).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
-		} catch (Exception e) {
-			return Response.ok(
-					new JSONObject().put("status", "product not found")
-							.toString()).status(404).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
 		}
 	}
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response put(@FormParam("price") String p) {
+	public Response put (@FormParam("price") String p) {
 		if (Objects.equals(p, "") || p == null)
 			return Response.ok(
 							new JSONObject().put("status", "missing parameter 'price'").toString())
@@ -81,15 +77,20 @@ public class ProductEndpoint {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") String id) {
+	public Response delete (@PathParam("id") String id) {
 
 		try {
 			int t = Integer.parseInt(id);
 			manager.delete(t);
 			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
-
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", e.getMessage())
+							.toString()).status(500).build();
 		}
 	}
 

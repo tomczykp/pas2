@@ -1,6 +1,7 @@
 package app.managers;
 
 import app.dto.ProductDTO;
+import app.exceptions.NotFoundException;
 import app.model.Product;
 import app.repositories.ProductRepository;
 import jakarta.inject.Inject;
@@ -26,11 +27,11 @@ public class ProductManager {
 			throw new Exception("cannot delete product with ongoing reservations");
 	}
 
-	public Product modify (int id, Function<Product, Product> func) throws Exception {
+	public Product modify (int id, Function<Product, Product> func) throws NotFoundException {
 		return productRepository.modify(id, func);
 	}
 
-	public Product get (int id) throws Exception {
+	public Product get (int id) throws NotFoundException {
 		return productRepository.get(id);
 	}
 

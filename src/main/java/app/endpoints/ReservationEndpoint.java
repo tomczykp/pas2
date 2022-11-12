@@ -1,6 +1,7 @@
 package app.endpoints;
 
 import app.dto.ReservationDTO;
+import app.exceptions.NotFoundException;
 import app.managers.CustomerManager;
 import app.managers.ProductManager;
 import app.managers.ReservationManager;
@@ -11,9 +12,13 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.hibernate.annotations.NotFound;
 import org.json.JSONObject;
+import org.mockito.internal.matchers.Not;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Path("/reservation")
@@ -41,10 +46,12 @@ public class ReservationEndpoint {
 			return Response.ok(reservation).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
-		}  catch (Exception e) {
+		}  catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "reservation not found").toString()).status(404).build();
+		} catch (Exception e) {
 			return Response.ok(
-					new JSONObject().put("status", "reservation not found")
-							.toString()).status(404).build();
+					new JSONObject().put("status", e.getMessage())
+							.toString()).status(500).build();
 		}
 	}
 
@@ -75,10 +82,22 @@ public class ReservationEndpoint {
 					.status(404).build();
 
 		try {
-			LocalDateTime endDate = LocalDateTime.parse(end);
-			LocalDateTime startDate = LocalDateTime.parse(start);
-			Customer customer = customerManager.get(Integer.parseInt(cid));
-			Product product = productManager.get(Integer.parseInt(pid));
+			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+			LocalDate endDate = LocalDate.parse(end, dateTimeFormatter);
+			LocalDate startDate = LocalDate.parse(start, dateTimeFormatter);
+			Customer customer;
+			Product product;
+			try {
+				customer = customerManager.get(Integer.parseInt(cid));
+			} catch (NotFoundException e) {
+				return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
+			}
+			try {
+				product = productManager.get(Integer.parseInt(pid));
+			} catch (NotFoundException e) {
+				return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
+			}
 			ReservationDTO reservation = reservationManager.create(startDate, endDate, customer, product);
 
 			return Response.ok(reservation).build();
@@ -87,7 +106,7 @@ public class ReservationEndpoint {
 			return Response.ok(e).status(500).build();
 		} catch (Exception e) {
 			return Response.ok(
-					new JSONObject().put("status", e.getClass())
+					new JSONObject().put("status", e.getMessage())
 							.toString()).status(500).build();
 		}
 	}
@@ -103,6 +122,8 @@ public class ReservationEndpoint {
 			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "reservation not found").toString()).status(404).build();
 		} catch (Exception e) {
 			return Response.ok(
 					new JSONObject().put("status", e.getMessage())

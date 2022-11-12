@@ -23,18 +23,20 @@ public class ReservationEndpointTest {
 	}
 
 	private List<Integer> getProductIDs () {
-		Map<Integer, LinkedHashMap> m = req().when().get("/product").getBody().jsonPath().getMap("", Integer.class, LinkedHashMap.class);
+		Map<Integer, LinkedHashMap> m = req().when().get("/product").getBody().jsonPath().getMap("", Integer.class,
+				LinkedHashMap.class);
 		List<Integer> list = new ArrayList<>();
-		for (Map.Entry<Integer, LinkedHashMap> entry: m.entrySet())
+		for (Map.Entry<Integer, LinkedHashMap> entry : m.entrySet())
 			list.add((Integer) entry.getValue().get("productID"));
 		list.sort(Comparator.naturalOrder());
 		return list;
 	}
 
 	private List<Integer> getCustomerIDs () {
-		Map<Integer, LinkedHashMap> m = req().when().get("/customer").getBody().jsonPath().getMap("", Integer.class, LinkedHashMap.class);
+		Map<Integer, LinkedHashMap> m = req().when().get("/customer").getBody().jsonPath().getMap("", Integer.class,
+				LinkedHashMap.class);
 		List<Integer> list = new ArrayList<>();
-		for (Map.Entry<Integer, LinkedHashMap> entry: m.entrySet())
+		for (Map.Entry<Integer, LinkedHashMap> entry : m.entrySet())
 			list.add((Integer) entry.getValue().get("customerID"));
 		list.sort(Comparator.naturalOrder());
 		return list;
@@ -48,7 +50,7 @@ public class ReservationEndpointTest {
 	private String uniq;
 
 	@BeforeAll
-	public void init() {
+	public void init () {
 		productIDs = new ArrayList<>();
 		customerIDs = new ArrayList<>();
 		emails = new ArrayList<>();
@@ -138,7 +140,7 @@ public class ReservationEndpointTest {
 	}
 
 	@Test
-	public void getTest() {
+	public void getTest () {
 
 		req()
 				.get("/reservation").then()
@@ -157,7 +159,7 @@ public class ReservationEndpointTest {
 	}
 
 	@Test
-	public void putTest() {
+	public void putTest () {
 
 		int i = 0;
 		req()
@@ -180,11 +182,11 @@ public class ReservationEndpointTest {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2022-12-06")
 				.formParam("edate", "2022-12-23")
-				.formParam("cid", (int)customerIDs.get(0).get("customerID"))
-				.formParam("pid", (int)productIDs.get(0).get("productID"))
+				.formParam("cid", (int) customerIDs.get(0).get("customerID"))
+				.formParam("pid", (int) productIDs.get(0).get("productID"))
 				.put("/reservation").then()
-				.statusCode(Matchers.is(200));
-//				.body("message", Matchers.equalTo("object not found"));
+				.statusCode(Matchers.is(200))
+				.body("message", Matchers.equalTo("object not found"));
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
