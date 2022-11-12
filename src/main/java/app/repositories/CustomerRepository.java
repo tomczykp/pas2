@@ -11,19 +11,20 @@ import java.util.Objects;
 public class CustomerRepository extends InMemoryRepository<Integer, Customer> {
 
 	@PostConstruct
-	public void init() {
+	public void init () {
 		counter = 1;
 	}
 
-    private Integer counter;
+	private Integer counter;
 
-    @Override
-    public Customer insert (Customer v) throws Exception {
-        v.setCustomerID(Long.valueOf(counter));
-		for (Map.Entry<Integer, Customer> c: getMap().entrySet()) {
+	@Override
+	public Customer insert (Customer v) throws Exception {
+		v.setCustomerID(counter);
+		for (Map.Entry<Integer, Customer> c : getMap().entrySet()) {
 			if (Objects.equals(c.getValue().getUsername(), v.getUsername()))
 				throw new Exception("Username already exist");
 		}
-        return insert(counter++, v);
-    }
+		return insert(counter++, v);
+	}
+
 }

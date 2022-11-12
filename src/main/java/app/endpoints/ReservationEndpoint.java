@@ -12,12 +12,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.hibernate.annotations.NotFound;
 import org.json.JSONObject;
-import org.mockito.internal.matchers.Not;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -43,10 +40,10 @@ public class ReservationEndpoint {
 	public Response get (@PathParam("id") String id) {
 		try {
 			Reservation reservation = reservationManager.get(Integer.parseInt(id));
-			return Response.ok(reservation).build();
+			return Response.ok(new ReservationDTO(reservation)).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
-		}  catch (NotFoundException e) {
+		} catch (NotFoundException e) {
 			return Response.ok(new JSONObject().put("status", "reservation not found").toString()).status(404).build();
 		} catch (Exception e) {
 			return Response.ok(
@@ -59,24 +56,24 @@ public class ReservationEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response put (
-						@FormParam("sdate") String start,
-						@FormParam("edate") String end,
-						@FormParam("cid") String cid,
-						@FormParam("pid") String pid) {
+			@FormParam("sdate") String start,
+			@FormParam("edate") String end,
+			@FormParam("cid") String cid,
+			@FormParam("pid") String pid) {
 
-		if ( Objects.equals(start, "") || start == null)
+		if (Objects.equals(start, "") || start == null)
 			return Response.ok(
 							new JSONObject().put("status", "missing arguments 'sdate'").toString())
 					.status(404).build();
-		if ( Objects.equals(end, "") || end == null)
+		if (Objects.equals(end, "") || end == null)
 			return Response.ok(
 							new JSONObject().put("status", "missing arguments 'edate'").toString())
 					.status(404).build();
-		if ( Objects.equals(cid, "") || cid == null)
+		if (Objects.equals(cid, "") || cid == null)
 			return Response.ok(
 							new JSONObject().put("status", "missing arguments 'cid'").toString())
 					.status(404).build();
-		if ( Objects.equals(pid, "") || pid == null)
+		if (Objects.equals(pid, "") || pid == null)
 			return Response.ok(
 							new JSONObject().put("status", "missing arguments 'pid'").toString())
 					.status(404).build();
@@ -114,7 +111,7 @@ public class ReservationEndpoint {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") String id) {
+	public Response delete (@PathParam("id") String id) {
 
 		try {
 			int t = Integer.parseInt(id);

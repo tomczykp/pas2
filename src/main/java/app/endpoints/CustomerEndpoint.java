@@ -29,13 +29,13 @@ public class CustomerEndpoint {
 	public Response getAll (
 			@QueryParam("username") String username,
 			@QueryParam("exact") String exact) {
-		Map<Integer, Customer> data;
+		Map<Integer, CustomerDTO> data;
 
 		if (Objects.equals(username, "") || username == null)
 			data = manager.getMap();
 		else if (exact == null || exact.equals(""))
-			data =
-					manager.get((Customer c) -> (c.getUsername().contains(username)) || username.contains(c.getUsername()));
+			data = manager.get(
+					(Customer c) -> (c.getUsername().contains(username)) || username.contains(c.getUsername()));
 		else
 			data = manager.get((Customer c) -> Objects.equals(c.getUsername(), username));
 
@@ -52,7 +52,7 @@ public class CustomerEndpoint {
 	public Response get (@PathParam("id") String id) {
 		try {
 			Customer customer = manager.get(Integer.parseInt(id));
-			return Response.ok(customer).build();
+			return Response.ok(new CustomerDTO(customer)).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		} catch (NotFoundException e) {

@@ -5,6 +5,7 @@ import app.exceptions.NotFoundException;
 import app.model.Product;
 import app.repositories.ProductRepository;
 import jakarta.inject.Inject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -35,17 +36,23 @@ public class ProductManager {
 		return productRepository.get(id);
 	}
 
-	public Map<Integer, Product> get (Predicate<Product> predicate) {
+	public Map<Integer, ProductDTO> get (Predicate<Product> predicate) {
 		try {
-			return productRepository.get(predicate);
+			HashMap<Integer, ProductDTO> res = new HashMap<>();
+			for (Map.Entry<Integer, Product> entry : productRepository.get(predicate).entrySet())
+				res.put(entry.getKey(), new ProductDTO(entry.getValue()));
+			return res;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public HashMap<Integer, Product> getMap () {
-		return productRepository.getMap();
+	public HashMap<Integer, ProductDTO> getMap () {
+		HashMap<Integer, ProductDTO> res = new HashMap<>();
+		for (Map.Entry<Integer, Product> entry : productRepository.getMap().entrySet())
+			res.put(entry.getKey(), new ProductDTO(entry.getValue()));
+		return res;
 	}
 
 	public int getLength () {

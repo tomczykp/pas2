@@ -1,10 +1,6 @@
 package app.dto;
 
 import app.model.Customer;
-import app.model.Reservation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CustomerDTO {
 
@@ -16,7 +12,7 @@ public class CustomerDTO {
 		return username;
 	}
 
-	public List<ReservationDTO> getReservations () {
+	public int getReservations () {
 		return reservations;
 	}
 
@@ -27,7 +23,7 @@ public class CustomerDTO {
 	private final long customerID;
 	private final String email;
 	private final String username;
-	private final List<ReservationDTO> reservations;
+	private final int reservations;
 	private final boolean active;
 
 	public boolean isActive () {
@@ -38,9 +34,8 @@ public class CustomerDTO {
 		email = c.getEmail();
 		username = c.getUsername();
 		customerID = c.getCustomerID();
-		reservations = new ArrayList<>();
-		for (Reservation r: c.getReservations())
-			reservations.add(new ReservationDTO(r));
+		reservations = c.getReservations().size();
 		active = c.isActive();
 	}
+
 }

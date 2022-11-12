@@ -6,13 +6,13 @@ import java.time.LocalDate;
 
 public class ReservationDTO {
 
-	public ProductDTO getProduct () {
-		return product;
+	public int getProduct () {
+		return pid;
 	}
 
 
-	public CustomerDTO getCustomer () {
-		return customer;
+	public int getCustomer () {
+		return cid;
 	}
 
 	public LocalDate getEndDate () {
@@ -23,8 +23,8 @@ public class ReservationDTO {
 		return startDate;
 	}
 
-	private final ProductDTO product;
-	private final CustomerDTO customer;
+	private final int pid;
+	private final int cid;
 	private LocalDate endDate;
 	private LocalDate startDate;
 	private final long reservationID;
@@ -34,8 +34,8 @@ public class ReservationDTO {
 	}
 
 	public ReservationDTO (Reservation r) {
-		product = new ProductDTO(r.getProduct());
-		customer = new CustomerDTO(r.getCustomer());
+		pid = r.getProduct().getProductID();
+		cid = r.getCustomer().getCustomerID();
 		endDate = r.getEndDate();
 		startDate = r.getStartDate();
 		reservationID = r.getReservationID();

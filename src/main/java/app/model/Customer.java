@@ -19,7 +19,7 @@ public class Customer {
 	@Column(name = "customer_id", nullable = false)
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private Long customerID;
+	private int customerID;
 
 	@Column(unique = true)
 	@NotNull
@@ -59,7 +59,7 @@ public class Customer {
 		return reservationList;
 	}
 
-	public boolean isReserved() {
+	public boolean isReserved () {
 		for (Reservation r : reservations)
 			if (r.getStartDate().isBefore(LocalDate.now()) && r.getEndDate().isAfter(LocalDate.now()))
 				return true;
@@ -98,11 +98,11 @@ public class Customer {
 		reservations.add(reservation);
 	}
 
-	public Long getCustomerID () {
+	public int getCustomerID () {
 		return customerID;
 	}
 
-	public void setCustomerID (Long customerID) {
+	public void setCustomerID (int customerID) {
 		this.customerID = customerID;
 	}
 
@@ -110,8 +110,9 @@ public class Customer {
 		return username;
 	}
 
-	public Customer setPassword(String password) {
-		this.password = password; return this;
+	public Customer setPassword (String password) {
+		this.password = password;
+		return this;
 	}
 
 	public void setUsername (String username) {

@@ -30,7 +30,7 @@ public class ProductEndpoint {
 	public Response get (@PathParam("id") String id) {
 		try {
 			Product product = manager.get(Integer.parseInt(id));
-			return Response.ok(product).build();
+			return Response.ok(new ProductDTO(product)).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		} catch (NotFoundException e) {

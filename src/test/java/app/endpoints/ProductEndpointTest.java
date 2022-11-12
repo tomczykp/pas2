@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,9 +27,11 @@ public class ProductEndpointTest {
 	}
 
 	List<JsonPath> ids;
+	private String uniq;
 
 	@BeforeAll
 	public void init () {
+		uniq = LocalDateTime.now().toString();
 		ids = new ArrayList<>();
 		ids.add(req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -37,7 +40,7 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(200))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().response().jsonPath());
 
 		ids.add(req()
@@ -47,7 +50,7 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(300))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().response().jsonPath());
 	}
 
@@ -94,7 +97,7 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(200))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0));
+				.body("reservations", Matchers.equalTo(0));
 	}
 
 	@Test
@@ -111,7 +114,7 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("productID", Matchers.equalTo(productID))
 				.body("price", Matchers.equalTo(price))
-				.body("reservations", Matchers.hasSize(0));
+				.body("reservations", Matchers.equalTo(0));
 
 		req()
 				.delete("/product/" + productID + "a").then()
@@ -122,16 +125,64 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("productID", Matchers.equalTo(productID))
 				.body("price", Matchers.equalTo(price))
-				.body("reservations", Matchers.hasSize(0));
+				.body("reservations", Matchers.equalTo(0));
 
 		req()
 				.delete("/product/" + productID).then()
+				.statusCode(Matchers.is(200))
 				.body("status", Matchers.equalTo("deletion succesful"));
+
+		req()
+				.delete("/product/" + productID).then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("product not found"));
 
 		req()
 				.get("/product/" + productID).then()
 				.statusCode(Matchers.is(404))
 				.body("status", Matchers.equalTo("product not found"));
+	}
+
+	@Test
+	public void deleteReseved () {
+		JsonPath cPath = req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("email", "emai@a.com")
+				.formParam("username", uniq + "user")
+				.put("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.anything())
+				.body("active", Matchers.equalTo(true))
+				.body("email", Matchers.equalTo("emai@a.com"))
+				.body("username", Matchers.equalTo(uniq + "user"))
+				.body("reservations", Matchers.equalTo(0)).extract().jsonPath();
+
+		JsonPath pPath = req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("price", 200)
+				.put("/product").then()
+				.statusCode(Matchers.is(200))
+				.body("price", Matchers.equalTo(200))
+				.body("productID", Matchers.anything())
+				.body("reservations", Matchers.equalTo(0)).extract().jsonPath();
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2022-12-06")
+				.formParam("edate", "2022-12-23")
+				.formParam("cid", (int) cPath.get("customerID"))
+				.formParam("pid", (int) pPath.get("productID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(200))
+				.body("customer", Matchers.equalTo((int) cPath.get("customerID")))
+				.body("product", Matchers.equalTo((int) pPath.get("productID")));
+
+		req()
+				.delete("/product/" + pPath.get("productID")).then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("cannot delete product with ongoing reservations"));
+
+
 	}
 
 

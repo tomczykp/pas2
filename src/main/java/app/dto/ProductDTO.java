@@ -1,10 +1,6 @@
 package app.dto;
 
 import app.model.Product;
-import app.model.Reservation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProductDTO {
 
@@ -12,7 +8,7 @@ public class ProductDTO {
 		return price;
 	}
 
-	public List<ReservationDTO> getReservations () {
+	public int getReservations () {
 		return reservations;
 	}
 
@@ -22,14 +18,13 @@ public class ProductDTO {
 
 	private final long productID;
 	private final long price;
-	private final List<ReservationDTO> reservations;
+	private final int reservations;
 
-	public ProductDTO(Product p) {
+	public ProductDTO (Product p) {
 		price = p.getPrice();
-		reservations = new ArrayList<>();
+		reservations = p.getReservations().size();
 		productID = p.getProductID();
-		for(Reservation r: p.getReservations())
-			reservations.add(new ReservationDTO(r));
 
 	}
+
 }

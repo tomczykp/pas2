@@ -9,7 +9,6 @@ import app.repositories.ReservationRepository;
 import jakarta.inject.Inject;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -37,7 +36,7 @@ public class ReservationManager {
 		return new ReservationDTO(reservationRepository.insert(new Reservation(b, e, c, p)));
 	}
 
-	public void delete(int id) throws Exception {
+	public void delete (int id) throws Exception {
 		Reservation reservation = reservationRepository.get(id);
 		if (reservation.getStartDate().isAfter(LocalDate.now()))
 			throw new Exception("cannot remove already started reservation");
@@ -51,23 +50,29 @@ public class ReservationManager {
 		return reservationRepository.modify(id, func);
 	}
 
-	public Reservation get(int id) throws NotFoundException {
+	public Reservation get (int id) throws NotFoundException {
 		return reservationRepository.get(id);
 	}
 
-	public Map<Integer, Reservation> get (Predicate<Reservation> predicate) {
+	public Map<Integer, ReservationDTO> get (Predicate<Reservation> predicate) {
 		try {
-			return reservationRepository.get(predicate);
+			HashMap<Integer, ReservationDTO> res = new HashMap<>();
+			for (Map.Entry<Integer, Reservation> entry : reservationRepository.get(predicate).entrySet())
+				res.put(entry.getKey(), new ReservationDTO(entry.getValue()));
+			return res;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public HashMap<Integer, Reservation> getMap () {
-		return reservationRepository.getMap();
-	}
+	public HashMap<Integer, ReservationDTO> getMap () {
 
+		HashMap<Integer, ReservationDTO> res = new HashMap<>();
+		for (Map.Entry<Integer, Reservation> entry : reservationRepository.getMap().entrySet())
+			res.put(entry.getKey(), new ReservationDTO(entry.getValue()));
+		return res;
+	}
 
 
 }

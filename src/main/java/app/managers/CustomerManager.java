@@ -16,11 +16,11 @@ public class CustomerManager {
 	@Inject
 	private CustomerRepository customerRepository;
 
-	public CustomerDTO create (String username, String email, String password) throws Exception{
+	public CustomerDTO create (String username, String email, String password) throws Exception {
 		return new CustomerDTO(customerRepository.insert(new Customer(username, email, password)));
 	}
 
-	public void delete(int id) {
+	public void delete (int id) {
 		customerRepository.delete(id);
 	}
 
@@ -28,24 +28,31 @@ public class CustomerManager {
 		return customerRepository.modify(id, func);
 	}
 
-	public Customer get(int id) throws NotFoundException {
+	public Customer get (int id) throws NotFoundException {
 		return customerRepository.get(id);
 	}
 
-	public Map<Integer, Customer> get (Predicate<Customer> predicate) {
+	public Map<Integer, CustomerDTO> get (Predicate<Customer> predicate) {
 		try {
-			return customerRepository.get(predicate);
+			HashMap<Integer, CustomerDTO> res = new HashMap<>();
+			for (Map.Entry<Integer, Customer> entry : customerRepository.get(predicate).entrySet())
+				res.put(entry.getKey(), new CustomerDTO(entry.getValue()));
+			return res;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public HashMap<Integer, Customer> getMap () {
-		return customerRepository.getMap();
+	public HashMap<Integer, CustomerDTO> getMap () {
+		HashMap<Integer, CustomerDTO> res = new HashMap<>();
+		for (Map.Entry<Integer, Customer> entry : customerRepository.getMap().entrySet())
+			res.put(entry.getKey(), new CustomerDTO(entry.getValue()));
+		return res;
 	}
 
-	public int getLength() {
+	public int getLength () {
 		return customerRepository.getLenght();
 	}
+
 }
