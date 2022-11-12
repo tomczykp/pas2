@@ -158,6 +158,36 @@ public class ReservationEndpointTest {
 				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 	}
 
+	/*
+		create:
+		- missing sdate
+		- missing edate
+		- missing pid
+		- missing cid
+		- invalid pid x2 (404 and invalid)
+		- invalid cid x2 (404 and invalid)
+		- invalid sdate
+		- invalid edate
+		- sdate before edate
+		- 2x for same time period, same product
+		- 2x for overlaping time period
+
+		GET:
+		- product/res
+		- customer/res
+		- one
+		- invalid
+		- missing
+
+		DELETE:
+		- missing
+		- invalid
+		- success
+		- already finished
+		- ongloing
+		- with future date
+	 */
+
 	@Test
 	public void putTest () {
 

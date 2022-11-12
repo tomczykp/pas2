@@ -107,10 +107,19 @@ public class CustomerEndpointTest {
 	@Test
 	public void getTest () {
 
-		req()
+		JsonPath res = req()
 				.get("/customer").then()
-				.statusCode(Matchers.is(200))
-				.body(Matchers.anything());
+				.statusCode(Matchers.is(200)).extract().jsonPath();
+
+		for (JsonPath c : ids) {
+			int id = c.get("customerID");
+			LinkedHashMap check = res.get(String.valueOf(id));
+			Assertions.assertEquals(c.get("username"), check.get("username"));
+			Assertions.assertEquals(c.get("active"), check.get("active"));
+			Assertions.assertEquals(c.get("customerID"), check.get("customerID"));
+			Assertions.assertEquals(c.get("email"), check.get("email"));
+			Assertions.assertEquals(c.get("reservations"), check.get("reservations"));
+		}
 
 		req()
 				.get("/customer/-4").then()

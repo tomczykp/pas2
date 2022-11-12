@@ -57,10 +57,18 @@ public class ProductEndpointTest {
 	@Test
 	public void getTest () {
 
-		req()
+
+		JsonPath res = req()
 				.get("/product").then()
-				.statusCode(Matchers.is(200))
-				.body(Matchers.anything());
+				.statusCode(Matchers.is(200)).extract().jsonPath();
+
+		for (JsonPath c : ids) {
+			int id = c.get("productID");
+			LinkedHashMap check = res.get(String.valueOf(id));
+			Assertions.assertEquals(c.get("productID"), check.get("productID"));
+			Assertions.assertEquals(c.get("price"), check.get("price"));
+			Assertions.assertEquals(c.get("reservations"), check.get("reservations"));
+		}
 
 		req()
 				.get("/product/-4").then()
