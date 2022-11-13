@@ -25,8 +25,8 @@ public class ReservationDTO {
 
 	private final int pid;
 	private final int cid;
-	private LocalDate endDate;
-	private LocalDate startDate;
+	private final LocalDate endDate;
+	private final LocalDate startDate;
 	private final long reservationID;
 
 	public long getReservationID () {

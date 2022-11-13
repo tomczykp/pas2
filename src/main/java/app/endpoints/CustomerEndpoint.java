@@ -116,7 +116,7 @@ public class CustomerEndpoint {
 		try {
 			Customer customer = manager.get(Integer.parseInt(id));
 
-			if (customer.isReserved())
+			if (!customer.getFutureReservations().isEmpty())
 				throw new Exception("cannot deactivate user with ongoing reservations");
 
 			customer.setActive(false);

@@ -62,6 +62,7 @@ public class Product {
 				reservationList.add(r);
 		return reservationList;
 	}
+
 	public List<Reservation> getPastReservations () {
 		List<Reservation> reservationList = new ArrayList<>();
 		for (Reservation r : reservations)
@@ -70,10 +71,23 @@ public class Product {
 		return reservationList;
 	}
 
-	public boolean isReserved() {
+	public boolean isReserved () {
 		for (Reservation r : reservations)
 			if (r.getStartDate().isBefore(LocalDate.now()) && r.getEndDate().isAfter(LocalDate.now()))
 				return true;
+		return false;
+	}
+
+	public boolean isReserved (LocalDate nStart, LocalDate nEnd) {
+		for (Reservation r : reservations) {
+			LocalDate rStart = r.getStartDate();
+			LocalDate rEnd = r.getEndDate();
+			if ((nStart.isBefore(rEnd) && nStart.isAfter(rStart))
+					|| (nStart.isBefore(rEnd) && nEnd.isAfter(rEnd))
+					|| (nEnd.isBefore(rEnd) && nEnd.isAfter(rStart))
+					|| nStart.isEqual(rStart) || nEnd.isEqual(rStart))
+				return true;
+		}
 		return false;
 	}
 

@@ -59,13 +59,6 @@ public class Customer {
 		return reservationList;
 	}
 
-	public boolean isReserved () {
-		for (Reservation r : reservations)
-			if (r.getStartDate().isBefore(LocalDate.now()) && r.getEndDate().isAfter(LocalDate.now()))
-				return true;
-		return false;
-	}
-
 	public List<Reservation> getPastReservations () {
 		List<Reservation> reservationList = new ArrayList<>();
 		for (Reservation r : reservations)

@@ -19,21 +19,21 @@ public class ReservationManager {
 	@Inject
 	private ReservationRepository reservationRepository;
 
-	public ReservationDTO create (LocalDate b, LocalDate e, Customer c, Product p) throws Exception {
+	public ReservationDTO create (LocalDate beginDate, LocalDate endDate, Customer c, Product p) throws Exception {
 
-		if (b.isBefore(LocalDate.now()) || e.isBefore(LocalDate.now()))
+		if (beginDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now()))
 			throw new Exception("cannot make reservation in the past");
 
-		if (e.isBefore(b))
+		if (endDate.isBefore(beginDate))
 			throw new Exception("end date cannot be before start date");
 
-		if (!c.isActive() || c.isReserved())
-			throw new Exception("customer has active reservations or is inactive");
+		if (!c.isActive())
+			throw new Exception("customer is inactive");
 
-		if (p.isReserved())
+		if (p.isReserved(beginDate, endDate))
 			throw new Exception("product is already reserved");
 
-		return new ReservationDTO(reservationRepository.insert(new Reservation(b, e, c, p)));
+		return new ReservationDTO(reservationRepository.insert(new Reservation(beginDate, endDate, c, p)));
 	}
 
 	public void delete (int id) throws Exception {

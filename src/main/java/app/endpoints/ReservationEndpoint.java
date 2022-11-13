@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 @Path("/reservation")
@@ -85,6 +86,7 @@ public class ReservationEndpoint {
 			LocalDate startDate = LocalDate.parse(start, dateTimeFormatter);
 			Customer customer;
 			Product product;
+
 			try {
 				customer = customerManager.get(Integer.parseInt(cid));
 			} catch (NotFoundException e) {
@@ -95,11 +97,14 @@ public class ReservationEndpoint {
 			} catch (NotFoundException e) {
 				return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
 			}
+			for (Reservation r : product.getReservations())
+				System.out.println("\t " + new ReservationDTO(r));
+
 			ReservationDTO reservation = reservationManager.create(startDate, endDate, customer, product);
 
 			return Response.ok(reservation).build();
 
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | DateTimeParseException e) {
 			return Response.ok(e).status(500).build();
 		} catch (Exception e) {
 			return Response.ok(

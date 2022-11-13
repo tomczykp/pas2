@@ -5,6 +5,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.ws.rs.core.MediaType;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -45,17 +46,14 @@ public class ReservationEndpointTest {
 	private List<JsonPath> productIDs;
 	private List<JsonPath> customerIDs;
 	private List<JsonPath> reservations;
-	private List<String> emails;
-	private List<String> usernames;
-	private String uniq;
 
 	@BeforeAll
 	public void init () {
 		productIDs = new ArrayList<>();
 		customerIDs = new ArrayList<>();
-		emails = new ArrayList<>();
-		usernames = new ArrayList<>();
-		uniq = LocalDateTime.now().toString();
+		List<String> emails = new ArrayList<>();
+		List<String> usernames = new ArrayList<>();
+		String uniq = LocalDateTime.now().toString();
 		reservations = new ArrayList<>();
 
 		List<Integer> list = getCustomerIDs();
@@ -80,7 +78,7 @@ public class ReservationEndpointTest {
 				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().jsonPath());
 
 		customerIDs.add(req()
@@ -93,7 +91,7 @@ public class ReservationEndpointTest {
 				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails.get(1)))
 				.body("username", Matchers.equalTo(usernames.get(1)))
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().jsonPath());
 
 		customerIDs.add(req()
@@ -106,7 +104,7 @@ public class ReservationEndpointTest {
 				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails.get(2)))
 				.body("username", Matchers.equalTo(usernames.get(2)))
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().jsonPath());
 
 		productIDs.add(req()
@@ -116,7 +114,7 @@ public class ReservationEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(200))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().response().jsonPath());
 
 		productIDs.add(req()
@@ -126,29 +124,63 @@ public class ReservationEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("price", Matchers.equalTo(300))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0))
+				.body("reservations", Matchers.equalTo(0))
 				.extract().response().jsonPath());
-
 
 		reservations.add(req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.formParam("", "")
+				.formParam("sdate", "2023-02-01")
+				.formParam("edate", "2023-02-06")
+				.formParam("pid", (int) productIDs.get(0).get("productID"))
+				.formParam("cid", (int) customerIDs.get(0).get("customerID"))
 				.put("/reservation").then()
 				.statusCode(Matchers.is(200))
-				.body("reservationID", Matchers.anything())
-				.extract().response().jsonPath());
+				.body("product", Matchers.equalTo((int) productIDs.get(0).get("productID")))
+				.body("customer", Matchers.equalTo((int) customerIDs.get(0).get("customerID")))
+				.body("startDate", Matchers.equalTo("2023-02-01"))
+				.body("endDate", Matchers.equalTo("2023-02-06"))
+				.body("reservationID", Matchers.anything()).extract().jsonPath());
+
+		reservations.add(req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-02-07")
+				.formParam("edate", "2023-02-23")
+				.formParam("pid", (int) productIDs.get(0).get("productID"))
+				.formParam("cid", (int) customerIDs.get(1).get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(200))
+				.body("product", Matchers.equalTo((int) productIDs.get(0).get("productID")))
+				.body("customer", Matchers.equalTo((int) customerIDs.get(1).get("customerID")))
+				.body("startDate", Matchers.equalTo("2023-02-07"))
+				.body("endDate", Matchers.equalTo("2023-02-23"))
+				.body("reservationID", Matchers.anything()).extract().jsonPath());
+
 	}
 
 	@Test
 	public void getTest () {
-
-		req()
+		JsonPath res = req()
 				.get("/reservation").then()
-				.statusCode(Matchers.is(200))
-				.body(Matchers.anything());
+				.statusCode(Matchers.is(200)).extract().jsonPath();
+
+		for (JsonPath c : reservations) {
+			int id = c.get("reservationID");
+			LinkedHashMap check = res.get(String.valueOf(id));
+			Assertions.assertEquals(c.get("customer"), check.get("customer"));
+			Assertions.assertEquals(c.get("endDate"), check.get("endDate"));
+			Assertions.assertEquals(c.get("startDate"), check.get("startDate"));
+			Assertions.assertEquals(c.get("reservationID"), check.get("reservationID"));
+			Assertions.assertEquals(c.get("product"), check.get("product"));
+		}
 
 		req()
-				.get("/reservation/1").then()
+				.get("/reservation/-3").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("reservation not found"));
+
+		int lastID = (int) reservations.get(reservations.size() - 1).get("reservationID") + 90;
+		req()
+				.get("/reservation/" + lastID).then()
 				.statusCode(Matchers.is(404))
 				.body("status", Matchers.equalTo("reservation not found"));
 
@@ -158,16 +190,9 @@ public class ReservationEndpointTest {
 				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 	}
 
+
 	/*
 		create:
-		- missing sdate
-		- missing edate
-		- missing pid
-		- missing cid
-		- invalid pid x2 (404 and invalid)
-		- invalid cid x2 (404 and invalid)
-		- invalid sdate
-		- invalid edate
 		- sdate before edate
 		- 2x for same time period, same product
 		- 2x for overlaping time period
@@ -175,9 +200,6 @@ public class ReservationEndpointTest {
 		GET:
 		- product/res
 		- customer/res
-		- one
-		- invalid
-		- missing
 
 		DELETE:
 		- missing
@@ -189,43 +211,360 @@ public class ReservationEndpointTest {
 	 */
 
 	@Test
-	public void putTest () {
+	public void missingArgPutTests () {
 
-		int i = 0;
+		int cid = customerIDs.get(0).get("customerID");
+		int pid = productIDs.get(0).get("productID");
+
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("edate", "2022-12-23")
+				.formParam("cid", cid)
+				.formParam("pid", pid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(404))
-				.body("status", Matchers.equalTo("missing parameters"));
+				.body("status", Matchers.equalTo("missing arguments 'sdate'"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2022-12-06")
+				.formParam("cid", cid)
+				.formParam("pid", pid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("missing arguments 'edate'"));
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2022-12-06")
 				.formParam("edate", "2022-12-23")
-				.formParam("cid", 1)
-				.formParam("pid", 1)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("missing arguments 'pid'"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2022-12-06")
+				.formParam("edate", "2022-12-23")
+				.formParam("pid", pid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("missing arguments 'cid'"));
+	}
+
+	@Test
+	public void invalidPidCidPutTests () {
+
+		int cid = customerIDs.get(customerIDs.size() - 1).get("customerID");
+		int pid = productIDs.get(productIDs.size() - 1).get("productID");
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2022-12-06")
+				.formParam("edate", "2022-12-23")
+				.formParam("pid", pid + 1)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("product not found"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2022-12-06")
+				.formParam("edate", "2022-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid + 1)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("customer not found"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2022-12-06")
+				.formParam("edate", "2022-12-23")
+				.formParam("pid", pid + "o")
+				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("message", Matchers.equalTo("object not found"));
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2022-12-06")
 				.formParam("edate", "2022-12-23")
-				.formParam("cid", (int) customerIDs.get(0).get("customerID"))
-				.formParam("pid", (int) productIDs.get(0).get("productID"))
+				.formParam("pid", pid)
+				.formParam("cid", cid + "o")
 				.put("/reservation").then()
-				.statusCode(Matchers.is(200))
-				.body("message", Matchers.equalTo("object not found"));
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
+
+	}
+
+	@Test
+	public void invalidDatePutTests () {
+
+		int cid = customerIDs.get(customerIDs.size() - 1).get("customerID");
+		int pid = productIDs.get(productIDs.size() - 1).get("productID");
+
+		// month
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-12-06")
+				.formParam("edate", "2023-13-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.formParam("price", 200)
+				.formParam("sdate", "2023-13-06")
+				.formParam("edate", "2023-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+
+		// day
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-12-33")
+				.formParam("edate", "2024-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-12-06")
+				.formParam("edate", "2023-13-33")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		// month with only 30 days
+//		req()
+//				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//				.formParam("sdate", "2023-06-31")
+//				.formParam("edate", "2023-12-23")
+//				.formParam("pid", pid)
+//				.formParam("cid", cid)
+//				.put("/reservation").then()
+//				.statusCode(Matchers.is(500))
+//				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		// format
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "202312-06")
+				.formParam("edate", "2023-04-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-12-06")
+				.formParam("edate", "2023-1323")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-2-06")
+				.formParam("edate", "2023-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-01-06")
+				.formParam("edate", "2023-3-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-01-06")
+				.formParam("edate", "2023-03-3")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-01-6")
+				.formParam("edate", "2023-03-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		// dla lutego
+//		req()
+//				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//				.formParam("sdate", "2023-02-29")
+//				.formParam("edate", "2023-06-23")
+//				.formParam("pid", pid)
+//				.formParam("cid", cid)
+//				.put("/reservation").then()
+//				.statusCode(Matchers.is(500))
+//				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+//
+//		req()
+//				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//				.formParam("sdate", "2023-02-31")
+//				.formParam("edate", "2023-06-23")
+//				.formParam("pid", pid)
+//				.formParam("cid", cid)
+//				.put("/reservation").then()
+//				.statusCode(Matchers.is(500))
+//				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2024-02-28")
+				.formParam("edate", "2024-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(200))
-				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.hasSize(0));
+				.body("product", Matchers.equalTo(pid))
+				.body("customer", Matchers.equalTo(cid))
+				.body("startDate", Matchers.equalTo("2024-02-28"))
+				.body("endDate", Matchers.equalTo("2024-12-23"))
+				.body("reservationID", Matchers.anything());
+
+	}
+
+	@Test
+	public void invalidDateRangesTests () {
+
+		int cid = customerIDs.get(customerIDs.size() - 1).get("customerID");
+		int pid = productIDs.get(productIDs.size() - 1).get("productID");
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "1999-02-28")
+				.formParam("edate", "2023-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("cannot make reservation in the past"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "1999-02-28")
+				.formParam("edate", "1999-12-23")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("cannot make reservation in the past"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-02-05")
+				.formParam("edate", "2023-02-01")
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("end date cannot be before start date"));
+	}
+
+	@Test
+	public void alredyReservedTests () {
+		JsonPath product = productIDs.get(0);
+		JsonPath customer = customerIDs.get(0);
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-03-07")
+				.formParam("edate", "2023-03-23")
+				.formParam("pid", (int) product.get("productID"))
+				.formParam("cid", (int) customer.get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(200))
+				.body("product", Matchers.equalTo((int) product.get("productID")))
+				.body("customer", Matchers.equalTo((int) customer.get("customerID")))
+				.body("startDate", Matchers.equalTo("2023-03-07"))
+				.body("endDate", Matchers.equalTo("2023-03-23"))
+				.body("reservationID", Matchers.anything());
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-03-07")
+				.formParam("edate", "2023-03-23")
+				.formParam("pid", (int) product.get("productID"))
+				.formParam("cid", (int) customer.get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("product is already reserved"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-03-01")
+				.formParam("edate", "2023-03-08")
+				.formParam("pid", (int) product.get("productID"))
+				.formParam("cid", (int) customer.get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("product is already reserved"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-03-21")
+				.formParam("edate", "2023-03-29")
+				.formParam("pid", (int) product.get("productID"))
+				.formParam("cid", (int) customer.get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("product is already reserved"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-03-09")
+				.formParam("edate", "2023-03-20")
+				.formParam("pid", (int) product.get("productID"))
+				.formParam("cid", (int) customer.get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("product is already reserved"));
+
+		req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", "2023-03-02")
+				.formParam("edate", "2023-03-30")
+				.formParam("pid", (int) product.get("productID"))
+				.formParam("cid", (int) customer.get("customerID"))
+				.put("/reservation").then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("product is already reserved"));
+
 	}
 
 }

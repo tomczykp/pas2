@@ -329,7 +329,7 @@ public class CustomerEndpointTest {
 				.formParam("pid", pid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("status", Matchers.equalTo("customer has active reservations or is inactive"));
+				.body("status", Matchers.equalTo("customer is inactive"));
 
 		req()
 				.get("/customer/" + cid).then()
