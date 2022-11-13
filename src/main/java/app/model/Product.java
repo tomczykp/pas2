@@ -1,30 +1,19 @@
 package app.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "product")
 public class Product {
 
-	@Id
-	@Column(name = "productId")
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private int productID;
-	@NotNull
-	@Column
 	private long price;
 
-	@OneToMany
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Product (long price) {
@@ -37,8 +26,9 @@ public class Product {
 		return productID;
 	}
 
-	public void setId (int id) {
+	public Product setId (int id) {
 		productID = id;
+		return this;
 	}
 
 	public long getPrice () {
@@ -91,8 +81,9 @@ public class Product {
 		return false;
 	}
 
-	public void addReservation (Reservation reservation) {
+	public Product addReservation (Reservation reservation) {
 		reservations.add(reservation);
+		return this;
 	}
 
 	@Override

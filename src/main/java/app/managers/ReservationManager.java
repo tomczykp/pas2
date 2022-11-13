@@ -38,8 +38,11 @@ public class ReservationManager {
 
 	public void delete (int id) throws Exception {
 		Reservation reservation = reservationRepository.get(id);
-		if (reservation.getStartDate().isAfter(LocalDate.now()))
+		if ((reservation.getStartDate().isBefore(LocalDate.now()) || reservation.getStartDate().isEqual(LocalDate.now())) && reservation.getEndDate().isAfter(LocalDate.now()))
 			throw new Exception("cannot remove already started reservation");
+
+		if (reservation.getStartDate().isAfter(LocalDate.now()))
+			throw new Exception("cannot remove future reservation");
 
 		reservation.getCustomer().getReservations().remove(reservation);
 		reservation.getProduct().getReservations().remove(reservation);

@@ -1,41 +1,27 @@
 package app.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "reservation")
 public class Reservation {
 
-	@Id
-	@Column(name = "resId")
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private int reservationID;
 
 	public int getReservationID () {
 		return reservationID;
 	}
 
-
-	@NotNull
-	@Column
 	private LocalDate startDate;
 
-	@NotNull
-	@Column
 	private LocalDate endDate;
 
 	public Customer getCustomer () {
 		return customer;
 	}
 
-	public void setId(int id) {
+	public void setId (int id) {
 		reservationID = id;
 	}
 
@@ -44,12 +30,8 @@ public class Reservation {
 	}
 
 
-	@NotNull
-	@ManyToOne
 	private Customer customer;
 
-	@ManyToOne
-	@NotNull
 	private Product product;
 
 	public Reservation (LocalDate startDate, LocalDate endDate, Customer customer, Product product) {

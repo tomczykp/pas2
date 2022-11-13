@@ -1,41 +1,24 @@
 package app.model;
 
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "customer")
 public class Customer {
 
-	@Id
-	@Column(name = "customer_id", nullable = false)
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private int customerID;
 
-	@Column(unique = true)
-	@NotNull
 	private String username;
 
-	@Column
-	@NotNull
 	private String password;
 
-	@Column
 	private String email;
 
-	@Column
 	private boolean isActive;
 
-	@OneToMany
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Customer () {}
@@ -95,8 +78,9 @@ public class Customer {
 		return customerID;
 	}
 
-	public void setCustomerID (int customerID) {
+	public Customer setCustomerID (int customerID) {
 		this.customerID = customerID;
+		return this;
 	}
 
 	public String getUsername () {
@@ -108,24 +92,26 @@ public class Customer {
 		return this;
 	}
 
-	public void setUsername (String username) {
-		this.username = username;
+	public String getPassword () {
+		return password;
 	}
 
 	public String getEmail () {
 		return email;
 	}
 
-	public void setEmail (String email) {
+	public Customer setEmail (String email) {
 		this.email = email;
+		return this;
 	}
 
 	public boolean isActive () {
 		return isActive;
 	}
 
-	public void setActive (boolean active) {
+	public Customer setActive (boolean active) {
 		isActive = active;
+		return this;
 	}
 
 }

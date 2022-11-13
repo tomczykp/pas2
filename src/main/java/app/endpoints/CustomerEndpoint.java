@@ -1,15 +1,19 @@
 package app.endpoints;
 
 import app.dto.CustomerDTO;
+import app.dto.ReservationDTO;
 import app.exceptions.NotFoundException;
 import app.managers.CustomerManager;
 import app.model.Customer;
+import app.model.Reservation;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -71,10 +75,13 @@ public class CustomerEndpoint {
 		try {
 			Customer customer = manager.get(Integer.parseInt(id));
 
+			List<Reservation> res;
 			if (fromPast)
-				return Response.ok(customer.getPastReservations()).build();
+				res = customer.getPastReservations();
 			else
-				return Response.ok(customer.getFutureReservations()).build();
+				res = customer.getFutureReservations();
+
+			return Response.ok(mapDTO(res)).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		} catch (NotFoundException e) {
@@ -106,6 +113,13 @@ public class CustomerEndpoint {
 					new JSONObject().put("status", e.getMessage())
 							.toString()).status(500).build();
 		}
+	}
+
+	private List<ReservationDTO> mapDTO (List<Reservation> reservations) {
+		List<ReservationDTO> res = new ArrayList<>();
+		for (Reservation r : reservations)
+			res.add(new ReservationDTO(r));
+		return res;
 	}
 
 	@PATCH
@@ -159,6 +173,30 @@ public class CustomerEndpoint {
 			return Response.ok(e).status(500).build();
 		}
 
+	}
+
+
+	@PATCH
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response update (@PathParam("id") String id, CustomerDTO newCustomer) {
+		try {
+
+			int t = Integer.parseInt(id);
+			Customer res = manager.modify(t,
+					(Customer current) -> current.setActive(newCustomer.isActive()).setEmail(newCustomer.getEmail()));
+
+			return Response.ok(new CustomerDTO(res)).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", e.getMessage())
+							.toString()).status(500).build();
+		}
 	}
 
 }

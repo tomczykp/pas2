@@ -1,7 +1,9 @@
 package app.dto;
 
 import app.model.Customer;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude
 public class CustomerDTO {
 
 	public String getEmail () {

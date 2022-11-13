@@ -10,7 +10,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -21,16 +23,6 @@ public class ReservationEndpointTest {
 				.baseUri("http://localhost")
 				.basePath("/rest/api")
 				.port(8080);
-	}
-
-	private List<Integer> getProductIDs () {
-		Map<Integer, LinkedHashMap> m = req().when().get("/product").getBody().jsonPath().getMap("", Integer.class,
-				LinkedHashMap.class);
-		List<Integer> list = new ArrayList<>();
-		for (Map.Entry<Integer, LinkedHashMap> entry : m.entrySet())
-			list.add((Integer) entry.getValue().get("productID"));
-		list.sort(Comparator.naturalOrder());
-		return list;
 	}
 
 	private List<Integer> getCustomerIDs () {
@@ -190,25 +182,67 @@ public class ReservationEndpointTest {
 				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 	}
 
+	@Test
+	public void invalidMissingDeleteTests () {
 
-	/*
-		create:
-		- sdate before edate
-		- 2x for same time period, same product
-		- 2x for overlaping time period
+		req()
+				.delete("/reservation/1o").then()
+				.statusCode(Matchers.is(500))
+				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 
-		GET:
-		- product/res
-		- customer/res
+		int lastID = (int) (reservations.get(reservations.size() - 1).get("reservationID")) + 90;
+		req()
+				.delete("/reservation/" + lastID).then()
+				.statusCode(Matchers.is(404))
+				.body("status", Matchers.equalTo("reservation not found"));
 
-		DELETE:
-		- missing
-		- invalid
-		- success
-		- already finished
-		- ongloing
-		- with future date
-	 */
+	}
+
+	@Test
+	public void deleteReservedTest () {
+		int pid = productIDs.get(1).get("productID");
+		int cid = customerIDs.get(1).get("customerID");
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		JsonPath t = req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", LocalDate.now().format(dateTimeFormatter))
+				.formParam("edate", LocalDate.now().plusDays(1).format(dateTimeFormatter))
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(200))
+				.body("product", Matchers.equalTo(pid))
+				.body("customer", Matchers.equalTo(cid))
+				.body("startDate", Matchers.equalTo(LocalDate.now().format(dateTimeFormatter)))
+				.body("endDate", Matchers.equalTo(LocalDate.now().plusDays(1).format(dateTimeFormatter)))
+				.body("reservationID", Matchers.anything()).extract().jsonPath();
+
+		req()
+				.delete("/reservation/" + t.get("reservationID")).then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("cannot remove already started reservation"));
+
+		t = req()
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.formParam("sdate", LocalDate.now().plusDays(1).format(dateTimeFormatter))
+				.formParam("edate", LocalDate.now().plusDays(5).format(dateTimeFormatter))
+				.formParam("pid", pid)
+				.formParam("cid", cid)
+				.put("/reservation").then()
+				.statusCode(Matchers.is(200))
+				.body("product", Matchers.equalTo(pid))
+				.body("customer", Matchers.equalTo(cid))
+				.body("startDate", Matchers.equalTo(LocalDate.now().plusDays(1).format(dateTimeFormatter)))
+				.body("endDate", Matchers.equalTo(LocalDate.now().plusDays(5).format(dateTimeFormatter)))
+				.body("reservationID", Matchers.anything()).extract().jsonPath();
+
+		req()
+				.delete("/reservation/" + t.get("reservationID")).then()
+				.statusCode(Matchers.is(500))
+				.body("status", Matchers.equalTo("cannot remove future reservation"));
+
+	}
 
 	@Test
 	public void missingArgPutTests () {

@@ -1,15 +1,19 @@
 package app.endpoints;
 
 import app.dto.ProductDTO;
+import app.dto.ReservationDTO;
 import app.exceptions.NotFoundException;
 import app.managers.ProductManager;
 import app.model.Product;
+import app.model.Reservation;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Path("/product")
@@ -38,16 +42,27 @@ public class ProductEndpoint {
 		}
 	}
 
+	private List<ReservationDTO> mapDTO (List<Reservation> reservations) {
+		List<ReservationDTO> res = new ArrayList<>();
+		for (Reservation r : reservations)
+			res.add(new ReservationDTO(r));
+		return res;
+	}
+
 	@GET
 	@Path("/{id}/reservations")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
 		try {
 			Product product = manager.get(Integer.parseInt(id));
+			List<Reservation> res;
 			if (fromPast)
-				return Response.ok(product.getPastReservations()).build();
+				res = product.getPastReservations();
 			else
-				return Response.ok(product.getFutureReservations()).build();
+				res = product.getFutureReservations();
+
+			return Response.ok(mapDTO(res)).build();
+
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		} catch (NotFoundException e) {
@@ -83,6 +98,28 @@ public class ProductEndpoint {
 			int t = Integer.parseInt(id);
 			manager.delete(t);
 			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", e.getMessage())
+							.toString()).status(500).build();
+		}
+	}
+
+	@PATCH
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response update (@PathParam("id") String id, ProductDTO p) {
+		try {
+
+			int t = Integer.parseInt(id);
+			Product res = manager.modify(t, (Product p1) -> p1.setPrice(p.getPrice()));
+
+			return Response.ok(new ProductDTO(res)).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(500).build();
 		} catch (NotFoundException e) {
