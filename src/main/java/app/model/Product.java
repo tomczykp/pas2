@@ -12,11 +12,11 @@ import java.util.List;
 public class Product {
 
 	private int productID;
-	private long price;
+	private double price;
 
 	private final List<Reservation> reservations = new ArrayList<>();
 
-	public Product (long price) {
+	public Product (double price) {
 		this.price = price;
 	}
 
@@ -31,11 +31,11 @@ public class Product {
 		return this;
 	}
 
-	public long getPrice () {
+	public double getPrice () {
 		return price;
 	}
 
-	public Product setPrice (long price) {
+	public Product setPrice (double price) {
 		this.price = price;
 		return this;
 	}

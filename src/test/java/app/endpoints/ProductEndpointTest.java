@@ -38,9 +38,9 @@ public class ProductEndpointTest {
 				.formParam("price", 200)
 				.put("/product").then()
 				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(200))
+				.body("price", Matchers.equalTo(200.0F))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.equalTo(0))
+				.body("reservations", Matchers.hasSize(0))
 				.extract().response().jsonPath());
 
 		ids.add(req()
@@ -48,9 +48,9 @@ public class ProductEndpointTest {
 				.formParam("price", 300)
 				.put("/product").then()
 				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(300))
+				.body("price", Matchers.equalTo(300.0F))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.equalTo(0))
+				.body("reservations", Matchers.hasSize(0))
 				.extract().response().jsonPath());
 	}
 
@@ -103,9 +103,9 @@ public class ProductEndpointTest {
 				.formParam("price", 200)
 				.put("/product").then()
 				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(200))
+				.body("price", Matchers.equalTo(200.0F))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 	}
 
 	@Test
@@ -115,14 +115,14 @@ public class ProductEndpointTest {
 				LinkedHashMap.class);
 		Assertions.assertFalse(m.isEmpty());
 
-		int price = ids.get(0).get("price");
+		float price = ids.get(0).get("price");
 		int productID = ids.get(0).get("productID");
 
 		req().get("/product/" + productID).then()
 				.statusCode(Matchers.is(200))
 				.body("productID", Matchers.equalTo(productID))
 				.body("price", Matchers.equalTo(price))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 		req()
 				.delete("/product/" + productID + "a").then()
@@ -133,7 +133,7 @@ public class ProductEndpointTest {
 				.statusCode(Matchers.is(200))
 				.body("productID", Matchers.equalTo(productID))
 				.body("price", Matchers.equalTo(price))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 		req()
 				.delete("/product/" + productID).then()
@@ -163,16 +163,16 @@ public class ProductEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo("emai@a.com"))
 				.body("username", Matchers.equalTo(uniq + "user"))
-				.body("reservations", Matchers.equalTo(0)).extract().jsonPath();
+				.body("reservations", Matchers.hasSize(0)).extract().jsonPath();
 
 		JsonPath pPath = req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("price", 200)
 				.put("/product").then()
 				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(200))
+				.body("price", Matchers.equalTo(200.0F))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.equalTo(0)).extract().jsonPath();
+				.body("reservations", Matchers.hasSize(0)).extract().jsonPath();
 
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)

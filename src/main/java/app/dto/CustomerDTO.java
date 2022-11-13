@@ -1,7 +1,11 @@
 package app.dto;
 
 import app.model.Customer;
+import app.model.Reservation;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude
 public class CustomerDTO {
@@ -14,18 +18,18 @@ public class CustomerDTO {
 		return username;
 	}
 
-	public int getReservations () {
+	public List<Integer> getReservations () {
 		return reservations;
 	}
 
-	public long getCustomerID () {
+	public int getCustomerID () {
 		return customerID;
 	}
 
-	private final long customerID;
+	private final int customerID;
 	private final String email;
 	private final String username;
-	private final int reservations;
+	private final List<Integer> reservations;
 	private final boolean active;
 
 	public boolean isActive () {
@@ -36,7 +40,9 @@ public class CustomerDTO {
 		email = c.getEmail();
 		username = c.getUsername();
 		customerID = c.getCustomerID();
-		reservations = c.getReservations().size();
+		reservations = new ArrayList<>();
+		for (Reservation r : c.getReservations())
+			reservations.add(r.getReservationID());
 		active = c.isActive();
 	}
 

@@ -72,7 +72,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
-				.body("reservations", Matchers.equalTo(0))
+				.body("reservations", Matchers.hasSize(0))
 				.extract().jsonPath());
 
 		ids.add(req()
@@ -86,7 +86,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(1)))
 				.body("username", Matchers.equalTo(usernames.get(1)))
-				.body("reservations", Matchers.equalTo(0))
+				.body("reservations", Matchers.hasSize(0))
 				.extract().jsonPath());
 
 		ids.add(req()
@@ -100,7 +100,7 @@ public class CustomerEndpointTest {
 				.body("customerID", Matchers.anything())
 				.body("email", Matchers.equalTo(emails.get(2)))
 				.body("username", Matchers.equalTo(usernames.get(2)))
-				.body("reservations", Matchers.equalTo(0))
+				.body("reservations", Matchers.hasSize(0))
 				.extract().jsonPath());
 	}
 
@@ -138,7 +138,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(2)))
 				.body("username", Matchers.equalTo(usernames.get(2)))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo("emai@a.com"))
 				.body("username", Matchers.equalTo("emaia" + k))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 
 		req()
@@ -201,7 +201,7 @@ public class CustomerEndpointTest {
 			Assertions.assertNotNull(tmp.get("customerID"));
 			Assertions.assertEquals(emails.get(0), tmp.get("email"));
 			Assertions.assertEquals(usernames.get(0), tmp.get("username"));
-			Assertions.assertEquals(0, tmp.get("reservations"));
+			Assertions.assertEquals(new ArrayList<>(), tmp.get("reservations"));
 		}
 	}
 
@@ -222,7 +222,7 @@ public class CustomerEndpointTest {
 			Assertions.assertNotNull(tmp.get("customerID"));
 			Assertions.assertEquals(emails.get(i), tmp.get("email"));
 			Assertions.assertEquals(usernames.get(i), tmp.get("username"));
-			Assertions.assertEquals(0, tmp.get("reservations"));
+			Assertions.assertEquals(new ArrayList<>(), tmp.get("reservations"));
 			i++;
 		}
 	}
@@ -264,7 +264,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 		req().when()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -281,7 +281,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(false))
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 		req().when()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -297,7 +297,7 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(true))
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 	}
 
 	@Test
@@ -307,9 +307,9 @@ public class CustomerEndpointTest {
 				.formParam("price", 200)
 				.put("/product").then()
 				.statusCode(Matchers.is(200))
-				.body("price", Matchers.equalTo(200))
+				.body("price", Matchers.equalTo(200.0F))
 				.body("productID", Matchers.anything())
-				.body("reservations", Matchers.equalTo(0))
+				.body("reservations", Matchers.hasSize(0))
 				.extract().response().jsonPath();
 
 		int pid = productPath.get("productID");
@@ -338,14 +338,14 @@ public class CustomerEndpointTest {
 				.body("active", Matchers.equalTo(false))
 				.body("email", Matchers.equalTo(ids.get(1).get("email")))
 				.body("username", Matchers.equalTo(ids.get(1).get("username")))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 		req()
 				.get("/product/" + pid).then()
 				.statusCode(200)
 				.body("price", Matchers.equalTo(productPath.get("price")))
 				.body("productID", Matchers.equalTo(productPath.get("productID")))
-				.body("reservations", Matchers.equalTo(0));
+				.body("reservations", Matchers.hasSize(0));
 
 	}
 

@@ -110,13 +110,12 @@ public class ProductEndpoint {
 	}
 
 	@PATCH
-	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update (@PathParam("id") String id, ProductDTO p) {
+	public Response update (ProductDTO p) {
 		try {
 
-			int t = Integer.parseInt(id);
+			int t = p.getProductID();
 			Product res = manager.modify(t, (Product p1) -> p1.setPrice(p.getPrice()));
 
 			return Response.ok(new ProductDTO(res)).build();
