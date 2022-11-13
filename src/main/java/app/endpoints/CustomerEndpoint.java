@@ -177,15 +177,16 @@ public class CustomerEndpoint {
 
 
 	@PATCH
-	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update (@PathParam("id") String id, CustomerDTO newCustomer) {
+	public Response update (CustomerDTO newCustomer) {
 		try {
 
-			int t = Integer.parseInt(id);
+			int t = newCustomer.customerID;
 			Customer res = manager.modify(t,
-					(Customer current) -> current.setActive(newCustomer.active).setEmail(newCustomer.email));
+					(Customer current) -> current
+							.setActive(newCustomer.active)
+							.setEmail(newCustomer.email));
 
 			return Response.ok(new CustomerDTO(res)).build();
 		} catch (NumberFormatException e) {

@@ -133,4 +133,30 @@ public class ReservationEndpoint {
 		}
 	}
 
+	@PATCH
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response update (ReservationDTO newReservation) {
+		try {
+
+			int t = newReservation.reservationID;
+			Reservation res = reservationManager.modify(t,
+					(Reservation current) -> current
+							.setCustomer(customerManager.get(newReservation.customerID))
+							.setEndDate(newReservation.endDate)
+							.setStartDate(newReservation.startDate)
+							.setProduct(productManager.get(newReservation.productID)));
+
+			return Response.ok(new ReservationDTO(res)).build();
+		} catch (NumberFormatException e) {
+			return Response.ok(e).status(500).build();
+		} catch (NotFoundException e) {
+			return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
+		} catch (Exception e) {
+			return Response.ok(
+					new JSONObject().put("status", e.getMessage())
+							.toString()).status(500).build();
+		}
+	}
+
 }

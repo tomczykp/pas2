@@ -1,11 +1,11 @@
 package app.repositories;
 
 
+import app.FunctionThrows;
 import app.exceptions.NotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
@@ -51,7 +51,7 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 	}
 
 	@Override
-	public V modify (K k, Function<V, V> func) throws NotFoundException {
+	public V modify (K k, FunctionThrows<V> func) throws Exception {
 		if (map.containsKey(k)) {
 			V v = map.get(k);
 			return func.apply(v);

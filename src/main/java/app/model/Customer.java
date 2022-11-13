@@ -92,8 +92,9 @@ public class Customer {
 		return this;
 	}
 
-	public void setUsername (String username) {
+	public Customer setUsername (String username) {
 		this.username = username;
+		return this;
 	}
 
 	public String getPassword () {

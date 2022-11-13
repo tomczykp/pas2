@@ -1,5 +1,6 @@
 package app.managers;
 
+import app.FunctionThrows;
 import app.dto.ReservationDTO;
 import app.exceptions.NotFoundException;
 import app.model.Customer;
@@ -11,7 +12,6 @@ import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ReservationManager {
@@ -49,7 +49,7 @@ public class ReservationManager {
 		reservationRepository.delete(id);
 	}
 
-	public Reservation modify (int id, Function<Reservation, Reservation> func) throws NotFoundException {
+	public Reservation modify (int id, FunctionThrows<Reservation> func) throws Exception {
 		return reservationRepository.modify(id, func);
 	}
 

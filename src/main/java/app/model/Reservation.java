@@ -21,18 +21,67 @@ public class Reservation {
 		return customer;
 	}
 
-	public void setId (int id) {
+	public Reservation setId (int id) {
 		reservationID = id;
+		return this;
 	}
 
 	public Product getProduct () {
 		return product;
 	}
 
+	public Reservation setStartDate (LocalDate startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+
+	public Reservation setEndDate (LocalDate endDate) {
+		this.endDate = endDate;
+		return this;
+	}
+
+	public Reservation setCustomer (Customer customer) {
+		this.customer = customer;
+		return this;
+	}
+
+	public Reservation setProduct (Product product) {
+		this.product = product;
+		return this;
+	}
 
 	private Customer customer;
-
 	private Product product;
+
+	public Reservation switchCustomer (Customer nCustomer) {
+		Customer current = customer;
+		nCustomer.getReservations().remove(this);
+		current.getReservations().add(this);
+		customer = nCustomer;
+		return this;
+	}
+
+	private boolean overlapingReservations (Product p) {
+		for (Reservation r : p.getFutureReservations())
+			if (r.startDate.isEqual(startDate) || r.endDate.isEqual(endDate)
+					|| (r.startDate.isAfter(startDate) && r.startDate.isBefore(endDate))
+					|| (r.endDate.isAfter(startDate) && r.endDate.isBefore(endDate))
+					|| (r.startDate.isBefore(startDate) && r.endDate.isAfter(endDate)))
+				return true;
+		return false;
+	}
+
+	public Reservation switchProduct (Product p) throws Exception {
+
+		if (overlapingReservations(p))
+			throw new Exception("cannot switch product, already reserved at this period");
+
+		Product curr = product;
+		curr.getReservations().remove(this);
+		p.getReservations().add(this);
+		product = p;
+		return this;
+	}
 
 	public Reservation (LocalDate startDate, LocalDate endDate, Customer customer, Product product) {
 		this.startDate = startDate;

@@ -1,5 +1,6 @@
 package app.managers;
 
+import app.FunctionThrows;
 import app.dto.CustomerDTO;
 import app.exceptions.NotFoundException;
 import app.model.Customer;
@@ -8,7 +9,6 @@ import jakarta.inject.Inject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class CustomerManager {
@@ -24,7 +24,7 @@ public class CustomerManager {
 		customerRepository.delete(id);
 	}
 
-	public Customer modify (int id, Function<Customer, Customer> func) throws NotFoundException {
+	public Customer modify (int id, FunctionThrows<Customer> func) throws Exception {
 		return customerRepository.modify(id, func);
 	}
 
