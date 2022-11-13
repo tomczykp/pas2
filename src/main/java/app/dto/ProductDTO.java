@@ -2,27 +2,21 @@ package app.dto;
 
 import app.model.Product;
 import app.model.Reservation;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement
 public class ProductDTO {
 
-	public double getPrice () {
-		return price;
-	}
-
-	public List<Integer> getReservations () {
-		return reservations;
-	}
-
-	public int getProductID () {
-		return productID;
-	}
-
-	private final int productID;
-	private final double price;
-	private final List<Integer> reservations;
+	@XmlElement
+	public int productID;
+	@XmlElement
+	public double price;
+	@XmlElement
+	public List<Integer> reservations;
 
 	public ProductDTO (Product p) {
 		price = p.getPrice();
@@ -33,5 +27,7 @@ public class ProductDTO {
 		productID = p.getProductID();
 
 	}
+
+	public ProductDTO () {}
 
 }

@@ -115,8 +115,8 @@ public class ProductEndpoint {
 	public Response update (ProductDTO p) {
 		try {
 
-			int t = p.getProductID();
-			Product res = manager.modify(t, (Product p1) -> p1.setPrice(p.getPrice()));
+			int t = p.productID;
+			Product res = manager.modify(t, (Product p1) -> p1.setPrice(p.price));
 
 			return Response.ok(new ProductDTO(res)).build();
 		} catch (NumberFormatException e) {

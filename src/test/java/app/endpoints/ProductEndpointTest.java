@@ -182,8 +182,8 @@ public class ProductEndpointTest {
 				.formParam("pid", (int) pPath.get("productID"))
 				.put("/reservation").then()
 				.statusCode(Matchers.is(200))
-				.body("customer", Matchers.equalTo((int) cPath.get("customerID")))
-				.body("product", Matchers.equalTo((int) pPath.get("productID")));
+				.body("customerID", Matchers.equalTo((int) cPath.get("customerID")))
+				.body("productID", Matchers.equalTo((int) pPath.get("productID")));
 
 		req()
 				.delete("/product/" + pPath.get("productID")).then()

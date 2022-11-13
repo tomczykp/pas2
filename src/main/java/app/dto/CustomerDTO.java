@@ -2,40 +2,26 @@ package app.dto;
 
 import app.model.Customer;
 import app.model.Reservation;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonInclude
+@XmlRootElement
 public class CustomerDTO {
 
-	public String getEmail () {
-		return email;
-	}
-
-	public String getUsername () {
-		return username;
-	}
-
-	public List<Integer> getReservations () {
-		return reservations;
-	}
-
-	public int getCustomerID () {
-		return customerID;
-	}
-
-	private final int customerID;
-	private final String email;
-	private final String username;
-	private final List<Integer> reservations;
-	private final boolean active;
-
-	public boolean isActive () {
-		return active;
-	}
-
+	@XmlElement
+	public final int customerID;
+	@XmlElement
+	public final String email;
+	@XmlElement
+	public final String username;
+	@XmlElement
+	public final List<Integer> reservations;
+	@XmlElement
+	public final boolean active;
+	
 	public CustomerDTO (Customer c) {
 		email = c.getEmail();
 		username = c.getUsername();

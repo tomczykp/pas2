@@ -185,7 +185,7 @@ public class CustomerEndpoint {
 
 			int t = Integer.parseInt(id);
 			Customer res = manager.modify(t,
-					(Customer current) -> current.setActive(newCustomer.isActive()).setEmail(newCustomer.getEmail()));
+					(Customer current) -> current.setActive(newCustomer.active).setEmail(newCustomer.email));
 
 			return Response.ok(new CustomerDTO(res)).build();
 		} catch (NumberFormatException e) {
