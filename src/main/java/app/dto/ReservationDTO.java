@@ -10,19 +10,15 @@ import java.time.LocalDate;
 public class ReservationDTO {
 
 	@XmlElement
-	public final int productID;
+	public int productID;
 	@XmlElement
-	public final int customerID;
+	public int customerID;
 	@XmlElement
-	public final LocalDate endDate;
+	public LocalDate endDate;
 	@XmlElement
-	public final LocalDate startDate;
+	public LocalDate startDate;
 	@XmlElement
-	public final int reservationID;
-
-	public int getReservationID () {
-		return reservationID;
-	}
+	public int reservationID;
 
 	public ReservationDTO (Reservation r) {
 		productID = r.getProduct().getProductID();
@@ -31,5 +27,7 @@ public class ReservationDTO {
 		startDate = r.getStartDate();
 		reservationID = r.getReservationID();
 	}
+
+	public ReservationDTO () {}
 
 }

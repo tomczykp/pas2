@@ -142,10 +142,11 @@ public class ReservationEndpoint {
 			int t = newReservation.reservationID;
 			Reservation res = reservationManager.modify(t,
 					(Reservation current) -> current
-							.setCustomer(customerManager.get(newReservation.customerID))
+
+							.switchCustomer(customerManager.get(newReservation.customerID))
 							.setEndDate(newReservation.endDate)
 							.setStartDate(newReservation.startDate)
-							.setProduct(productManager.get(newReservation.productID)));
+							.switchProduct(productManager.get(newReservation.productID)));
 
 			return Response.ok(new ReservationDTO(res)).build();
 		} catch (NumberFormatException e) {

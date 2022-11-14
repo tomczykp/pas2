@@ -12,16 +12,16 @@ import java.util.List;
 public class CustomerDTO {
 
 	@XmlElement
-	public final int customerID;
+	public int customerID;
 	@XmlElement
-	public final String email;
+	public String email;
 	@XmlElement
-	public final String username;
+	public String username;
 	@XmlElement
-	public final List<Integer> reservations;
+	public List<Integer> reservations;
 	@XmlElement
-	public final boolean active;
-	
+	public boolean active;
+
 	public CustomerDTO (Customer c) {
 		email = c.getEmail();
 		username = c.getUsername();
@@ -31,5 +31,7 @@ public class CustomerDTO {
 			reservations.add(r.getReservationID());
 		active = c.isActive();
 	}
+
+	public CustomerDTO () {}
 
 }

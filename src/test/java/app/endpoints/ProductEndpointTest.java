@@ -5,6 +5,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.ws.rs.core.MediaType;
 import org.hamcrest.Matchers;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,7 @@ public class ProductEndpointTest {
 		for (JsonPath c : ids) {
 			int id = c.get("productID");
 			LinkedHashMap check = res.get(String.valueOf(id));
+			System.out.println(check.get("price"));
 			Assertions.assertEquals(c.get("productID"), check.get("productID"));
 			Assertions.assertEquals(c.get("price"), check.get("price"));
 			Assertions.assertEquals(c.get("reservations"), check.get("reservations"));
@@ -193,5 +195,38 @@ public class ProductEndpointTest {
 
 	}
 
+	@Test
+	public void patchTests () {
+
+		JsonPath target = ids.get(1);
+		int id = target.get("productID");
+		req()
+				.get("/product/" + id).then()
+				.statusCode(Matchers.is(200))
+				.body("productID", Matchers.equalTo(target.get("productID")))
+				.body("price", Matchers.equalTo(target.get("price")))
+				.body("reservations", Matchers.equalTo(target.get("reservations")));
+
+		JSONObject data = new JSONObject()
+				.put("productID", (int) target.get("productID"))
+				.put("price", 333)
+				.put("reservations", (ArrayList<Integer>) target.get("reservations"));
+
+		req()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(data.toString())
+				.patch("/product").then()
+				.statusCode(Matchers.is(200))
+				.body("productID", Matchers.equalTo(target.get("productID")))
+				.body("price", Matchers.equalTo(333.0F))
+				.body("reservations", Matchers.equalTo(target.get("reservations")));
+
+		req()
+				.get("/product/" + id).then()
+				.statusCode(Matchers.is(200))
+				.body("productID", Matchers.equalTo(target.get("productID")))
+				.body("price", Matchers.equalTo(333.0F))
+				.body("reservations", Matchers.equalTo(target.get("reservations")));
+	}
 
 }

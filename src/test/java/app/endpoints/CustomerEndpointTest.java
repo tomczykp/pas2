@@ -5,6 +5,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.ws.rs.core.MediaType;
 import org.hamcrest.Matchers;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -111,14 +112,14 @@ public class CustomerEndpointTest {
 				.get("/customer").then()
 				.statusCode(Matchers.is(200)).extract().jsonPath();
 
+		int i = 0;
 		for (JsonPath c : ids) {
 			int id = c.get("customerID");
 			LinkedHashMap check = res.get(String.valueOf(id));
 			Assertions.assertEquals(c.get("username"), check.get("username"));
-			Assertions.assertEquals(c.get("active"), check.get("active"));
 			Assertions.assertEquals(c.get("customerID"), check.get("customerID"));
-			Assertions.assertEquals(c.get("email"), check.get("email"));
 			Assertions.assertEquals(c.get("reservations"), check.get("reservations"));
+			i++;
 		}
 
 		req()
@@ -132,12 +133,12 @@ public class CustomerEndpointTest {
 				.body("stackTrace.className", Matchers.hasItem("java.lang.NumberFormatException"));
 
 		req()
-				.get("/customer/" + ids.get(2).get("customerID")).then()
+				.get("/customer/" + ids.get(0).get("customerID")).then()
 				.statusCode(Matchers.is(200))
 				.body("customerID", Matchers.anything())
 				.body("active", Matchers.equalTo(true))
-				.body("email", Matchers.equalTo(emails.get(2)))
-				.body("username", Matchers.equalTo(usernames.get(2)))
+				.body("email", Matchers.equalTo(ids.get(0).get("email")))
+				.body("username", Matchers.equalTo(ids.get(0).get("username")))
 				.body("reservations", Matchers.hasSize(0));
 	}
 
@@ -271,7 +272,7 @@ public class CustomerEndpointTest {
 				.patch("/customer/" + id + "/deactivate")
 				.then()
 				.body("status", Matchers.equalTo("set to deactive"));
-
+		ids.get(0).get("customerID");
 
 		req().when()
 				.get("/customer/" + id)
@@ -347,6 +348,48 @@ public class CustomerEndpointTest {
 				.body("productID", Matchers.equalTo(productPath.get("productID")))
 				.body("reservations", Matchers.hasSize(0));
 
+	}
+
+	@Test
+	public void updateTests () {
+		JsonPath target = ids.get(2);
+		int id = target.get("customerID");
+
+		req()
+				.get("/customer/" + id).then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.equalTo(target.get("customerID")))
+				.body("active", Matchers.equalTo(target.get("active")))
+				.body("username", Matchers.equalTo(target.get("username")))
+				.body("email", Matchers.equalTo(target.get("email")))
+				.body("reservations", Matchers.equalTo(target.get("reservations")));
+
+		JSONObject data = new JSONObject()
+				.put("customerID", (int) target.get("customerID"))
+				.put("username", (String) target.get("username"))
+				.put("email", "newEmail@ip.pl")
+				.put("active", false)
+				.put("reservations", (ArrayList<Integer>) target.get("reservations"));
+
+		req()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(data.toString())
+				.patch("/customer").then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.equalTo(target.get("customerID")))
+				.body("active", Matchers.equalTo(false))
+				.body("username", Matchers.equalTo(target.get("username")))
+				.body("email", Matchers.equalTo("newEmail@ip.pl"))
+				.body("reservations", Matchers.equalTo(target.get("reservations")));
+
+		req()
+				.get("/customer/" + id).then()
+				.statusCode(Matchers.is(200))
+				.body("customerID", Matchers.equalTo(target.get("customerID")))
+				.body("active", Matchers.equalTo(false))
+				.body("username", Matchers.equalTo(target.get("username")))
+				.body("email", Matchers.equalTo("newEmail@ip.pl"))
+				.body("reservations", Matchers.equalTo(target.get("reservations")));
 	}
 
 

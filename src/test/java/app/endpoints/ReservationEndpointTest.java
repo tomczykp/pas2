@@ -221,7 +221,10 @@ public class ReservationEndpointTest {
 		req()
 				.delete("/reservation/" + t.get("reservationID")).then()
 				.statusCode(Matchers.is(500))
-				.body("status", Matchers.equalTo("cannot remove already started reservation"));
+				.body("status",
+						Matchers.anyOf(
+								Matchers.equalTo("cannot remove already started reservation"),
+								Matchers.equalTo("cannot remove future reservation")));
 
 		t = req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
