@@ -1,41 +1,24 @@
 package app.model;
 
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "customer")
 public class Customer {
 
-	@Id
-	@Column(name = "customer_id", nullable = false)
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private Long customerID;
 
-	@Column(unique = true)
-	@NotNull
 	private String username;
 
-	@Column
-	@NotNull
 	private String password;
 
-	@Column
 	private String email;
 
-	@Column
 	private boolean isActive;
 
-	@OneToMany
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Customer () {}
