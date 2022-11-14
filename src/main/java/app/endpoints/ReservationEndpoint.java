@@ -142,7 +142,6 @@ public class ReservationEndpoint {
 			int t = newReservation.reservationID;
 			Reservation res = reservationManager.modify(t,
 					(Reservation current) -> current
-
 							.switchCustomer(customerManager.get(newReservation.customerID))
 							.setEndDate(newReservation.endDate)
 							.setStartDate(newReservation.startDate)
