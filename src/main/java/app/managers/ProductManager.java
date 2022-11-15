@@ -16,7 +16,7 @@ public class ProductManager {
 	@Inject
 	private ProductRepository productRepository;
 
-	public ProductDTO create (int price) {
+	synchronized public ProductDTO create (int price) {
 		return new ProductDTO(productRepository.insert(new Product(price)));
 	}
 

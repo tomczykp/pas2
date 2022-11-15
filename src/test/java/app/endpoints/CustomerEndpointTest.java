@@ -272,7 +272,6 @@ public class CustomerEndpointTest {
 				.patch("/customer/" + id + "/deactivate")
 				.then()
 				.body("status", Matchers.equalTo("set to deactive"));
-		ids.get(0).get("customerID");
 
 		req().when()
 				.get("/customer/" + id)
@@ -299,6 +298,39 @@ public class CustomerEndpointTest {
 				.body("email", Matchers.equalTo(emails.get(0)))
 				.body("username", Matchers.equalTo(usernames.get(0)))
 				.body("reservations", Matchers.hasSize(0));
+	}
+
+	@Test
+	public void cocurrentCreateTest () {
+
+		String login = uniq + "nameXYZ";
+		String email = "mail@poczka.com";
+		int n = 20;
+
+		JsonPath dane = req().when()
+				.queryParam("username", login)
+				.get("/customer")
+				.getBody().jsonPath();
+		Assertions.assertTrue(dane.getMap("").isEmpty());
+
+		Thread[] treads = new Thread[n];
+		for (int i = 0; i < n; i++) {
+			treads[i] = new Thread(() -> req()
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.formParam("email", email)
+					.formParam("username", login)
+					.formParam("password", "haslo")
+					.put("/customer"));
+			treads[i].start();
+		}
+
+		dane = req().when()
+				.queryParam("username", login)
+				.get("/customer")
+				.getBody().jsonPath();
+
+		Assertions.assertFalse(dane.getMap("").isEmpty());
+		Assertions.assertEquals(1, dane.getMap("").size());
 	}
 
 	@Test

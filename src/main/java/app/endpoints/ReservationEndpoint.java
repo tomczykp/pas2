@@ -1,6 +1,7 @@
 package app.endpoints;
 
 import app.dto.ReservationDTO;
+import app.exceptions.DateException;
 import app.exceptions.NotFoundException;
 import app.managers.CustomerManager;
 import app.managers.ProductManager;
@@ -14,9 +15,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 @Path("/reservation")
@@ -81,9 +82,14 @@ public class ReservationEndpoint {
 
 		try {
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-			LocalDate endDate = LocalDate.parse(end, dateTimeFormatter);
-			LocalDate startDate = LocalDate.parse(start, dateTimeFormatter);
+			LocalDate endDate;
+			LocalDate startDate;
+			try {
+				endDate = LocalDate.parse(end, dateTimeFormatter);
+				startDate = LocalDate.parse(start, dateTimeFormatter);
+			} catch (DateTimeException e) {
+				throw new DateException();
+			}
 			Customer customer;
 			Product product;
 
@@ -97,14 +103,12 @@ public class ReservationEndpoint {
 			} catch (NotFoundException e) {
 				return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
 			}
-			for (Reservation r : product.getReservations())
-				System.out.println("\t " + new ReservationDTO(r));
 
 			ReservationDTO reservation = reservationManager.create(startDate, endDate, customer, product);
 
 			return Response.ok(reservation).build();
 
-		} catch (NumberFormatException | DateTimeParseException e) {
+		} catch (NumberFormatException | DateException e) {
 			return Response.ok(e).status(500).build();
 		} catch (Exception e) {
 			return Response.ok(

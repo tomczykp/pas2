@@ -66,7 +66,6 @@ public class ProductEndpointTest {
 		for (JsonPath c : ids) {
 			int id = c.get("productID");
 			LinkedHashMap check = res.get(String.valueOf(id));
-			System.out.println(check.get("price"));
 			Assertions.assertEquals(c.get("productID"), check.get("productID"));
 			Assertions.assertEquals(c.get("price"), check.get("price"));
 			Assertions.assertEquals(c.get("reservations"), check.get("reservations"));

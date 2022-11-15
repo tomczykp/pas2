@@ -19,7 +19,7 @@ public class ReservationManager {
 	@Inject
 	private ReservationRepository reservationRepository;
 
-	public ReservationDTO create (LocalDate beginDate, LocalDate endDate, Customer c, Product p) throws Exception {
+	synchronized public ReservationDTO create (LocalDate beginDate, LocalDate endDate, Customer c, Product p) throws Exception {
 
 		if (beginDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now()))
 			throw new Exception("cannot make reservation in the past");

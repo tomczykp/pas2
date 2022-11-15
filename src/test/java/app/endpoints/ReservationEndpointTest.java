@@ -353,8 +353,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-13-06")
@@ -363,8 +362,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 
 		// day
 		req()
@@ -375,8 +373,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-12-06")
@@ -385,8 +382,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		// month with only 30 days
 //		req()
 //				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -396,8 +392,7 @@ public class ReservationEndpointTest {
 //				.formParam("cid", cid)
 //				.put("/reservation").then()
 //				.statusCode(Matchers.is(500))
-//				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+//				.body("message", Matchers.equalTo("Invalid date"));
 		// format
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -407,8 +402,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-12-06")
@@ -417,8 +411,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-2-06")
@@ -427,8 +420,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-01-06")
@@ -437,8 +429,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-01-06")
@@ -447,8 +438,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2023-01-6")
@@ -457,8 +447,7 @@ public class ReservationEndpointTest {
 				.formParam("cid", cid)
 				.put("/reservation").then()
 				.statusCode(Matchers.is(500))
-				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+				.body("message", Matchers.equalTo("Invalid date"));
 		// dla lutego
 //		req()
 //				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -468,8 +457,7 @@ public class ReservationEndpointTest {
 //				.formParam("cid", cid)
 //				.put("/reservation").then()
 //				.statusCode(Matchers.is(500))
-//				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-//
+//				.body("message", Matchers.equalTo("Invalid date"));//
 //		req()
 //				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 //				.formParam("sdate", "2023-02-31")
@@ -478,8 +466,7 @@ public class ReservationEndpointTest {
 //				.formParam("cid", cid)
 //				.put("/reservation").then()
 //				.statusCode(Matchers.is(500))
-//				.body("stackTrace.className", Matchers.hasItem("java.time.format.DateTimeFormatter"));
-
+//				.body("message", Matchers.equalTo("Invalid date"));
 		req()
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.formParam("sdate", "2024-02-28")

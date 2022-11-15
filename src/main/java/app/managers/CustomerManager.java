@@ -16,7 +16,7 @@ public class CustomerManager {
 	@Inject
 	private CustomerRepository customerRepository;
 
-	public CustomerDTO create (String username, String email, String password) throws Exception {
+	synchronized public CustomerDTO create (String username, String email, String password) throws Exception {
 		return new CustomerDTO(customerRepository.insert(new Customer(username, email, password)));
 	}
 
