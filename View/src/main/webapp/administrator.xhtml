@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/html"
+                template="./templates/MainTemplate.xhtml">
+    <ui:define name="left">
+        <ui:include src="./templates/menu.xhtml"/>
+    </ui:define>
+    <ui:define name="content">
+    <h:form>
+        <p>USERNAME
+            <h:inputText id="inpusername" value="#{administrator.beanCustomer.username}"/>
+            PASSWORD
+            <h:inputText id="inppassword" value="#{administrator.beanCustomer.password}"/>
+            EMAIL
+            <h:inputText id="inpemail" value="#{administrator.beanCustomer.email}"/>
+            <h:commandButton value="Create" update="table" onclick="#{administrator.createCustomer()}"/>
+        </p>
+    </h:form>
+    <h:form>
+        <h:dataTable id="table" value="#{administrator.customers}" var="customers">
+            <f:facet name="header">CUSTOMER TABLE</f:facet>
+            <h:column>
+                <f:facet name="header">USERNAME</f:facet>
+                <h:outputText value='#{customers.get("username")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">EMAIL</f:facet>
+                <h:outputText value='#{customers.get("email")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">ACTIVE</f:facet>
+                <h:outputText value='#{customers.get("active")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">ID</f:facet>
+                <h:outputText value='#{customers.get("customerID")}'/>
+            </h:column>
+            <h:column>
+                <h:commandLink value="Activate" action='#{administrator.updateCustomer(customers.get("customerID"), true)}'/>
+            </h:column>
+            <h:column>
+                <h:commandLink value="Deactivate" action='#{administrator.updateCustomer(customers.get("customerID"), false)}'/>
+            </h:column>
+            <h:column>
+                <h:commandLink value="Book" action="productCustomer.xhtml" actionListener='#{chosenID.bindValue(customers.get("customerID"))}'/>
+            </h:column>
+        </h:dataTable>
+    </h:form>
+    </ui:define>
+</ui:composition>

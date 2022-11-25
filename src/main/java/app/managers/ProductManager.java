@@ -14,10 +14,10 @@ import java.util.function.Predicate;
 public class ProductManager {
 
 	@Inject
-	private ProductRepository productRepository;
+	public ProductRepository productRepository;
 
-	synchronized public ProductDTO create (int price) {
-		return new ProductDTO(productRepository.insert(new Product(price)));
+	synchronized public ProductDTO create (Product product) {
+		return new ProductDTO(productRepository.insert(product));
 	}
 
 	public void delete (int id) throws Exception {

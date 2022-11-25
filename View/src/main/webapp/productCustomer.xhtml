@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="./templates/MainTemplate.xhtml">
+    <ui:define name="left">
+        <ui:include src="./templates/menu.xhtml"/>
+    </ui:define>
+    <ui:define name="content">
+    <h:form>
+        <p>
+            <h:outputText value="Chosen client ID: #{chosenID.id}"/>
+        </p>
+        <p>START DATE(YYYY-MM-DD)
+            <h:inputText styleClass="datepicker" value="#{productCustomer.reservationBean.startDate}"/>
+            END DATE(YYYY-MM-DD)
+            <h:inputText id="inppassword" value="#{productCustomer.reservationBean.endDate}"/>
+        </p>
+        <h:dataTable id="table" value="#{productCustomer.products}" var="products">
+            <f:facet name="header">PRODUCTS</f:facet>
+            <h:column>
+                <f:facet name="header">ID</f:facet>
+                <h:outputText value='#{products.get("productID")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">PRICE</f:facet>
+                <h:outputText value='#{products.get("price")}'/>
+            </h:column>
+            <h:column>
+                <h:commandLink value="Book" action='#{productCustomer.createReservation(chosenID.id, products.get("productID"))}'/>
+            </h:column>
+        </h:dataTable>
+        <h:outputLink value="administrator.xhtml">Back</h:outputLink>
+    </h:form>
+    </ui:define>
+</ui:composition>

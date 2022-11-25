@@ -1,20 +1,24 @@
 package app.model;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.time.LocalDate;
 
+@XmlRootElement
 public class Reservation {
-
+	@XmlElement
 	private int reservationID;
-
 	public int getReservationID () {
 		return reservationID;
 	}
-
+	@XmlElement
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	private LocalDate startDate;
-
+	@XmlElement
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	private LocalDate endDate;
 
 	public Customer getCustomer () {
@@ -50,7 +54,9 @@ public class Reservation {
 		return this;
 	}
 
+	@XmlElement
 	private Customer customer;
+	@XmlElement
 	private Product product;
 
 	public Reservation switchCustomer (Customer nCustomer) {

@@ -17,23 +17,22 @@ import java.util.function.Predicate;
 public class ReservationManager {
 
 	@Inject
-	private ReservationRepository reservationRepository;
+	public ReservationRepository reservationRepository;
 
-	synchronized public ReservationDTO create (LocalDate beginDate, LocalDate endDate, Customer c, Product p) throws Exception {
-
-		if (beginDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now()))
+	synchronized public ReservationDTO create (Reservation r) throws Exception {
+		if (r.getStartDate().isBefore(LocalDate.now()) || r.getEndDate().isBefore(LocalDate.now()))
 			throw new Exception("cannot make reservation in the past");
 
-		if (endDate.isBefore(beginDate))
+		if (r.getEndDate().isBefore(r.getStartDate()))
 			throw new Exception("end date cannot be before start date");
 
-		if (!c.isActive())
+		if (!r.getCustomer().isActive())
 			throw new Exception("customer is inactive");
 
-		if (p.isReserved(beginDate, endDate))
+		if (r.getProduct().isReserved(r.getStartDate(), r.getEndDate()))
 			throw new Exception("product is already reserved");
 
-		return new ReservationDTO(reservationRepository.insert(new Reservation(beginDate, endDate, c, p)));
+		return new ReservationDTO(reservationRepository.insert(r));
 	}
 
 	public void delete (int id) throws Exception {

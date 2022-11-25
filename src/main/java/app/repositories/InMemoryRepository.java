@@ -3,6 +3,7 @@ package app.repositories;
 
 import app.FunctionThrows;
 import app.exceptions.NotFoundException;
+import app.model.Customer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,14 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 		if (map.containsKey(k)) {
 			V v = map.get(k);
 			return func.apply(v);
+		}
+		throw new NotFoundException();
+	}
+
+	public Customer modifyCustomer(K k, FunctionThrows<Customer> func) throws Exception {
+		if (map.containsKey(k)) {
+			Customer v = (Customer) map.get(k);
+			return  func.apply(v);
 		}
 		throw new NotFoundException();
 	}

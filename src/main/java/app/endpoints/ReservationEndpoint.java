@@ -10,11 +10,13 @@ import app.model.Customer;
 import app.model.Product;
 import app.model.Reservation;
 import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import javax.ejb.Stateless;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +35,7 @@ public class ReservationEndpoint {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll () {
-		return Response.ok(reservationManager.getMap()).build();
+		return Response.ok(reservationManager.getMap().values()).build();
 	}
 
 	@GET
@@ -44,77 +46,27 @@ public class ReservationEndpoint {
 			Reservation reservation = reservationManager.get(Integer.parseInt(id));
 			return Response.ok(new ReservationDTO(reservation)).build();
 		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
+			return Response.ok(e).status(406).build();
 		} catch (NotFoundException e) {
 			return Response.ok(new JSONObject().put("status", "reservation not found").toString()).status(404).build();
 		} catch (Exception e) {
 			return Response.ok(
 					new JSONObject().put("status", e.getMessage())
-							.toString()).status(500).build();
+							.toString()).status(409).build();
 		}
 	}
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response put (
-			@FormParam("sdate") String start,
-			@FormParam("edate") String end,
-			@FormParam("cid") String cid,
-			@FormParam("pid") String pid) {
-
-		if (Objects.equals(start, "") || start == null)
-			return Response.ok(
-							new JSONObject().put("status", "missing arguments 'sdate'").toString())
-					.status(404).build();
-		if (Objects.equals(end, "") || end == null)
-			return Response.ok(
-							new JSONObject().put("status", "missing arguments 'edate'").toString())
-					.status(404).build();
-		if (Objects.equals(cid, "") || cid == null)
-			return Response.ok(
-							new JSONObject().put("status", "missing arguments 'cid'").toString())
-					.status(404).build();
-		if (Objects.equals(pid, "") || pid == null)
-			return Response.ok(
-							new JSONObject().put("status", "missing arguments 'pid'").toString())
-					.status(404).build();
-
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response put (@NotNull Reservation r) {
 		try {
-			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			LocalDate endDate;
-			LocalDate startDate;
-			try {
-				endDate = LocalDate.parse(end, dateTimeFormatter);
-				startDate = LocalDate.parse(start, dateTimeFormatter);
-			} catch (DateTimeException e) {
-				throw new DateException();
-			}
-			Customer customer;
-			Product product;
-
-			try {
-				customer = customerManager.get(Integer.parseInt(cid));
-			} catch (NotFoundException e) {
-				return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
-			}
-			try {
-				product = productManager.get(Integer.parseInt(pid));
-			} catch (NotFoundException e) {
-				return Response.ok(new JSONObject().put("status", "product not found").toString()).status(404).build();
-			}
-
-			ReservationDTO reservation = reservationManager.create(startDate, endDate, customer, product);
-
+			ReservationDTO reservation = reservationManager.create(r);
 			return Response.ok(reservation).build();
-
-		} catch (NumberFormatException | DateException e) {
-			return Response.ok(e).status(500).build();
 		} catch (Exception e) {
-			return Response.ok(
-					new JSONObject().put("status", e.getMessage())
-							.toString()).status(500).build();
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@DELETE
@@ -127,13 +79,13 @@ public class ReservationEndpoint {
 			reservationManager.delete(t);
 			return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
 		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
+			return Response.ok(e).status(406).build();
 		} catch (NotFoundException e) {
 			return Response.ok(new JSONObject().put("status", "reservation not found").toString()).status(404).build();
 		} catch (Exception e) {
 			return Response.ok(
 					new JSONObject().put("status", e.getMessage())
-							.toString()).status(500).build();
+							.toString()).status(409).build();
 		}
 	}
 
@@ -146,20 +98,20 @@ public class ReservationEndpoint {
 			int t = newReservation.reservationID;
 			Reservation res = reservationManager.modify(t,
 					(Reservation current) -> current
-							.switchCustomer(customerManager.get(newReservation.customerID))
+							.switchCustomer((Customer) customerManager.get(newReservation.customerID))
 							.setEndDate(newReservation.endDate)
 							.setStartDate(newReservation.startDate)
 							.switchProduct(productManager.get(newReservation.productID)));
 
 			return Response.ok(new ReservationDTO(res)).build();
 		} catch (NumberFormatException e) {
-			return Response.ok(e).status(500).build();
+			return Response.ok(e).status(406).build();
 		} catch (NotFoundException e) {
 			return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
 		} catch (Exception e) {
 			return Response.ok(
 					new JSONObject().put("status", e.getMessage())
-							.toString()).status(500).build();
+							.toString()).status(409).build();
 		}
 	}
 

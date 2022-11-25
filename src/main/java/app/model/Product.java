@@ -1,6 +1,8 @@
 package app.model;
 
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,11 +11,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement
 public class Product {
 
+	@XmlElement
 	private int productID;
+
+	@XmlElement
 	private double price;
 
+	@XmlElement
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Product (double price) {

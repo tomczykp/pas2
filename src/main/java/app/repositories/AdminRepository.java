@@ -1,16 +1,13 @@
 package app.repositories;
 
 import app.model.Administrator;
-import app.model.Customer;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.criteria.CriteriaBuilder;
-
 import java.util.Map;
 import java.util.Objects;
 
 @ApplicationScoped
-public class CustomerRepository extends InMemoryRepository<Integer, Customer> {
+public class AdminRepository extends InMemoryRepository<Integer, Administrator> {
 
     @PostConstruct
     public void init() {
@@ -20,13 +17,13 @@ public class CustomerRepository extends InMemoryRepository<Integer, Customer> {
     private Integer counter;
 
     @Override
-    public Customer insert (Customer v) throws Exception {
-        for (Map.Entry<Integer, Customer> i : getMap().entrySet()) {
+    public Administrator insert (Administrator v) throws Exception {
+        for (Map.Entry<Integer, Administrator> i : getMap().entrySet()) {
             if (Objects.equals(i.getValue().getUsername(), v.getUsername())) {
                 throw new Exception("Username already exist");
             }
         }
-        v.setCustomerID(counter);
+        v.setAdministratorID(counter);
         return insert(counter++, v);
     }
 }

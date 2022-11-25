@@ -1,33 +1,45 @@
 package app.model;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement
 public class Customer {
 
-	private int customerID;
-
+	@XmlElement
 	private String username;
 
+	@XmlElement
 	private String password;
 
+	@XmlElement
+	private CustomerType type;
+
+	@XmlElement
+	private int customerID;
+
+	@XmlElement
 	private String email;
 
+	@XmlElement
 	private boolean isActive;
 
+	@XmlElement
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Customer () {}
 
 	public Customer (String u, String e, String p) {
 		email = e;
+		isActive = true;
 		username = u;
 		password = p;
-		isActive = true;
+		type = CustomerType.CUSTOMER;
 	}
 
 	public List<Reservation> getReservations () {
@@ -58,7 +70,7 @@ public class Customer {
 
 		return new EqualsBuilder()
 				.append(customerID, customer.customerID)
-				.append(username, customer.username)
+				.append(username, customer.getUsername())
 				.append(email, customer.email).isEquals();
 	}
 
@@ -83,24 +95,6 @@ public class Customer {
 		return this;
 	}
 
-	public String getUsername () {
-		return username;
-	}
-
-	public Customer setPassword (String password) {
-		this.password = password;
-		return this;
-	}
-
-	public Customer setUsername (String username) {
-		this.username = username;
-		return this;
-	}
-
-	public String getPassword () {
-		return password;
-	}
-
 	public String getEmail () {
 		return email;
 	}
@@ -119,4 +113,27 @@ public class Customer {
 		return this;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public CustomerType getType() {
+		return type;
+	}
+
+	public void setType(CustomerType type) {
+		this.type = type;
+	}
 }
