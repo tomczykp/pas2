@@ -1,7 +1,6 @@
 package app.endpoints;
 
 import app.dto.CustomerDTO;
-import app.dto.ReservationDTO;
 import app.exceptions.NotFoundException;
 import app.managers.CustomerManager;
 import app.model.Customer;
@@ -55,10 +54,10 @@ public class CustomerEndpoint {
 		}
 	}
 
-	private List<ReservationDTO> mapDTO (List<Reservation> reservations) {
-		List<ReservationDTO> res = new ArrayList<>();
+	private List<Reservation> mapDTO (List<Reservation> reservations) {
+		List<Reservation> res = new ArrayList<>();
 		for (Reservation r : reservations)
-			res.add(new ReservationDTO(r));
+			res.add(r);
 		return res;
 	}
 

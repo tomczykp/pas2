@@ -1,6 +1,5 @@
 package app.repositories;
 
-import app.model.Customer;
 import app.model.Moderator;
 import jakarta.annotation.PostConstruct;
 

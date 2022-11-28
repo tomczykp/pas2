@@ -7,8 +7,8 @@ public class ReservationBean {
     private int reservationID;
     private String startDate;
     private String endDate;
-    private JSONObject customer;
-    private JSONObject product;
+    private Integer customer;
+    private Integer product;
 
     public int getReservationID() {
         return reservationID;
@@ -34,19 +34,19 @@ public class ReservationBean {
         this.endDate = endDate;
     }
 
-    public JSONObject getCustomer() {
+    public Integer getCustomer() {
         return customer;
     }
 
-    public void setCustomer(JSONObject customer) {
+    public void setCustomer(Integer customer) {
         this.customer = customer;
     }
 
-    public JSONObject getProduct() {
+    public Integer getProduct() {
         return product;
     }
 
-    public void setProduct(JSONObject product) {
+    public void setProduct(Integer product) {
         this.product = product;
     }
 }

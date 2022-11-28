@@ -4,6 +4,7 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 template="./templates/MainTemplate.xhtml">
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
@@ -13,10 +14,10 @@
         <p>
             <h:outputText value="Chosen client ID: #{chosenID.id}"/>
         </p>
-        <p>START DATE(YYYY-MM-DD)
-            <h:inputText styleClass="datepicker" value="#{productCustomer.reservationBean.startDate}"/>
-            END DATE(YYYY-MM-DD)
-            <h:inputText id="inppassword" value="#{productCustomer.reservationBean.endDate}"/>
+        <p>START DATE
+            <h:inputText value="#{productCustomer.reservationBean.startDate}" required="true" requiredMessage="Start Date cannot be empty!"/>
+            END DATE
+            <h:inputText value="#{productCustomer.reservationBean.endDate}" required="true" requiredMessage="End Date cannot be empty!"/>
         </p>
         <h:dataTable id="table" value="#{productCustomer.products}" var="products">
             <f:facet name="header">PRODUCTS</f:facet>
@@ -29,10 +30,34 @@
                 <h:outputText value='#{products.get("price")}'/>
             </h:column>
             <h:column>
-                <h:commandLink value="Book" action='#{productCustomer.createReservation(chosenID.id, products.get("productID"))}'/>
+                <h:commandLink value="Book" actionListener='#{productCustomer.fillReservationArray(chosenID.id)}' action='#{productCustomer.createReservation(chosenID.id, products.get("productID"))}'/>
             </h:column>
         </h:dataTable>
-        <h:outputLink value="administrator.xhtml">Back</h:outputLink>
     </h:form>
+    <h:form>
+        <h:dataTable id="res" value="#{productCustomer.reservations}" var = "res">
+            <f:facet name="header">CLIENT #{chosenID.id} RESERVATIONS</f:facet>
+            <h:column>
+                <f:facet name="header">RESERVATION ID</f:facet>
+                <h:outputText value='#{res.get("reservationID")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">PRODUCT ID</f:facet>
+                <h:outputText value='#{res.get("product")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">START DATE</f:facet>
+                <h:outputText value='#{res.get("startDate")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">END DATE</f:facet>
+                <h:outputText value='#{res.get("endDate")}'/>
+            </h:column>
+            <h:column>
+                <h:commandLink value="Delete" action='#{productCustomer.delete(res.get("reservationID"), chosenID.id)}'/>
+            </h:column>
+        </h:dataTable>
+    </h:form>
+    <h:outputLink value="customer.xhtml">Back</h:outputLink>
     </ui:define>
 </ui:composition>

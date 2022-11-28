@@ -4,7 +4,6 @@ import app.FunctionThrows;
 import app.dto.CustomerDTO;
 import app.dto.ModeratorDTO;
 import app.exceptions.NotFoundException;
-import app.exceptions.UnauthorizedActionException;
 import app.model.Customer;
 import app.model.CustomerType;
 import app.model.Moderator;

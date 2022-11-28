@@ -4,35 +4,32 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:p="http://xmlns.jcp.org/jsf/html"
                 template="./templates/MainTemplate.xhtml">
-    <f:view>
-        <f:event type="preRenderView" listener="#{product.productReservations(chosenID.id)}"/>
-    </f:view>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
     <h:form>
-        <h:dataTable id="table" value="#{product.reservation}" var="r">
+        <h:dataTable id="table" value="#{product.productReservations(chosenID.id)}" var="res">
             <f:facet name="header">RESERVATIONS FOR PRODUCT #{chosenID.id}</f:facet>
             <h:column>
-                <f:facet name="header">ID</f:facet>
-                <h:outputText value='#{r.get("reservationID")}'/>
+                <f:facet name="header">RESERVATION ID</f:facet>
+                <h:outputText value='#{res.get("reservationID")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">CUSTOMER ID</f:facet>
-                <h:outputText value='#{r.get("customerID")}'/>
+                <f:facet name="header">CLIENT ID</f:facet>
+                <h:outputText value='#{res.get("customer")}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">START DATE</f:facet>
-                <h:outputText value='#{r.get("startDate")}'/>
+                <h:outputText value='#{res.get("startDate")}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">END DATE</f:facet>
-                <h:outputText value='#{r.get("endDate")}'/>
+                <h:outputText value='#{res.get("endDate")}'/>
             </h:column>
         </h:dataTable>
     </h:form>
+    <h:outputLink value="product.xhtml">Back</h:outputLink>
     </ui:define>
 </ui:composition>

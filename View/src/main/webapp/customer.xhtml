@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/html"
+                template="./templates/MainTemplate.xhtml">
+    <ui:define name="left">
+        <ui:include src="./templates/menu.xhtml"/>
+    </ui:define>
+    <ui:define name="content">
+    <h:form id="abc" >
+        <p>USERNAME
+            <h:inputText id="inpusername" value="#{customer.beanCustomer.username}" required="true" requiredMessage="Username cannot be empty!" maxlength="15"/>
+            PASSWORD
+            <h:inputSecret id="inppassword" value="#{customer.beanCustomer.password}" maxlength="15"
+                           required="true" requiredMessage="Password cannot be empty!"/>
+            EMAIL
+            <h:inputText id="inpemail" value="#{customer.beanCustomer.email}" required="true" requiredMessage="Email cannot be empty!"/>
+            <h:commandLink value="Create" action="#{customer.createCustomer()}"/>
+        </p>
+    </h:form>
+    <h:form id="efg" >
+        <p:dataTable id="table" value="#{customer.customers}" var="customers">
+            <f:facet name="header">CUSTOMER TABLE</f:facet>
+            <h:column>
+                <f:facet name="header">USERNAME</f:facet>
+                <h:outputText value='#{customers.get("username")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">EMAIL</f:facet>
+                <h:inputText value='#{customer.email}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
+                <h:outputText value='#{customers.get("email")}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">ACTIVE</f:facet>
+                <h:outputText value='#{customers.get("active")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">ID</f:facet>
+                <h:outputText value='#{customers.get("customerID")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">ACTIVATE</f:facet>
+                <h:commandLink value="Activate" action='#{customer.updateCustomer(customers.get("customerID"), true)}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">DEACTIVATE</f:facet>
+                <h:commandLink value="Deactivate" action='#{customer.updateCustomer(customers.get("customerID"), false)}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">EDIT</f:facet>
+                <h:commandLink value = "EDIT" action='#{customer.edit(customers.get("customerID"))}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
+                <h:commandLink value = "SUBMIT" action='#{customer.update(customers.get("customerID"))}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">BOOK</f:facet>
+                <h:commandLink value="Book" action="productCustomer.xhtml" actionListener='#{chosenID.bindValue(customers.get("customerID"))}' rendered='#{customer.isActive(customers.get("customerID"))}'/>
+            </h:column>
+        </p:dataTable>
+    </h:form>
+    </ui:define>
+</ui:composition>

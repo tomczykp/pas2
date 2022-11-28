@@ -12,8 +12,8 @@
     <ui:define name="content">
     <h:form>
         <p>PRICE
-            <h:inputText id="inputprice" value="#{product.productBean.price}"/>
-            <h:commandButton value="Create" update="table" onclick="#{product.createProduct()}"/>
+            <h:inputText id="inputprice" value="#{product.productBean.price}" required="true" requiredMessage="Price cannot be empty!"/>
+            <h:commandLink value="Create" action="#{product.createProduct()}"/>
         </p>
     </h:form>
     <h:form>
@@ -25,12 +25,20 @@
             </h:column>
             <h:column>
                 <f:facet name="header">PRICE</f:facet>
-                <h:outputText value='#{p.get("price")}'/>
+                <h:inputText value='#{product.updatePrice}' rendered='#{product.getEditable(p.get("productID"))}'/>
+                <h:outputText value='#{p.get("price")}' rendered='#{!product.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>
+                <f:facet name="header">DELETE</f:facet>
                 <h:commandLink value="Delete" action='#{product.deleteProduct(p.get("productID"))}'/>
             </h:column>
             <h:column>
+                <f:facet name="header">EDIT</f:facet>
+                <h:commandLink value = "EDIT" action='#{product.edit(p.get("productID"))}' rendered='#{!product.getEditable(p.get("productID"))}'/>
+                <h:commandLink value = "SUBMIT" action='#{product.update(p.get("productID"))}' rendered='#{product.getEditable(p.get("productID"))}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">RESERVATION INFO</f:facet>
                 <h:commandLink value="Rservation info" action="productReservation.xhtml" actionListener='#{chosenID.bindValue(p.get("productID"))}'/>
             </h:column>
         </h:dataTable>

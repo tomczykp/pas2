@@ -3,19 +3,19 @@ package app.endpoints;
 import app.dto.AdministratorDTO;
 import app.dto.CustomerDTO;
 import app.dto.ModeratorDTO;
-import app.dto.ReservationDTO;
+import app.model.Administrator;
+import app.model.Customer;
+import app.model.Moderator;
+import app.model.Reservation;
 import app.exceptions.NotFoundException;
 import app.managers.AdministratorManager;
-import app.model.*;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,10 +133,10 @@ public class AdministratorEndpoint {
         }
     }
 
-    private List<ReservationDTO> mapDTO (List<Reservation> reservations) {
-        List<ReservationDTO> res = new ArrayList<>();
+    private List<Reservation> mapDTO (List<Reservation> reservations) {
+        List<Reservation> res = new ArrayList<>();
         for (Reservation r : reservations)
-            res.add(new ReservationDTO(r));
+            res.add(r);
         return res;
     }
 

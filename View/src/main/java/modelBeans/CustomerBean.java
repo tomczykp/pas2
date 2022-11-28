@@ -77,4 +77,9 @@ public class CustomerBean implements Serializable {
     public void setReservations(JSONArray reservations) {
         this.reservations = reservations;
     }
+    public void clearFields() {
+        this.setUsername("");
+        this.setEmail("");
+        this.setPassword("");
+    }
 }

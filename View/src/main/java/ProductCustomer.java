@@ -1,5 +1,6 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import modelBeans.ProductBean;
 import modelBeans.ReservationBean;
@@ -13,24 +14,27 @@ import java.io.Serializable;
 @ManagedBean
 @ViewScoped
 public class ProductCustomer implements Serializable {
-    private Integer customerID;
     private JSONArray products;
-    private JSONObject customer;
+    private JSONArray reservations;
     private final RestMethods restMethods;
-    private ProductBean productBean;
     private ReservationBean reservationBean;
     private String reservationPrefix = "http://localhost:8081/rest/api/reservation";
     private String productPrefix = "http://localhost:8081/rest/api/product";
-    private String adminPrefix = "http://localhost:8081/rest/api/administrator/";
+
+    @Inject
+    private ChosenID chosenID;
 
     public ProductCustomer() {
         restMethods = new RestMethods();
-        productBean = new ProductBean();
         reservationBean = new ReservationBean();
     }
 
-
     @PostConstruct
+    public void innit() {
+        fillArray();
+        fillReservationArray(chosenID.getId());
+    }
+
     public void fillArray() {
         JSONArray arr = restMethods.getAll(productPrefix);
         if (arr != null) {
@@ -39,18 +43,18 @@ public class ProductCustomer implements Serializable {
     }
 
     public void createReservation(Integer clientId, Integer productId) {
-        JSONObject customer = restMethods.getOne(adminPrefix + "customer/" + clientId);
-        JSONObject product = restMethods.getOne(productPrefix + "/" + productId);
-        restMethods.createReservation(reservationBean.getStartDate(), reservationBean.getEndDate(), customer, product, reservationPrefix);
+        restMethods.createReservation(reservationBean.getStartDate(), reservationBean.getEndDate(), clientId, productId, reservationPrefix);
         this.fillArray();
+        this.fillReservationArray(clientId);
     }
 
-    public Integer getCustomerID() {
-        return customerID;
+    public void fillReservationArray(Integer clientId) {
+        this.reservations = restMethods.getAll(reservationPrefix + "/client/" + clientId);
     }
 
-    public void setCustomerID(Integer customerID) {
-        this.customerID = customerID;
+    public void delete(Integer id, Integer clientId) {
+        restMethods.delete(reservationPrefix + "/" + id);
+        fillReservationArray(clientId);
     }
 
     public JSONArray getProducts() {
@@ -61,27 +65,19 @@ public class ProductCustomer implements Serializable {
         this.products = products;
     }
 
-    public JSONObject getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(JSONObject customer) {
-        this.customer = customer;
-    }
-
-    public ProductBean getProductBean() {
-        return productBean;
-    }
-
-    public void setProductBean(ProductBean productBean) {
-        this.productBean = productBean;
-    }
-
     public ReservationBean getReservationBean() {
         return reservationBean;
     }
 
     public void setReservationBean(ReservationBean reservationBean) {
         this.reservationBean = reservationBean;
+    }
+
+    public JSONArray getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(JSONArray reservations) {
+        this.reservations = reservations;
     }
 }

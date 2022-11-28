@@ -1,10 +1,8 @@
 package app.repositories;
 
-import app.model.Administrator;
 import app.model.Customer;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.util.Map;
 import java.util.Objects;

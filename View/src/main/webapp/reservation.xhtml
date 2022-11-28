@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="./templates/MainTemplate.xhtml">
+    <ui:define name="left">
+        <ui:include src="./templates/menu.xhtml"/>
+    </ui:define>
+    <ui:define name="content">
+        <h:form>
+            <h:dataTable id="table" value="#{reservation.reservations}" var="res">
+                <f:facet name="header">LIST OF RESERVATIONS</f:facet>
+                <h:column>
+                    <f:facet name="header">RESERVATION ID</f:facet>
+                    <h:outputText value='#{res.get("reservationID")}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">CLIENT ID</f:facet>
+                    <h:inputText value='#{reservation.updateCustomerID}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("customer")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">PRODUCT ID</f:facet>
+                    <h:inputText value='#{reservation.updateProductID}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("product")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">START DATE</f:facet>
+                    <h:inputText value='#{reservation.updateStartDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("startDate")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">END DATE</f:facet>
+                    <h:inputText value='#{reservation.updateEndDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("endDate")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">EDIT</f:facet>
+                    <h:commandLink value = "EDIT" action='#{reservation.edit(res.get("reservationID"))}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:commandLink value = "SUBMIT" action='#{reservation.update(res.get("reservationID"))}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">DELETE</f:facet>
+                    <h:commandLink value="Delete" action='#{reservation.deleteF(res.get("reservationID"))}'/>
+                </h:column>
+            </h:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

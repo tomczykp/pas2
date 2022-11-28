@@ -1,5 +1,8 @@
 package app.model;
 
+import app.exceptions.NotFoundException;
+import app.repositories.CustomerRepository;
+import app.repositories.ProductRepository;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -21,18 +24,34 @@ public class Reservation {
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	private LocalDate endDate;
 
-	public Customer getCustomer () {
+	@XmlElement
+	private Integer customer;
+
+	@XmlElement
+	private Integer product;
+
+	public Integer getCustomer() {
 		return customer;
 	}
+
+	public Integer getProduct() {
+		return product;
+	}
+
+	public void setCustomer(Integer customer) {
+		this.customer = customer;
+	}
+
+	public void setProduct(Integer product) {
+		this.product = product;
+	}
+
 
 	public Reservation setId (int id) {
 		reservationID = id;
 		return this;
 	}
 
-	public Product getProduct () {
-		return product;
-	}
 
 	public Reservation setStartDate (LocalDate startDate) {
 		this.startDate = startDate;
@@ -44,26 +63,11 @@ public class Reservation {
 		return this;
 	}
 
-	public Reservation setCustomer (Customer customer) {
-		this.customer = customer;
-		return this;
-	}
-
-	public Reservation setProduct (Product product) {
-		this.product = product;
-		return this;
-	}
-
-	@XmlElement
-	private Customer customer;
-	@XmlElement
-	private Product product;
-
-	public Reservation switchCustomer (Customer nCustomer) {
-		Customer current = customer;
+	public Reservation switchCustomer (Customer nCustomer, CustomerRepository repository) throws NotFoundException {
+		Customer current = repository.get(this.getCustomer());
 		nCustomer.getReservations().remove(this);
 		current.getReservations().add(this);
-		customer = nCustomer;
+		this.setCustomer(nCustomer.getCustomerID());
 		return this;
 	}
 
@@ -77,25 +81,23 @@ public class Reservation {
 		return false;
 	}
 
-	public Reservation switchProduct (Product p) throws Exception {
+	public Reservation switchProduct (Product p, ProductRepository repository) throws Exception {
 
 		if (overlapingReservations(p))
 			throw new Exception("cannot switch product, already reserved at this period");
 
-		Product curr = product;
+		Product curr = repository.get(this.getProduct());
 		curr.getReservations().remove(this);
 		p.getReservations().add(this);
-		product = p;
+		this.setProduct(p.getProductID());
 		return this;
 	}
 
-	public Reservation (LocalDate startDate, LocalDate endDate, Customer customer, Product product) {
+	public Reservation (LocalDate startDate, LocalDate endDate, Integer customer, Integer product) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.customer = customer;
 		this.product = product;
-		product.addReservation(this);
-		customer.addReservation(this);
 	}
 
 	public Reservation () {}

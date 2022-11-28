@@ -81,7 +81,7 @@ public class RestMethods {
         }
     }
 
-    public void updateCustomer(JSONObject customer, String endpointURL) {
+    public void update(JSONObject customer, String endpointURL) {
         if (customer == null) {
             return;
         }
@@ -97,7 +97,7 @@ public class RestMethods {
         }
     }
 
-    public void createReservation(String startDate, String endDate, JSONObject customer, JSONObject product, String endpointURL) {
+    public void createReservation(String startDate, String endDate, Integer customer, Integer product, String endpointURL) {
         if (customer == null || product == null || startDate == null || startDate.equals("")) {
             return;
         }
@@ -139,7 +139,7 @@ public class RestMethods {
         }
     }
 
-    public void delete(Integer id, String endpointURL) {
+    public void delete(String endpointURL) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpUriRequest request = RequestBuilder.delete()
                     .setUri(endpointURL)

@@ -1,7 +1,6 @@
 package app.endpoints;
 
 import app.dto.ProductDTO;
-import app.dto.ReservationDTO;
 import app.exceptions.NotFoundException;
 import app.managers.ProductManager;
 import app.model.Product;
@@ -12,7 +11,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
-import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,10 +41,10 @@ public class ProductEndpoint {
 		}
 	}
 
-	private List<ReservationDTO> mapDTO (List<Reservation> reservations) {
-		List<ReservationDTO> res = new ArrayList<>();
+	private List<Reservation> mapDTO (List<Reservation> reservations) {
+		List<Reservation> res = new ArrayList<>();
 		for (Reservation r : reservations)
-			res.add(new ReservationDTO(r));
+			res.add(r);
 		return res;
 	}
 
@@ -109,7 +107,8 @@ public class ProductEndpoint {
 		}
 	}
 
-	@PATCH
+	@PUT
+	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update (ProductDTO p) {

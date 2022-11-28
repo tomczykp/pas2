@@ -1,11 +1,10 @@
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 
-import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 
 @Named
-@ApplicationScoped
+@SessionScoped
 public class ChosenID implements Serializable {
     private Integer id;
 
