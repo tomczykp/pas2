@@ -52,7 +52,7 @@ public class ReservationManager {
 				throw new Exception("cannot remove already started reservation");
 		}
 		customerRepository.get(reservation.getCustomer()).getReservations().remove(reservation);
-		productRepository.get(reservation.getCustomer()).getReservations().remove(reservation);
+		productRepository.get(reservation.getProduct()).getReservations().remove(reservation);
 		reservationRepository.delete(id);
 	}
 

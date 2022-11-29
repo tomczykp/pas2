@@ -14,9 +14,6 @@ import java.time.LocalDate;
 public class Reservation {
 	@XmlElement
 	private int reservationID;
-	public int getReservationID () {
-		return reservationID;
-	}
 	@XmlElement
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	private LocalDate startDate;
@@ -30,6 +27,10 @@ public class Reservation {
 	@XmlElement
 	private Integer product;
 
+
+	public int getReservationID() {
+		return reservationID;
+	}
 	public Integer getCustomer() {
 		return customer;
 	}
@@ -52,6 +53,9 @@ public class Reservation {
 		return this;
 	}
 
+	public void setReservationID(int reservationID) {
+		this.reservationID = reservationID;
+	}
 
 	public Reservation setStartDate (LocalDate startDate) {
 		this.startDate = startDate;
@@ -65,19 +69,21 @@ public class Reservation {
 
 	public Reservation switchCustomer (Customer nCustomer, CustomerRepository repository) throws NotFoundException {
 		Customer current = repository.get(this.getCustomer());
-		nCustomer.getReservations().remove(this);
-		current.getReservations().add(this);
+		current.getReservations().remove(this);
+		nCustomer.addReservation(this);
 		this.setCustomer(nCustomer.getCustomerID());
 		return this;
 	}
 
 	private boolean overlapingReservations (Product p) {
 		for (Reservation r : p.getFutureReservations())
-			if (r.startDate.isEqual(startDate) || r.endDate.isEqual(endDate)
-					|| (r.startDate.isAfter(startDate) && r.startDate.isBefore(endDate))
-					|| (r.endDate.isAfter(startDate) && r.endDate.isBefore(endDate))
-					|| (r.startDate.isBefore(startDate) && r.endDate.isAfter(endDate)))
-				return true;
+			if (r.getProduct() != p.getProductID()) {
+				if (r.startDate.isEqual(startDate) || r.endDate.isEqual(endDate)
+						|| (r.startDate.isAfter(startDate) && r.startDate.isBefore(endDate))
+						|| (r.endDate.isAfter(startDate) && r.endDate.isBefore(endDate))
+						|| (r.startDate.isBefore(startDate) && r.endDate.isAfter(endDate)))
+					return true;
+			}
 		return false;
 	}
 

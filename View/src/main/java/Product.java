@@ -50,7 +50,7 @@ public class Product implements Serializable {
 
     public void update(Integer id) {
         JSONObject obj = restMethods.getOne(productPrefix + "/" + id);
-        if (this.updatePrice <= 0) {
+        if (this.updatePrice <= 0 || this.updatePrice == null) {
             this.editable.replace(id, false);
             this.isUpdating = false;
             return;
@@ -101,8 +101,9 @@ public class Product implements Serializable {
 //        this.reservations = reservations;
 //    }
 
-    public void edit(Integer id) {
+    public void edit(Integer id, Double price) {
         if (!isUpdating) {
+            this.updatePrice = price;
             this.editable.replace(id, true);
             isUpdating = true;
         }

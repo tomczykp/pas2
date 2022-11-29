@@ -25,7 +25,7 @@
             </h:column>
             <h:column>
                 <f:facet name="header">PRICE</f:facet>
-                <h:inputText value='#{product.updatePrice}' rendered='#{product.getEditable(p.get("productID"))}'/>
+                <h:inputText value='#{product.updatePrice}' rendered='#{product.getEditable(p.get("productID"))}' required="true" requiredMessage="Cannot change to empty values"/>
                 <h:outputText value='#{p.get("price")}' rendered='#{!product.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>
@@ -34,7 +34,7 @@
             </h:column>
             <h:column>
                 <f:facet name="header">EDIT</f:facet>
-                <h:commandLink value = "EDIT" action='#{product.edit(p.get("productID"))}' rendered='#{!product.getEditable(p.get("productID"))}'/>
+                <h:commandLink value = "EDIT" action='#{product.edit(p.get("productID"), p.get("price"))}' rendered='#{!product.getEditable(p.get("productID"))}'/>
                 <h:commandLink value = "SUBMIT" action='#{product.update(p.get("productID"))}' rendered='#{product.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>

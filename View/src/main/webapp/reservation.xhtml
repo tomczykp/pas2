@@ -18,27 +18,27 @@
                 </h:column>
                 <h:column>
                     <f:facet name="header">CLIENT ID</f:facet>
-                    <h:inputText value='#{reservation.updateCustomerID}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:inputText value='#{reservation.updateCustomerID}' rendered='#{reservation.getEditable(res.get("reservationID"))}' required="true" requiredMessage="Cannot change to empty values"/>
                     <h:outputText value='#{res.get("customer")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">PRODUCT ID</f:facet>
-                    <h:inputText value='#{reservation.updateProductID}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:inputText value='#{reservation.updateProductID}' rendered='#{reservation.getEditable(res.get("reservationID"))}' required="true" requiredMessage="Cannot change to empty values"/>
                     <h:outputText value='#{res.get("product")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">START DATE</f:facet>
-                    <h:inputText value='#{reservation.updateStartDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:inputText value='#{reservation.updateStartDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}' required="true" requiredMessage="Cannot change to empty values"/>
                     <h:outputText value='#{res.get("startDate")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">END DATE</f:facet>
-                    <h:inputText value='#{reservation.updateEndDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:inputText value='#{reservation.updateEndDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}' required="true" requiredMessage="Cannot change to empty values"/>
                     <h:outputText value='#{res.get("endDate")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">EDIT</f:facet>
-                    <h:commandLink value = "EDIT" action='#{reservation.edit(res.get("reservationID"))}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:commandLink value = "EDIT" action='#{reservation.edit(res.get("reservationID"), res.get("customer"), res.get("product"), res.get("startDate"), res.get("endDate"))}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
                     <h:commandLink value = "SUBMIT" action='#{reservation.update(res.get("reservationID"))}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>

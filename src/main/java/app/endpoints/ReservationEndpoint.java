@@ -105,9 +105,8 @@ public class ReservationEndpoint {
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update (Reservation newReservation) {
+	public Response update (@NotNull Reservation newReservation) {
 		try {
-
 			int t = newReservation.getReservationID();
 			Reservation res = reservationManager.modify(t,
 					(Reservation current) -> current
@@ -115,12 +114,11 @@ public class ReservationEndpoint {
 							.setEndDate(newReservation.getEndDate())
 							.setStartDate(newReservation.getStartDate())
 							.switchProduct(productManager.get(newReservation.getProduct()), reservationManager.productRepository));
-
 			return Response.ok(res).build();
 		} catch (NumberFormatException e) {
 			return Response.ok(e).status(406).build();
 		} catch (NotFoundException e) {
-			return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
+			return Response.ok(new JSONObject().put("status", "not found").toString()).status(404).build();
 		} catch (Exception e) {
 			return Response.ok(
 					new JSONObject().put("status", e.getMessage())

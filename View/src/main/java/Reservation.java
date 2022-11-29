@@ -45,23 +45,15 @@ public class Reservation implements Serializable {
 
     public void deleteF(Integer id) {
         rest.delete(reservationPrefix + "/forced/" + id);
-        fillArray();
+        this.fillArray();
     }
 
     public void update(Integer id) {
         JSONObject obj = rest.getOne(reservationPrefix + "/" + id);
-        if (this.updateCustomerID > 0 || this.updateCustomerID != null) {
-            obj.put("customer", this.getUpdateCustomerID());
-        }
-        if (this.updateProductID > 0 || this.updateProductID != null) {
-            obj.put("product", this.getUpdateProductID());
-        }
-        if (!this.updateStartDate.isEmpty() || this.updateStartDate != null) {
-            obj.put("startDate", this.getUpdateStartDate());
-        }
-        if(!this.updateEndDate.isEmpty() || this.updateEndDate != null) {
-            obj.put("endDate", this.getUpdateEndDate());
-        }
+        obj.put("customer", this.getUpdateCustomerID());
+        obj.put("product", this.getUpdateProductID());
+        obj.put("startDate", this.getUpdateStartDate());
+        obj.put("endDate", this.getUpdateEndDate());
         rest.update(obj, reservationPrefix + "/update");
         this.fillArray();
         this.setUpdateCustomerID(0);
@@ -111,8 +103,12 @@ public class Reservation implements Serializable {
         this.updateEndDate = updateEndDate;
     }
 
-    public void edit(Integer id) {
+    public void edit(Integer id, Integer customerID, Integer productID, String sDate, String eDate) {
         if (!isUpdating) {
+            this.updateCustomerID = customerID;
+            this.updateProductID = productID;
+            this.updateStartDate = sDate;
+            this.updateEndDate = eDate;
             this.editable.replace(id, true);
             this.isUpdating = true;
         }

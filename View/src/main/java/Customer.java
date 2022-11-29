@@ -49,19 +49,11 @@ public class Customer implements Serializable {
     }
 
     public void updateCustomer(Integer id, boolean active) {
-        JSONObject obj = restMethods.getOne(adminPrefix + "customer/" + id);
         if (active) {
-            if (obj.get("active").toString().equals("true")) {
-                return;
-            }
-            obj.put("active", true);
+            restMethods.put(adminPrefix + id + "/activate");
         } else {
-            if (obj.get("active").toString().equals("false")) {
-                return;
-            }
-            obj.put("active", false);
+            restMethods.put(adminPrefix + id + "/deactivate");
         }
-        restMethods.update(obj,  adminPrefix + "update/customer");
         this.fillArray();
     }
 
@@ -79,8 +71,9 @@ public class Customer implements Serializable {
         this.isUpdating = false;
     }
 
-    public void edit(Integer id) {
+    public void edit(Integer id, String email) {
         if (!isUpdating) {
+            this.email = email;
             this.editable.replace(id, true);
             isUpdating = true;
         }

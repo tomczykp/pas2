@@ -97,6 +97,17 @@ public class RestMethods {
         }
     }
 
+    public void put(String endpointURL) {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            HttpUriRequest request = RequestBuilder.put()
+                    .setUri(endpointURL)
+                    .build();
+            httpclient.execute(request);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void createReservation(String startDate, String endDate, Integer customer, Integer product, String endpointURL) {
         if (customer == null || product == null || startDate == null || startDate.equals("")) {
             return;

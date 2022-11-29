@@ -30,7 +30,7 @@
             </h:column>
             <h:column>
                 <f:facet name="header">EMAIL</f:facet>
-                <h:inputText value='#{customer.email}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
+                <h:inputText value='#{customer.email}' rendered='#{customer.getEditable(customers.get("customerID"))}' required="true" requiredMessage="Cannot change to empty values"/>
                 <h:outputText value='#{customers.get("email")}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
@@ -51,7 +51,7 @@
             </h:column>
             <h:column>
                 <f:facet name="header">EDIT</f:facet>
-                <h:commandLink value = "EDIT" action='#{customer.edit(customers.get("customerID"))}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
+                <h:commandLink value = "EDIT" action='#{customer.edit(customers.get("customerID"), customers.get("email"))}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
                 <h:commandLink value = "SUBMIT" action='#{customer.update(customers.get("customerID"))}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
