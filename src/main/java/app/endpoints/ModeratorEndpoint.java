@@ -188,7 +188,7 @@ public class ModeratorEndpoint {
     @Path("/update/customer")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCustomer (CustomerDTO newCustomer) {
+    public Response updateCustomer (@NotNull CustomerDTO newCustomer) {
         try {
             int t = newCustomer.customerID;
             Customer res = moderatorManager.modifyCustomer(t,

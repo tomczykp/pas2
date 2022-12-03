@@ -27,7 +27,7 @@ public class Product implements Serializable {
     private String reservationPrefix = "http://localhost:8081/rest/api/reservation";
 //    private JSONArray reservations;
 
-    private Map<Integer, Boolean> editable = new HashMap<>();
+    private final Map<Integer, Boolean> editable = new HashMap<>();
     private boolean isUpdating = false;
 
     public Product() {
@@ -48,29 +48,27 @@ public class Product implements Serializable {
         }
     }
 
-    public void update(Integer id) {
+    public String update(Integer id) {
         JSONObject obj = restMethods.getOne(productPrefix + "/" + id);
-        if (this.updatePrice <= 0 || this.updatePrice == null) {
-            this.editable.replace(id, false);
-            this.isUpdating = false;
-            return;
-        }
         obj.put("price", this.getUpdatePrice());
         restMethods.update(obj, productPrefix + "/update");
         this.fillArray();
         this.isUpdating = false;
+        return "submitProduct";
     }
 
-    public void createProduct() {
+    public String createProduct() {
         restMethods.createProduct(productBean.getPrice(), productPrefix);
         this.fillArray();
         this.productBean.setPrice(0);
+        return "createProduct";
     }
 
-    public void deleteProduct(Integer id) {
+    public String deleteProduct(Integer id) {
         restMethods.delete(productPrefix + "/" + id);
         this.fillArray();
         this.productBean.setPrice(0);
+        return "deleteProduct";
     }
 
     public JSONArray productReservations(Integer id) {
@@ -92,14 +90,6 @@ public class Product implements Serializable {
     public void setProducts(JSONArray products) {
         this.products = products;
     }
-
-//    public JSONArray getReservations() {
-//        return reservations;
-//    }
-//
-//    public void setReservations(JSONArray reservations) {
-//        this.reservations = reservations;
-//    }
 
     public void edit(Integer id, Double price) {
         if (!isUpdating) {

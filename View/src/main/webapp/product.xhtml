@@ -4,42 +4,45 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:p="http://xmlns.jcp.org/jsf/html"
                 template="./templates/MainTemplate.xhtml">
+    <ui:define name="top">
+        <p>#{msg["app.app"]}/#{msg["app.menu.products"]}</p>
+    </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
-    <h:form>
-        <p>PRICE
-            <h:inputText id="inputprice" value="#{product.productBean.price}" required="true" requiredMessage="Price cannot be empty!"/>
-            <h:commandLink value="Create" action="#{product.createProduct()}"/>
+    <h:outputScript library="js" name="scripts.js"/>
+    <h:form id="createProduct">
+        <p>${msg["products.price"]}
+            <h:inputText id="inputprice" value="#{product.productBean.price}"/>
+            <h:commandLink onclick="return validatePrice(${msg['validation.price']})" value='${msg["app.create"]}' action='#{product.createProduct()}'/>
         </p>
     </h:form>
-    <h:form>
+    <h:form id="tableForm">
         <h:dataTable id="table" value="#{product.products}" var="p">
-            <f:facet name="header">CUSTOMER TABLE</f:facet>
+            <f:facet name="header">${msg["products.table"]}</f:facet>
             <h:column>
-                <f:facet name="header">ID</f:facet>
+                <f:facet name="header">${msg["app.id"]}</f:facet>
                 <h:outputText value='#{p.get("productID")}'/>
             </h:column>
-            <h:column>
-                <f:facet name="header">PRICE</f:facet>
-                <h:inputText value='#{product.updatePrice}' rendered='#{product.getEditable(p.get("productID"))}' required="true" requiredMessage="Cannot change to empty values"/>
+            <h:column id = "toChange">
+                <f:facet name="header">${msg["products.price"]}</f:facet>
+                <h:inputText value='#{product.updatePrice}' rendered='#{product.getEditable(p.get("productID"))}' id="change"/>
                 <h:outputText value='#{p.get("price")}' rendered='#{!product.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">DELETE</f:facet>
-                <h:commandLink value="Delete" action='#{product.deleteProduct(p.get("productID"))}'/>
+                <f:facet name="header">${msg["app.delete"]}</f:facet>
+                <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{product.deleteProduct(p.get("productID"))}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">EDIT</f:facet>
-                <h:commandLink value = "EDIT" action='#{product.edit(p.get("productID"), p.get("price"))}' rendered='#{!product.getEditable(p.get("productID"))}'/>
-                <h:commandLink value = "SUBMIT" action='#{product.update(p.get("productID"))}' rendered='#{product.getEditable(p.get("productID"))}'/>
+                <f:facet name="header">${msg["app.edit"]}</f:facet>
+                <h:commandLink value = '${msg["app.edit"]}' action='#{product.edit(p.get("productID"), p.get("price"))}' rendered='#{!product.getEditable(p.get("productID"))}'/>
+                <h:commandLink value = '${msg["app.submit"]}' onclick="return validatePrice2(${msg['validation.price']})" action='#{product.update(p.get("productID"))}' rendered='#{product.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">RESERVATION INFO</f:facet>
-                <h:commandLink value="Rservation info" action="productReservation.xhtml" actionListener='#{chosenID.bindValue(p.get("productID"))}'/>
+                <f:facet name="header">${msg["products.resinfo"]}</f:facet>
+                <h:commandLink value='${msg["products.resinfo"]}' action="productReservation.xhtml" actionListener='#{chosenID.bindValue(p.get("productID"))}'/>
             </h:column>
         </h:dataTable>
     </h:form>

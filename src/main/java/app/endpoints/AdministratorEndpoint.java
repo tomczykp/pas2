@@ -256,7 +256,7 @@ public class AdministratorEndpoint {
     @Path("/update/customer")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCustomer (CustomerDTO newCustomer) {
+    public Response updateCustomer (@NotNull CustomerDTO newCustomer) {
         try {
 
             int t = newCustomer.customerID;
@@ -276,5 +276,4 @@ public class AdministratorEndpoint {
                             .toString()).status(409).build();
         }
     }
-
 }

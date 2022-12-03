@@ -5,6 +5,10 @@ import modelBeans.CustomerBean;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestMethods;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.*;
@@ -16,6 +20,9 @@ public class Customer implements Serializable {
 
     private JSONArray customers;
     private String email;
+    private JSONArray foundCustomer;
+    private String chosenName;
+    private boolean visible = false;
     private String adminPrefix = "http://localhost:8081/rest/api/administrator/";
     private final RestMethods restMethods;
     private CustomerBean beanCustomer;
@@ -40,35 +47,30 @@ public class Customer implements Serializable {
         }
     }
 
-    public void createCustomer() {
-        if (beanCustomer.getPassword() == null) {
-            return;
-        }
+    public String createCustomer() {
         restMethods.putCustomer(beanCustomer.getUsername(), beanCustomer.getPassword(), beanCustomer.getEmail(), "CUSTOMER",  adminPrefix + "create/customer");
         this.fillArray();
+        return "createCustomer";
     }
 
-    public void updateCustomer(Integer id, boolean active) {
+    public String updateCustomer(Integer id, boolean active) {
         if (active) {
             restMethods.put(adminPrefix + id + "/activate");
         } else {
             restMethods.put(adminPrefix + id + "/deactivate");
         }
         this.fillArray();
+        return "activateCustomer";
     }
 
-    public void update(Integer id) {
+    public String update(Integer id) {
         JSONObject obj = restMethods.getOne(adminPrefix + "customer/" + id);
-        if (this.getEmail().isEmpty()) {
-            this.editable.replace(id, false);
-            this.isUpdating = false;
-            return;
-        }
         obj.put("email", this.getEmail());
         restMethods.update(obj, adminPrefix + "update/customer");
         this.fillArray();
         this.setEmail("");
         this.isUpdating = false;
+        return "submitCustomer";
     }
 
     public void edit(Integer id, String email) {
@@ -77,6 +79,19 @@ public class Customer implements Serializable {
             this.editable.replace(id, true);
             isUpdating = true;
         }
+    }
+
+    public void findByName() {
+        if (Objects.equals(this.chosenName, "") || this.chosenName == null) {
+            return;
+        }
+        this.foundCustomer = restMethods.findByUsername(this.chosenName, this.adminPrefix + "customers");
+        this.chosenName = "";
+        this.visible = true;
+    }
+
+    public void hide() {
+        this.visible = false;
     }
 
 
@@ -110,6 +125,30 @@ public class Customer implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public JSONArray getFoundCustomer() {
+        return foundCustomer;
+    }
+
+    public void setFoundCustomer(JSONArray foundCustomer) {
+        this.foundCustomer = foundCustomer;
+    }
+
+    public String getChosenName() {
+        return chosenName;
+    }
+
+    public void setChosenName(String chosenName) {
+        this.chosenName = chosenName;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }
 

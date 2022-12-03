@@ -12,8 +12,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
-import java.util.List;
-
 @Path("/reservation")
 public class ReservationEndpoint {
 

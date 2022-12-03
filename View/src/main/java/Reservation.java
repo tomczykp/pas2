@@ -43,12 +43,13 @@ public class Reservation implements Serializable {
         }
     }
 
-    public void deleteF(Integer id) {
-        rest.delete(reservationPrefix + "/forced/" + id);
-        this.fillArray();
+    public String deleteF(Integer id) {
+            rest.delete(reservationPrefix + "/forced/" + id);
+            this.fillArray();
+            return "deleteReservation";
     }
 
-    public void update(Integer id) {
+    public String update(Integer id) {
         JSONObject obj = rest.getOne(reservationPrefix + "/" + id);
         obj.put("customer", this.getUpdateCustomerID());
         obj.put("product", this.getUpdateProductID());
@@ -61,6 +62,7 @@ public class Reservation implements Serializable {
         this.setUpdateStartDate("");
         this.setUpdateEndDate("");
         this.isUpdating = false;
+        return "submitReservation";
     }
 
     public JSONArray getReservations() {

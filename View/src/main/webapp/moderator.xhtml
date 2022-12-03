@@ -5,6 +5,9 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 template="./templates/MainTemplate.xhtml">
+    <ui:define name="top">
+        <p>#{msg["app.app"]}/#{msg["app.menu.moderators"]}</p>
+    </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>

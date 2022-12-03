@@ -6,10 +6,13 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:p="http://xmlns.jcp.org/jsf/html"
                 template="./templates/MainTemplate.xhtml">
+    <ui:define name="top">
+        <p>#{msg["app.app"]}/#{msg["app.menu.main"]}</p>
+    </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
-        <p>REZERWACJA PRODUKTÓW</p>
+        <p>${msg["app.name"]}</p>
     </ui:define>
 </ui:composition>

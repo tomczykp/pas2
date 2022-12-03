@@ -6,6 +6,7 @@ import app.managers.ProductManager;
 import app.model.Product;
 import app.model.Reservation;
 import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -111,7 +112,7 @@ public class ProductEndpoint {
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update (ProductDTO p) {
+	public Response update (@NotNull ProductDTO p) {
 		try {
 
 			int t = p.productID;

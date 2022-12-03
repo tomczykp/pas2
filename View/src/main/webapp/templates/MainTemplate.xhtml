@@ -8,11 +8,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet library="css" name="default.css"/>
         <h:outputStylesheet library="css" name="cssLayout.css"/>
-        <title>Application</title>
+        <title>${msg["app.down"]}</title>
     </h:head>
 
     <h:body>
         <div>
+            <div id = "top">
+                <ui:insert name="top">Top</ui:insert>
+            </div>
             <div id="left">
                 <ui:insert name="left">Left</ui:insert>
             </div>
@@ -20,7 +23,7 @@
                 <ui:insert name="content">Content</ui:insert>
             </div>
             <div id="bottom">
-                <ui:insert name="bottom">APPLICATION TO RESERVE PRODUCTS</ui:insert>
+                <ui:insert name="bottom">${msg["app.down"]}</ui:insert>
             </div>
         </div>
     </h:body>

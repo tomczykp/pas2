@@ -42,19 +42,21 @@ public class ProductCustomer implements Serializable {
         }
     }
 
-    public void createReservation(Integer clientId, Integer productId) {
+    public String createReservation(Integer clientId, Integer productId) {
         restMethods.createReservation(reservationBean.getStartDate(), reservationBean.getEndDate(), clientId, productId, reservationPrefix);
         this.fillArray();
         this.fillReservationArray(clientId);
+        return "book";
     }
 
     public void fillReservationArray(Integer clientId) {
         this.reservations = restMethods.getAll(reservationPrefix + "/client/" + clientId);
     }
 
-    public void delete(Integer id, Integer clientId) {
+    public String delete(Integer id, Integer clientId) {
         restMethods.delete(reservationPrefix + "/" + id);
         fillReservationArray(clientId);
+        return "deletePC";
     }
 
     public JSONArray getProducts() {

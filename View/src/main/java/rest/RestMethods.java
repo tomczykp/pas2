@@ -160,4 +160,18 @@ public class RestMethods {
             throw new RuntimeException(e);
         }
     }
+
+    public JSONArray findByUsername(String name, String endpointURL) {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            HttpUriRequest request = RequestBuilder.get()
+                    .setUri(endpointURL)
+                    .addParameter("username", name)
+                    .build();
+            HttpResponse response = httpclient.execute(request);
+            String responseString = new BasicResponseHandler().handleResponse(response);
+            return new JSONArray(responseString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

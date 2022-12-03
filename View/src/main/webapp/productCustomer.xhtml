@@ -4,29 +4,37 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 template="./templates/MainTemplate.xhtml">
+    <ui:define name="top">
+        <p>#{msg["app.app"]}/#{msg["app.menu.customers"]}/#{msg["app.productCustomer"]}</p>
+    </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
     <h:form>
         <p>
-            <h:outputText value="Chosen client ID: #{chosenID.id}"/>
+            <h:outputText value='#{msg["book.client"]} #{chosenID.id}'/>
         </p>
-        <p>START DATE
-            <h:inputText value="#{productCustomer.reservationBean.startDate}" required="true" requiredMessage="Start Date cannot be empty!"/>
-            END DATE
-            <h:inputText value="#{productCustomer.reservationBean.endDate}" required="true" requiredMessage="End Date cannot be empty!"/>
+        <p>${msg["app.startDate"]} (YYYY-MM-DD)
+            <h:inputText id="start" value="#{productCustomer.reservationBean.startDate}" maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
+                <f:validateRegex pattern="^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"/>
+            </h:inputText>
+            ${msg["app.endDate"]} (YYYY-MM-DD)
+            <h:inputText id="end" value="#{productCustomer.reservationBean.endDate}" maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
+                <f:validateRegex pattern="^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"/>
+            </h:inputText>
+            <h:message for="start" style="color:red"/>
+            <h:message for="end" style="color:red"/>
         </p>
         <h:dataTable id="table" value="#{productCustomer.products}" var="products">
-            <f:facet name="header">PRODUCTS</f:facet>
+            <f:facet name="header">${msg["products.table"]}</f:facet>
             <h:column>
-                <f:facet name="header">ID</f:facet>
+                <f:facet name="header">${msg["app.id"]}</f:facet>
                 <h:outputText value='#{products.get("productID")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">PRICE</f:facet>
+                <f:facet name="header">${msg["products.price"]}</f:facet>
                 <h:outputText value='#{products.get("price")}'/>
             </h:column>
             <h:column>
@@ -36,28 +44,28 @@
     </h:form>
     <h:form>
         <h:dataTable id="res" value="#{productCustomer.reservations}" var = "res">
-            <f:facet name="header">CLIENT #{chosenID.id} RESERVATIONS</f:facet>
+            <f:facet name="header">#{msg["customers.client"]} #{chosenID.id} #{msg["app.main.app_name"]}</f:facet>
             <h:column>
-                <f:facet name="header">RESERVATION ID</f:facet>
+                <f:facet name="header">#{msg["app.id"]}</f:facet>
                 <h:outputText value='#{res.get("reservationID")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">PRODUCT ID</f:facet>
+                <f:facet name="header">#{msg["reservations.product"]}</f:facet>
                 <h:outputText value='#{res.get("product")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">START DATE</f:facet>
+                <f:facet name="header">#{msg["app.startDate"]}</f:facet>
                 <h:outputText value='#{res.get("startDate")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">END DATE</f:facet>
+                <f:facet name="header">#{msg["app.endDate"]}</f:facet>
                 <h:outputText value='#{res.get("endDate")}'/>
             </h:column>
             <h:column>
-                <h:commandLink value="Delete" action='#{productCustomer.delete(res.get("reservationID"), chosenID.id)}'/>
+                <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{productCustomer.delete(res.get("reservationID"), chosenID.id)}'/>
             </h:column>
         </h:dataTable>
     </h:form>
-    <h:outputLink value="customer.xhtml">Back</h:outputLink>
+    <h:outputLink value="customer.xhtml">${msg["app.back"]}</h:outputLink>
     </ui:define>
 </ui:composition>

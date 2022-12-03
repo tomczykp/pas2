@@ -5,31 +5,34 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 template="./templates/MainTemplate.xhtml">
+    <ui:define name="top">
+        <p>#{msg["app.app"]}/#{msg["app.menu.products"]}/#{msg["app.productReservation"]}</p>
+    </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
     <h:form>
         <h:dataTable id="table" value="#{product.productReservations(chosenID.id)}" var="res">
-            <f:facet name="header">RESERVATIONS FOR PRODUCT #{chosenID.id}</f:facet>
+            <f:facet name="header">#{chosenID.id} #{msg["reservations.forproduct"]}</f:facet>
             <h:column>
-                <f:facet name="header">RESERVATION ID</f:facet>
+                <f:facet name="header">#{msg["app.id"]}</f:facet>
                 <h:outputText value='#{res.get("reservationID")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">CLIENT ID</f:facet>
+                <f:facet name="header">#{msg["reservations.client"]}</f:facet>
                 <h:outputText value='#{res.get("customer")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">START DATE</f:facet>
+                <f:facet name="header">#{msg["app.startDate"]}</f:facet>
                 <h:outputText value='#{res.get("startDate")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">END DATE</f:facet>
+                <f:facet name="header">#{msg["app.endDate"]}</f:facet>
                 <h:outputText value='#{res.get("endDate")}'/>
             </h:column>
         </h:dataTable>
     </h:form>
-    <h:outputLink value="product.xhtml">Back</h:outputLink>
+    <h:outputLink value="product.xhtml">#{msg["app.back"]}</h:outputLink>
     </ui:define>
 </ui:composition>

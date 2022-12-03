@@ -6,57 +6,98 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:p="http://xmlns.jcp.org/jsf/html"
                 template="./templates/MainTemplate.xhtml">
+    <ui:define name="top">
+        <p>#{msg["app.app"]}/#{msg["app.menu.customers"]}</p>
+    </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
-    <h:form id="abc" >
-        <p>USERNAME
-            <h:inputText id="inpusername" value="#{customer.beanCustomer.username}" required="true" requiredMessage="Username cannot be empty!" maxlength="15"/>
-            PASSWORD
-            <h:inputSecret id="inppassword" value="#{customer.beanCustomer.password}" maxlength="15"
-                           required="true" requiredMessage="Password cannot be empty!"/>
-            EMAIL
-            <h:inputText id="inpemail" value="#{customer.beanCustomer.email}" required="true" requiredMessage="Email cannot be empty!"/>
-            <h:commandLink value="Create" action="#{customer.createCustomer()}"/>
+    <h:form id="createForm" >
+        <p>${msg["customers.username"]}
+            <h:inputText id="inpusername" value="#{customer.beanCustomer.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
+                <f:validateRegex pattern="^[a-z0-9_-]{3,15}$"/>
+            </h:inputText>
+            ${msg["customers.password"]}
+            <h:inputSecret id="inppassword" value="#{customer.beanCustomer.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
+                <f:validateRegex pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})" />
+            </h:inputSecret>
+            ${msg["customers.email"]}
+            <h:inputText id="inpemail" value="#{customer.beanCustomer.email}" required="true" requiredMessage='${msg["validation.email.empty"]}' validatorMessage='${msg["validation.email"]}'>
+                <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
+            </h:inputText>
+            <h:commandLink value='${msg["app.create"]}' action='#{customer.createCustomer()}' id="create"/>
+            <h:message for="inpusername" style="color:red"/>
+            <h:message for="inppassword" style="color:red"/>
+            <h:message for="inpemail" style="color:red"/>
         </p>
     </h:form>
+    <h:form id="findByName">
+        <p>FIND USER </p>
+        <h:inputText id="inp" value="#{customer.chosenName}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}'/>
+        <h:commandLink value="Znajdz" action='#{customer.findByName()}'/>
+        <h:message for="inp" style="color:red"/>
+        <p:dataTable id="foundTable" value="#{customer.foundCustomer}" var="found" rendered="#{customer.visible}">
+            <h:column>
+                <f:facet name="header">${msg["customers.username"]}</f:facet>
+                <h:outputText value='#{found.get("username")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">${msg["customers.email"]}</f:facet>
+                <h:outputText value='#{found.get("email")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">${msg["customers.active"]}</f:facet>
+                <h:outputText value='#{found.get("active")}'/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">${msg["app.id"]}</f:facet>
+                <h:outputText value='#{found.get("customerID")}'/>
+            </h:column>
+        </p:dataTable>
+    </h:form>
+    <h:form> <h:commandLink value='hide' action="#{customer.hide()}" rendered="#{customer.visible}"/></h:form>
     <h:form id="efg" >
         <p:dataTable id="table" value="#{customer.customers}" var="customers">
-            <f:facet name="header">CUSTOMER TABLE</f:facet>
+            <f:facet name="header">${msg["customers.table"]}</f:facet>
             <h:column>
-                <f:facet name="header">USERNAME</f:facet>
+                <f:facet name="header">${msg["customers.username"]}</f:facet>
                 <h:outputText value='#{customers.get("username")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">EMAIL</f:facet>
-                <h:inputText value='#{customer.email}' rendered='#{customer.getEditable(customers.get("customerID"))}' required="true" requiredMessage="Cannot change to empty values"/>
+                <f:facet name="header">${msg["customers.email"]}</f:facet>
+                <h:inputText value='#{customer.email}' rendered='#{customer.getEditable(customers.get("customerID"))}' required="true" requiredMessage='${msg["validation.email.change.empty"]}' validatorMessage='${msg["validation.email.change"]}' id="editEmail">
+                    <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
+                </h:inputText>
                 <h:outputText value='#{customers.get("email")}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">ACTIVE</f:facet>
+                <f:facet name="header">${msg["customers.active"]}</f:facet>
                 <h:outputText value='#{customers.get("active")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">ID</f:facet>
+                <f:facet name="header">${msg["app.id"]}</f:facet>
                 <h:outputText value='#{customers.get("customerID")}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">ACTIVATE</f:facet>
-                <h:commandLink value="Activate" action='#{customer.updateCustomer(customers.get("customerID"), true)}'/>
+                <f:facet name="header">${msg["customers.activate"]}</f:facet>
+                <h:commandLink value='${msg["customers.activate"]}' action='#{customer.updateCustomer(customers.get("customerID"), true)}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">DEACTIVATE</f:facet>
-                <h:commandLink value="Deactivate" action='#{customer.updateCustomer(customers.get("customerID"), false)}'/>
+                <f:facet name="header">${msg["customers.deactivate"]}</f:facet>
+                <h:commandLink value='${msg["customers.deactivate"]}' action='#{customer.updateCustomer(customers.get("customerID"), false)}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">EDIT</f:facet>
-                <h:commandLink value = "EDIT" action='#{customer.edit(customers.get("customerID"), customers.get("email"))}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
-                <h:commandLink value = "SUBMIT" action='#{customer.update(customers.get("customerID"))}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
+                <f:facet name="header">${msg["app.edit"]}</f:facet>
+                <h:commandLink value = '${msg["app.edit"]}' action='#{customer.edit(customers.get("customerID"), customers.get("email"))}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
+                <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{customer.update(customers.get("customerID"))}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
-                <f:facet name="header">BOOK</f:facet>
-                <h:commandLink value="Book" action="productCustomer.xhtml" actionListener='#{chosenID.bindValue(customers.get("customerID"))}' rendered='#{customer.isActive(customers.get("customerID"))}'/>
+                <f:facet name="header">${msg["customers.book"]}</f:facet>
+                <h:commandLink value='${msg["customers.book"]}' action="productCustomer.xhtml" actionListener='#{chosenID.bindValue(customers.get("customerID"))}' rendered='#{customer.isActive(customers.get("customerID"))}'/>
+            </h:column>
+            <h:column>
+                <h:message for="editEmail" style="color:red"/>
             </h:column>
         </p:dataTable>
     </h:form>
