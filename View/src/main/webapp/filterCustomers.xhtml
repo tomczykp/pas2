@@ -4,14 +4,28 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/html"
                 template="./templates/MainTemplate.xhtml">
     <ui:define name="top">
-        <p>#{msg["app.app"]}/#{msg["app.menu.moderators"]}</p>
+        <p>#{msg["app.app"]}/#{msg["app.menu.filter"]}</p>
     </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
-        <p>Soon inuf</p>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <h:outputScript library="js" name="scripts.js"/>
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+                getFiltered('${msg["customers.username"]}','${msg["customers.email"]}', '${msg["customers.active"]}', '${msg["app.id"]}');
+            });
+        </script>
+        <h:form id="form">
+            <p>${msg["customers.filter"]}
+                <h:inputText id="inputFilterData" maxlength="15" onkeyup="getFiltered(${msg['customers.username.comas']}, ${msg['customers.email.comas']}, ${msg['customers.active.comas']}, ${msg['app.id.comas']})" />
+            </p>
+        </h:form>
+        <table id="table">
+        </table>
     </ui:define>
 </ui:composition>

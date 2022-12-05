@@ -17,3 +17,29 @@ function validatePrice2(message) {
     }
     return confirm();
 }
+
+function getFiltered(username, email, active, id) {
+    let table = $("#table");
+    table.empty();
+    let header = $("<tr></tr>");
+    header.append($("<td></td>").append(username));
+    header.append($("<td></td>").append(email));
+    header.append($("<td></td>").append(active));
+    header.append($("<td></td>").append(id));
+    table.append(header);
+    let filter = document.getElementById("form:inputFilterData").value;
+    if (filter == null) {
+        filter = "";
+    }
+    $.get("http://localhost:8081/rest/api/administrator/customers", {username: filter}, function(data) {
+       let array = JSON.parse(JSON.stringify(data));
+       for(let i = 0; i < array.length; i++) {
+           let row = $("<tr></tr>");
+           row.append($("<td></td>").append(array[i].username));
+           row.append($("<td></td>").append(array[i].email));
+           row.append($("<td></td>").append(array[i].active));
+           row.append($("<td></td>").append(array[i].customerID));
+           table.append(row);
+       }
+    });
+}
