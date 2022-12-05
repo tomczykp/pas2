@@ -80,4 +80,30 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/administrator.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>createAdmin</from-outcome>
+            <to-view-id>/administrator.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/moderator.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>createMod</from-outcome>
+            <to-view-id>/moderator.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>deleteMod</from-outcome>
+            <to-view-id>/moderator.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>submitCustomer</from-outcome>
+            <to-view-id>/moderator.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

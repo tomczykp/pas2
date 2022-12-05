@@ -5,10 +5,6 @@ import modelBeans.CustomerBean;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestMethods;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.validator.ValidatorException;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.*;

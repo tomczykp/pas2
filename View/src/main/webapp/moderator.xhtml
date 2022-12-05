@@ -4,14 +4,66 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/html"
                 template="./templates/MainTemplate.xhtml">
     <ui:define name="top">
-        <p>#{msg["app.app"]}/#{msg["app.menu.moderators"]}</p>
+        <p>#{msg["app.app"]}/#{msg["app.menu.customers"]}</p>
     </ui:define>
     <ui:define name="left">
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
-        <p>Soon inuf</p>
+        <h:form id="createForm" >
+            <p>MODERATOR NAME
+                <h:inputText id="inpusername" value="#{moderator.moderatorBean.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
+                    <f:validateRegex pattern="^[a-z0-9_-]{3,15}$"/>
+                </h:inputText>
+                ${msg["customers.password"]}
+                <h:inputSecret id="inppassword" value="#{moderator.moderatorBean.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
+                    <f:validateRegex pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})" />
+                </h:inputSecret>
+                ${msg["customers.email"]}
+                <h:inputText id="inpemail" value="#{moderator.moderatorBean.email}" required="true" requiredMessage='${msg["validation.email.empty"]}' validatorMessage='${msg["validation.email"]}'>
+                    <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
+                </h:inputText>
+                <h:commandLink value='${msg["app.create"]}' action='#{moderator.createModerator()}' id="create"/>
+                <h:message for="inpusername" style="color:red"/>
+                <h:message for="inppassword" style="color:red"/>
+                <h:message for="inpemail" style="color:red"/>
+            </p>
+        </h:form>
+        <h:form id="efg" >
+            <p:dataTable id="table" value="#{moderator.moderators}" var="mods">
+                <f:facet name="header">MODERATOR TABLE</f:facet>
+                <h:column>
+                    <f:facet name="header">${msg["app.id"]}</f:facet>
+                    <h:outputText value='#{mods.get("moderatorID")}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">MOD NAME</f:facet>
+                    <h:outputText value='#{mods.get("username")}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">${msg["customers.email"]}</f:facet>
+                    <h:inputText value='#{moderator.email}' rendered='#{moderator.getEditable(mods.get("moderatorID"))}' required="true" requiredMessage='${msg["validation.email.change.empty"]}' validatorMessage='${msg["validation.email.change"]}' id="editEmail">
+                        <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
+                    </h:inputText>
+                    <h:outputText value='#{mods.get("email")}' rendered='#{!moderator.getEditable(mods.get("moderatorID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">ZARZĄDZAJ</f:facet>
+                    <h:outputLink value="customer.xhtml">klienci</h:outputLink>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">${msg["app.edit"]}</f:facet>
+                    <h:commandLink value = '${msg["app.edit"]}' action='#{moderator.edit(mods.get("moderatorID"), mods.get("email"))}' rendered='#{!moderator.getEditable(mods.get("moderatorID"))}'/>
+                    <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{moderator.update(mods.get("moderatorID"))}' rendered='#{moderator.getEditable(mods.get("moderatorID"))}'/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">${msg["app.delete"]}</f:facet>
+                    <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{moderator.deleteModerator(mods.get("moderatorID"))}'/>
+                </h:column>
+            </p:dataTable>
+        </h:form>
     </ui:define>
 </ui:composition>

@@ -45,8 +45,9 @@ public class Moderator {
         return email;
     }
 
-    public void setEmail(String email) {
+    public Moderator setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     @Override
@@ -98,4 +99,6 @@ public class Moderator {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

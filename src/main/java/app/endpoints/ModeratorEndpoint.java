@@ -183,6 +183,24 @@ public class ModeratorEndpoint {
         }
     }
 
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete (@PathParam("id") String id) {
+
+        try {
+            int t = Integer.parseInt(id);
+            moderatorManager.deleteModerator(t);
+            return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
+        } catch (NumberFormatException e) {
+            return Response.ok(e).status(406).build();
+        } catch (Exception e) {
+            return Response.ok(
+                    new JSONObject().put("status", e.getMessage())
+                            .toString()).status(409).build();
+        }
+    }
+
 
     @PUT
     @Path("/update/customer")

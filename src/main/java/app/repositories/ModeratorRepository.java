@@ -2,10 +2,12 @@ package app.repositories;
 
 import app.model.Moderator;
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Map;
 import java.util.Objects;
 
+@ApplicationScoped
 public class ModeratorRepository extends InMemoryRepository<Integer, Moderator> {
 
     @PostConstruct

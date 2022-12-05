@@ -69,6 +69,10 @@ public class AdministratorManager {
         return customerRepository.modify(id, func);
     }
 
+    public Moderator modifyModerator (int id, FunctionThrows<Moderator> func) throws Exception {
+        return moderatorRepository.modify(id, func);
+    }
+
     public Map<Integer, CustomerDTO> getCustomers (Predicate<Customer> predicate) {
         try {
             HashMap<Integer, CustomerDTO> res = new HashMap<>();
