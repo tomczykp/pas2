@@ -1,8 +1,8 @@
 package app.model;
 
 import app.exceptions.NotFoundException;
-import app.repositories.CustomerRepository;
 import app.repositories.ProductRepository;
+import app.repositories.UserRepository;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -67,11 +67,11 @@ public class Reservation {
 		return this;
 	}
 
-	public Reservation switchCustomer (Customer nCustomer, CustomerRepository repository) throws NotFoundException {
-		Customer current = repository.get(this.getCustomer());
+	public Reservation switchCustomer (Customer nCustomer, UserRepository repository) throws NotFoundException {
+		Customer current = (Customer) repository.get(this.getCustomer());
 		current.getReservations().remove(this);
 		nCustomer.addReservation(this);
-		this.setCustomer(nCustomer.getCustomerID());
+		this.setCustomer(nCustomer.getUserID());
 		return this;
 	}
 

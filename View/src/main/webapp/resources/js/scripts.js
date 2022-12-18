@@ -31,7 +31,7 @@ function getFiltered(username, email, active, id) {
     if (filter == null) {
         filter = "";
     }
-    $.get("http://localhost:8081/rest/api/administrator/customers", {username: filter}, function(data) {
+    $.get("http://localhost:8081/rest/api/customers", {username: filter}, function(data) {
        let array = JSON.parse(JSON.stringify(data));
        for(let i = 0; i < array.length; i++) {
            let row = $("<tr></tr>");

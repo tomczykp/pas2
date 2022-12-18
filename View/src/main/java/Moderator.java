@@ -24,7 +24,7 @@ public class Moderator implements Serializable {
     private String email;
     private final Map<Integer, Boolean> editable = new HashMap<>();
 
-    private String adminPrefix = "http://localhost:8081/rest/api/administrator/";
+    private final String prefix = "http://localhost:8081/rest/api/";
 
     public Moderator() {
         this.restMethods = new RestMethods();
@@ -33,7 +33,7 @@ public class Moderator implements Serializable {
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(adminPrefix + "moderators");
+        JSONArray arr = restMethods.getAll(prefix + "moderators");
         if (arr != null) {
             this.moderators = arr;
             this.editable.clear();
@@ -45,9 +45,9 @@ public class Moderator implements Serializable {
     }
 
     public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(adminPrefix + "moderator/" + id);
+        JSONObject obj = restMethods.getOne(prefix + "moderator/" + id);
         obj.put("email", this.getEmail());
-        restMethods.update(obj, adminPrefix + "update/moderator");
+        restMethods.update(obj, prefix + "moderator/update");
         this.fillArray();
         this.setEmail("");
         this.isUpdating = false;
@@ -63,13 +63,13 @@ public class Moderator implements Serializable {
     }
 
     public String createModerator() {
-        restMethods.putCustomer(moderatorBean.getUsername(), moderatorBean.getPassword(),  moderatorBean.getEmail(), "MODERATOR", adminPrefix + "create/moderator");
+        restMethods.putCustomer(moderatorBean.getUsername(), moderatorBean.getPassword(),  moderatorBean.getEmail(), "MODERATOR", prefix + "moderator/create");
         this.fillArray();
         return "createMod";
     }
 
     public String deleteModerator(Integer id) {
-        restMethods.delete(adminPrefix + id);
+        restMethods.delete(prefix + id);
         this.fillArray();
         return "deleteMod";
     }

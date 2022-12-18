@@ -29,7 +29,7 @@ public class CustomerDTO {
 	public CustomerDTO (Customer c) {
 		email = c.getEmail();
 		username = c.getUsername();
-		customerID = c.getCustomerID();
+		customerID = c.getUserID();
 		reservations = new ArrayList<>();
 		for (Reservation r : c.getReservations())
 			reservations.add(r.getReservationID());

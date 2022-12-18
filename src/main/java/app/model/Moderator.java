@@ -7,39 +7,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @XmlRootElement
-public class Moderator {
-
-    @XmlElement
-    private int moderatorID;
+public class Moderator extends User {
 
     @XmlElement
     private String email;
 
-    @XmlElement
-    private CustomerType type;
-
-    @XmlElement
-    private String username;
-
-    @XmlElement
-    private String password;
-
     public Moderator(String u, String e, String p) {
-        type = CustomerType.MODERATOR;
-        username = u;
-        password = p;
-        email = e;
+        super(u, p, CustomerType.MODERATOR);
+        this.email = e;
     }
 
     public Moderator() {}
-
-    public int getModeratorID() {
-        return moderatorID;
-    }
-
-    public void setModeratorID(int moderatorID) {
-        this.moderatorID = moderatorID;
-    }
 
     public String getEmail() {
         return email;
@@ -58,47 +36,21 @@ public class Moderator {
 
         Moderator moderator = (Moderator) o;
 
-        return new EqualsBuilder().append(moderatorID, moderator.moderatorID).isEquals();
+        return new EqualsBuilder().append(super.getUserID(), moderator.getUserID()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(moderatorID).toHashCode();
+        return new HashCodeBuilder(17, 37).append(super.getUserID()).toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("moderatorID", moderatorID)
+                .append("moderatorID", super.getUserID())
                 .append("email", email)
-                .append(username)
-                .append("type", type)
+                .append("username", super.getUsername())
+                .append("type", super.getType())
                 .toString();
     }
-
-    public CustomerType getType() {
-        return type;
-    }
-
-    public void setType(CustomerType type) {
-        this.type = type;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
 }

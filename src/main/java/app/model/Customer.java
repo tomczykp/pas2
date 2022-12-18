@@ -9,37 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
-public class Customer {
-
-	@XmlElement
-	private String username;
-
-	@XmlElement
-	private String password;
-
-	@XmlElement
-	private CustomerType type;
-
-	@XmlElement
-	private int customerID;
-
+public class Customer extends User {
 	@XmlElement
 	private String email;
-
 	@XmlElement
 	private boolean isActive;
-
 	@XmlElement
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Customer () {}
 
 	public Customer (String u, String e, String p) {
+		super(u, p, CustomerType.CUSTOMER);
 		email = e;
 		isActive = true;
-		username = u;
-		password = p;
-		type = CustomerType.CUSTOMER;
 	}
 
 	public List<Reservation> getReservations () {
@@ -69,16 +52,16 @@ public class Customer {
 		if (!(o instanceof Customer customer)) return false;
 
 		return new EqualsBuilder()
-				.append(customerID, customer.customerID)
-				.append(username, customer.getUsername())
+				.append(super.getUserID(), customer.getUserID())
+				.append(super.getUsername(), customer.getUsername())
 				.append(email, customer.email).isEquals();
 	}
 
 	@Override
 	public int hashCode () {
 		return new HashCodeBuilder(17, 37)
-				.append(customerID)
-				.append(username)
+				.append(super.getUserID())
+				.append(super.getUsername())
 				.append(email).toHashCode();
 	}
 
@@ -86,14 +69,6 @@ public class Customer {
 		reservations.add(reservation);
 	}
 
-	public int getCustomerID () {
-		return customerID;
-	}
-
-	public Customer setCustomerID (int customerID) {
-		this.customerID = customerID;
-		return this;
-	}
 
 	public String getEmail () {
 		return email;
@@ -111,29 +86,5 @@ public class Customer {
 	public Customer setActive (boolean active) {
 		isActive = active;
 		return this;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public CustomerType getType() {
-		return type;
-	}
-
-	public void setType(CustomerType type) {
-		this.type = type;
 	}
 }

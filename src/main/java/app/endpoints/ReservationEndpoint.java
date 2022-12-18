@@ -1,9 +1,9 @@
 package app.endpoints;
 
 import app.exceptions.NotFoundException;
-import app.managers.CustomerManager;
 import app.managers.ProductManager;
 import app.managers.ReservationManager;
+import app.managers.UserManager;
 import app.model.Reservation;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +18,7 @@ public class ReservationEndpoint {
 	@Inject
 	private ReservationManager reservationManager;
 	@Inject
-	private CustomerManager customerManager;
+	private UserManager userManager;
 	@Inject
 	private ProductManager productManager;
 
@@ -108,7 +108,7 @@ public class ReservationEndpoint {
 			int t = newReservation.getReservationID();
 			Reservation res = reservationManager.modify(t,
 					(Reservation current) -> current
-							.switchCustomer(customerManager.get(newReservation.getCustomer()), reservationManager.customerRepository)
+							.switchCustomer(userManager.getCustomer(newReservation.getCustomer()), reservationManager.customerRepository)
 							.setEndDate(newReservation.getEndDate())
 							.setStartDate(newReservation.getStartDate())
 							.switchProduct(productManager.get(newReservation.getProduct()), reservationManager.productRepository));

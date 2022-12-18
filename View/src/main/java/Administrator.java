@@ -3,7 +3,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
 import modelBeans.AdministratorBean;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import rest.RestMethods;
 
 import javax.faces.view.ViewScoped;
@@ -18,7 +17,7 @@ public class Administrator implements Serializable {
     private final RestMethods restMethods;
     private AdministratorBean administratorBean;
 
-    private String adminPrefix = "http://localhost:8081/rest/api/administrator/";
+    private String prefix = "http://localhost:8081/rest/api/";
 
     public Administrator() {
         this.restMethods = new RestMethods();
@@ -27,14 +26,14 @@ public class Administrator implements Serializable {
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(adminPrefix + "administrators");
+        JSONArray arr = restMethods.getAll(prefix + "administrators");
         if (arr != null) {
             this.administrators = arr;
         }
     }
 
     public String createAdmin() {
-        restMethods.putCustomer(administratorBean.getUsername(), administratorBean.getPassword(),  "", "ADMINISTRATOR", adminPrefix + "create/administrator");
+        restMethods.putCustomer(administratorBean.getUsername(), administratorBean.getPassword(),  "", "ADMINISTRATOR", prefix + "administrator/create");
         this.fillArray();
         return "createAdmin";
     }

@@ -3,7 +3,9 @@ package app.repositories;
 
 import app.FunctionThrows;
 import app.exceptions.NotFoundException;
+import app.model.Administrator;
 import app.model.Customer;
+import app.model.Moderator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +65,22 @@ public abstract class InMemoryRepository<K, V> implements Repository<K, V> {
 	public Customer modifyCustomer(K k, FunctionThrows<Customer> func) throws Exception {
 		if (map.containsKey(k)) {
 			Customer v = (Customer) map.get(k);
+			return  func.apply(v);
+		}
+		throw new NotFoundException();
+	}
+
+	public Moderator modifyModerator(K k, FunctionThrows<Moderator> func) throws Exception {
+		if (map.containsKey(k)) {
+			Moderator v = (Moderator) map.get(k);
+			return  func.apply(v);
+		}
+		throw new NotFoundException();
+	}
+
+	public Administrator modifyAdministrator(K k, FunctionThrows<Administrator> func) throws Exception {
+		if (map.containsKey(k)) {
+			Administrator v = (Administrator) map.get(k);
 			return  func.apply(v);
 		}
 		throw new NotFoundException();

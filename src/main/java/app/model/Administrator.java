@@ -1,30 +1,15 @@
 package app.model;
 
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @XmlRootElement
-public class Administrator {
-
-    @XmlElement
-    private int AdministratorID;
-
-    @XmlElement
-    private String username;
-
-    @XmlElement
-    private String password;
-
-    @XmlElement
-    private CustomerType type;
+public class Administrator extends User {
 
     public Administrator(String u, String p) {
-           username = u;
-           password = p;
-           type = CustomerType.ADMINISTRATOR;
+           super(u, p, CustomerType.ADMINISTRATOR);
        }
 
 
@@ -38,53 +23,19 @@ public class Administrator {
 
         Administrator that = (Administrator) o;
 
-        return new EqualsBuilder().append(AdministratorID, that.AdministratorID).isEquals();
+        return new EqualsBuilder().append(super.getUserID(), that.getUserID()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(AdministratorID).toHashCode();
+        return new HashCodeBuilder(17, 37).append(super.getUserID()).toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("AdministratorID", AdministratorID)
-                .append(username)
+                .append("AdministratorID", super.getUserID())
+                .append("Username", super.getUsername())
                 .toString();
     }
-
-    public int getAdministratorID() {
-        return AdministratorID;
-    }
-
-    public void setAdministratorID(int administratorID) {
-        AdministratorID = administratorID;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public CustomerType getType() {
-        return type;
-    }
-
-    public void setType(CustomerType type) {
-        this.type = type;
-    }
-
-
 }

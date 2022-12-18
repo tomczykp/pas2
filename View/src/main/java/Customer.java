@@ -19,7 +19,7 @@ public class Customer implements Serializable {
     private JSONArray foundCustomer;
     private String chosenName;
     private boolean visible = false;
-    private String adminPrefix = "http://localhost:8081/rest/api/administrator/";
+    private String prefix = "http://localhost:8081/rest/api/";
     private final RestMethods restMethods;
     private CustomerBean beanCustomer;
     private final Map<Integer, Boolean> editable = new HashMap<>();
@@ -32,7 +32,7 @@ public class Customer implements Serializable {
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(adminPrefix + "customers");
+        JSONArray arr = restMethods.getAll(prefix + "customers");
         if (arr != null) {
             this.customers = arr;
             this.editable.clear();
@@ -44,25 +44,25 @@ public class Customer implements Serializable {
     }
 
     public String createCustomer() {
-        restMethods.putCustomer(beanCustomer.getUsername(), beanCustomer.getPassword(), beanCustomer.getEmail(), "CUSTOMER",  adminPrefix + "create/customer");
+        restMethods.putCustomer(beanCustomer.getUsername(), beanCustomer.getPassword(), beanCustomer.getEmail(), "CUSTOMER",  prefix + "customer/create");
         this.fillArray();
         return "createCustomer";
     }
 
     public String updateCustomer(Integer id, boolean active) {
         if (active) {
-            restMethods.put(adminPrefix + id + "/activate");
+            restMethods.put(prefix + "customer/" + id + "/activate");
         } else {
-            restMethods.put(adminPrefix + id + "/deactivate");
+            restMethods.put(prefix + "customer/" + id + "/deactivate");
         }
         this.fillArray();
         return "activateCustomer";
     }
 
     public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(adminPrefix + "customer/" + id);
+        JSONObject obj = restMethods.getOne(prefix + "customer/" + id);
         obj.put("email", this.getEmail());
-        restMethods.update(obj, adminPrefix + "update/customer");
+        restMethods.update(obj, prefix + "customer/update");
         this.fillArray();
         this.setEmail("");
         this.isUpdating = false;
@@ -81,7 +81,7 @@ public class Customer implements Serializable {
         if (Objects.equals(this.chosenName, "") || this.chosenName == null) {
             return;
         }
-        this.foundCustomer = restMethods.findByUsername(this.chosenName, this.adminPrefix + "customers");
+        this.foundCustomer = restMethods.findByUsername(this.chosenName, this.prefix + "customers");
         this.chosenName = "";
         this.visible = true;
     }
@@ -93,7 +93,7 @@ public class Customer implements Serializable {
 
 
     public boolean isActive(int id) {
-        return (Boolean) restMethods.getOne(adminPrefix + "customer/" + id).get("active");
+        return (Boolean) restMethods.getOne(prefix + "customer/" + id).get("active");
     }
     public JSONArray getCustomers() {
         return customers;

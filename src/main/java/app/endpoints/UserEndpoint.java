@@ -3,12 +3,9 @@ package app.endpoints;
 import app.dto.AdministratorDTO;
 import app.dto.CustomerDTO;
 import app.dto.ModeratorDTO;
-import app.model.Administrator;
-import app.model.Customer;
-import app.model.Moderator;
-import app.model.Reservation;
 import app.exceptions.NotFoundException;
-import app.managers.AdministratorManager;
+import app.managers.UserManager;
+import app.model.*;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
@@ -21,12 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Path("/administrator")
-public class AdministratorEndpoint {
+@Path("/")
+public class UserEndpoint {
 
     @Inject
-    private AdministratorManager administratorManager;
-
+    private UserManager userManager;
 
     @GET
     @Path("/customers")
@@ -35,12 +31,12 @@ public class AdministratorEndpoint {
                                      @QueryParam("exact") String exact) {
         Map<Integer, CustomerDTO> data;
         if (Objects.equals(name, "") || name == null) {
-            data = administratorManager.getCustomerMap();
+            data = userManager.getCustomerMap();
         } else if (exact == null || Objects.equals(exact, "")) {
-            data = administratorManager.getCustomers(
-                    (Customer c) -> (c.getUsername().contains(name)) || name.contains(c.getUsername()));
+            data = userManager.getCustomers(
+                    (User c) -> (c.getUsername().contains(name)));
         } else {
-            data = administratorManager.getCustomers((Customer c) -> Objects.equals(c.getUsername(), name));
+            data = userManager.getCustomers((User c) -> Objects.equals(c.getUsername(), name));
         }
         return Response.ok(data.values()).build();
     }
@@ -49,15 +45,15 @@ public class AdministratorEndpoint {
     @Path("/moderators")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllModerators (@QueryParam("username") String name,
-                                     @QueryParam("exact") String exact) {
+                                      @QueryParam("exact") String exact) {
         Map<Integer, ModeratorDTO> data;
         if (Objects.equals(name, "") || name == null) {
-            data = administratorManager.getModeratorMap();
+            data = userManager.getModeratorMap();
         } else if (exact == null || Objects.equals(exact, "")) {
-            data = administratorManager.getModerators(
-                    (Moderator c) -> (c.getUsername().contains(name)) || name.contains(c.getUsername()));
+            data = userManager.getModerators(
+                    (User c) -> (c.getUsername().contains(name)) || name.contains(c.getUsername()));
         } else {
-            data = administratorManager.getModerators((Moderator c) -> Objects.equals(c.getUsername(), name));
+            data = userManager.getModerators((User c) -> Objects.equals(c.getUsername(), name));
         }
         return Response.ok(data.values()).build();
     }
@@ -69,12 +65,12 @@ public class AdministratorEndpoint {
                                           @QueryParam("exact") String exact) {
         Map<Integer, AdministratorDTO> data;
         if (Objects.equals(name, "") || name == null) {
-            data = administratorManager.getAdministratorMap();
+            data = userManager.getAdministratorMap();
         } else if (exact == null || Objects.equals(exact, "")) {
-            data = administratorManager.getAdministrators(
-                    (Administrator c) -> (c.getUsername().contains(name)) || name.contains(c.getUsername()));
+            data = userManager.getAdministrators(
+                    (User c) -> (c.getUsername().contains(name)) || name.contains(c.getUsername()));
         } else {
-            data = administratorManager.getAdministrators((Administrator c) -> Objects.equals(c.getUsername(), name));
+            data = userManager.getAdministrators((User c) -> Objects.equals(c.getUsername(), name));
         }
         return Response.ok(data.values()).build();
     }
@@ -84,11 +80,11 @@ public class AdministratorEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCustomer(@PathParam("id") String id) {
         try {
-            Customer customer = administratorManager.getCustomer(Integer.parseInt(id));
+            Customer customer = userManager.getCustomer(Integer.parseInt(id));
             return Response.ok(new CustomerDTO(customer)).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -102,11 +98,11 @@ public class AdministratorEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getModerator(@PathParam("id") String id) {
         try {
-            Moderator moderator = administratorManager.getModerator(Integer.parseInt(id));
+            Moderator moderator = userManager.getModerator(Integer.parseInt(id));
             return Response.ok(new ModeratorDTO(moderator)).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -120,11 +116,11 @@ public class AdministratorEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAdministrator(@PathParam("id") String id) {
         try {
-            Administrator administrator = administratorManager.getAdministrator(Integer.parseInt(id));
+            Administrator administrator = userManager.getAdministrator(Integer.parseInt(id));
             return Response.ok(new AdministratorDTO(administrator)).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -141,11 +137,11 @@ public class AdministratorEndpoint {
     }
 
     @GET
-    @Path("/{id}/reservations")
+    @Path("/customer/{id}/reservations")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
         try {
-            Customer customer = administratorManager.getCustomer(Integer.parseInt(id));
+            Customer customer = userManager.getCustomer(Integer.parseInt(id));
             List<Reservation> res;
             if (fromPast)
                 res = customer.getPastReservations();
@@ -155,7 +151,7 @@ public class AdministratorEndpoint {
             return Response.ok(mapDTO(res)).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -165,19 +161,19 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/{id}/activate")
+    @Path("/customer/{id}/activate")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response setActive (@PathParam("id") String id) {
         try {
-            Customer customer = administratorManager.getCustomer(Integer.parseInt(id));
+            Customer customer = userManager.getCustomer(Integer.parseInt(id));
             customer.setActive(true);
             return Response.ok(
                     new JSONObject().put("status", "set to active")
                             .toString()).status(200).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -187,12 +183,12 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/{id}/deactivate")
+    @Path("/customer/{id}/deactivate")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response setDeactivate (@PathParam("id") String id) {
         try {
-            Customer customer = administratorManager.getCustomer(Integer.parseInt(id));
+            Customer customer = userManager.getCustomer(Integer.parseInt(id));
             if (!customer.getFutureReservations().isEmpty())
                 throw new Exception("cannot deactivate user with ongoing reservations");
 
@@ -203,7 +199,7 @@ public class AdministratorEndpoint {
 
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -213,12 +209,12 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/create/administrator")
+    @Path("/administrator/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putAdministrator (@NotNull Administrator newAdministrator) {
         try {
-            AdministratorDTO admin = administratorManager.createAdministrator(newAdministrator);
+            AdministratorDTO admin = userManager.createAdministrator(newAdministrator);
             return Response.ok(admin).build();
         } catch (Exception e) {
             return Response.ok(e).status(409).build();
@@ -226,12 +222,12 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/create/moderator")
+    @Path("/moderator/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putModerator (@NotNull Moderator newModerator) {
         try {
-            ModeratorDTO moderator = administratorManager.createModerator(newModerator);
+            ModeratorDTO moderator = userManager.createModerator(newModerator);
             return Response.ok(moderator).build();
         } catch (Exception e) {
             return Response.ok(e).status(409).build();
@@ -239,12 +235,12 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/create/customer")
+    @Path("/customer/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putCustomer (@NotNull Customer newCustomer) {
         try {
-            CustomerDTO customer = administratorManager.createCustomer(newCustomer);
+            CustomerDTO customer = userManager.createCustomer(newCustomer);
             return Response.ok(customer).build();
         } catch (Exception e) {
             return Response.ok(e).status(409).build();
@@ -252,13 +248,13 @@ public class AdministratorEndpoint {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/user/delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete (@PathParam("id") String id) {
 
         try {
             int t = Integer.parseInt(id);
-            administratorManager.deleteModerator(t);
+            userManager.deleteUser(t);
             return Response.ok(new JSONObject().put("status", "deletion succesful").toString()).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
@@ -270,22 +266,22 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/update/customer")
+    @Path("/customer/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateCustomer (@NotNull CustomerDTO newCustomer) {
         try {
 
             int t = newCustomer.customerID;
-            Customer res = administratorManager.modifyCustomer(t,
+            userManager.modifyCustomer(t,
                     (Customer current) -> current
                             .setActive(newCustomer.active)
                             .setEmail(newCustomer.email));
 
-            return Response.ok(new CustomerDTO(res)).build();
+            return Response.ok().build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
-        } catch (NotFoundException e) {
+        } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
             return Response.ok(
@@ -295,17 +291,17 @@ public class AdministratorEndpoint {
     }
 
     @PUT
-    @Path("/update/moderator")
+    @Path("/moderator/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateModerator (@NotNull ModeratorDTO newModerator) {
         try {
             int t = newModerator.moderatorID;
-            Moderator res = administratorManager.modifyModerator(t,
+            userManager.modifyModerator(t,
                     (Moderator current) -> current
                             .setEmail(newModerator.email));
 
-            return Response.ok(new ModeratorDTO(res)).build();
+            return Response.ok().build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
         } catch (NotFoundException e) {
@@ -316,4 +312,26 @@ public class AdministratorEndpoint {
                             .toString()).status(409).build();
         }
     }
+
+//    @PUT
+//    @Path("/administrator/update")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public Response updateAdministrator (@NotNull AdministratorDTO newAdministrator) {
+//        try {
+//            int t = newAdministrator.administratorID;
+//            userManager.modifyAdministrator(t,
+//                    (Administrator current) -> current
+//                            .setUsername(newAdministrator.username));
+//            return Response.ok().build();
+//        } catch (NumberFormatException e) {
+//            return Response.ok(e).status(406).build();
+//        } catch (NotFoundException e) {
+//            return Response.ok(new JSONObject().put("status", "administrator not found").toString()).status(404).build();
+//        } catch (Exception e) {
+//            return Response.ok(
+//                    new JSONObject().put("status", e.getMessage())
+//                            .toString()).status(409).build();
+//        }
+//    }
 }

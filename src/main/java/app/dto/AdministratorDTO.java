@@ -17,7 +17,7 @@ public class AdministratorDTO {
 
     public AdministratorDTO(Administrator a) {
         username = a.getUsername();
-        administratorID = a.getAdministratorID();
+        administratorID = a.getUserID();
         type = a.getType();
     }
 

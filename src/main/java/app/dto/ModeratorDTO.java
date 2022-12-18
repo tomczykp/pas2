@@ -20,7 +20,7 @@ public class ModeratorDTO {
     public ModeratorDTO(Moderator m) {
         email = m.getEmail();
         username = m.getUsername();
-        moderatorID = m.getModeratorID();
+        moderatorID = m.getUserID();
         type = m.getType();
     }
 
