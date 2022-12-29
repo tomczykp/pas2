@@ -1,9 +1,10 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import rest.RestMethods;
+import rest.RestClient;
 
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
@@ -13,11 +14,14 @@ import java.util.Map;
 @Named
 @ManagedBean
 @ViewScoped
-public class Reservation implements Serializable {
+public class ReservationBean implements Serializable {
+
+    @Inject
+    private JwtStorage jwtStorage;
 
     private JSONArray reservations;
     private String reservationPrefix = "http://localhost:8081/rest/api/reservation";
-    private final RestMethods rest;
+    private final RestClient rest;
 
     private Integer updateCustomerID = 0;
     private Integer updateProductID = 0;
@@ -26,13 +30,13 @@ public class Reservation implements Serializable {
     private boolean isUpdating = false;
     private final Map<Integer, Boolean> editable = new HashMap<>();
 
-    public Reservation() {
-        rest = new RestMethods();
+    public ReservationBean() {
+        rest = new RestClient();
     }
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = rest.getAll(reservationPrefix);
+        JSONArray arr = rest.getAll(reservationPrefix, jwtStorage.getJwt());
         if (arr != null) {
             this.reservations = arr;
             this.editable.clear();
@@ -44,18 +48,18 @@ public class Reservation implements Serializable {
     }
 
     public String deleteF(Integer id) {
-            rest.delete(reservationPrefix + "/forced/" + id);
+            rest.delete(reservationPrefix + "/forced/" + id, jwtStorage.getJwt());
             this.fillArray();
             return "deleteReservation";
     }
 
     public String update(Integer id) {
-        JSONObject obj = rest.getOne(reservationPrefix + "/" + id);
+        JSONObject obj = rest.getOne(reservationPrefix + "/" + id, jwtStorage.getJwt());
         obj.put("customer", this.getUpdateCustomerID());
         obj.put("product", this.getUpdateProductID());
         obj.put("startDate", this.getUpdateStartDate());
         obj.put("endDate", this.getUpdateEndDate());
-        rest.update(obj, reservationPrefix + "/update");
+        rest.update(obj, reservationPrefix + "/update", jwtStorage.getJwt());
         this.fillArray();
         this.setUpdateCustomerID(0);
         this.setUpdateProductID(0);

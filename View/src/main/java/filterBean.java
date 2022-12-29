@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Named
 @ManagedBean
 @ViewScoped
-public class filter implements Serializable {
+public class filterBean implements Serializable {
     private String filterMessage;
     private JSONArray filteredCustomers;
 

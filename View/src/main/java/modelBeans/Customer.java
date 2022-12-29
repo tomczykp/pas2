@@ -4,7 +4,7 @@ import org.json.JSONArray;
 
 import java.io.Serializable;
 
-public class CustomerBean implements Serializable {
+public class Customer implements Serializable {
     private String username;
 
     private String password;
@@ -19,7 +19,7 @@ public class CustomerBean implements Serializable {
 
     private JSONArray reservations;
 
-    public CustomerBean() {
+    public Customer() {
     }
 
     public String getUsername() {

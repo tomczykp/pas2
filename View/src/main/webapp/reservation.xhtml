@@ -13,7 +13,7 @@
     </ui:define>
     <ui:define name="content">
         <h:form>
-            <h:dataTable id="table" value="#{reservation.reservations}" var="res">
+            <h:dataTable id="table" value="#{reservationBean.reservations}" var="res">
                 <f:facet name="header">${msg["app.main.app_name"]}</f:facet>
                 <h:column>
                     <f:facet name="header">${msg["app.id"]}</f:facet>
@@ -21,40 +21,40 @@
                 </h:column>
                 <h:column>
                     <f:facet name="header">${msg["reservations.client"]}</f:facet>
-                    <h:inputText id="customer" value='#{reservation.updateCustomerID}' rendered='#{reservation.getEditable(res.get("reservationID"))}' required="true" requiredMessage='${msg["validation.customerID.empty"]}' validatorMessage='${msg["validation.customerID"]}'>
+                    <h:inputText id="customer" value='#{reservationBean.updateCustomerID}' rendered='#{reservationBean.getEditable(res.get("reservationID"))}' required="true" requiredMessage='${msg["validation.customerID.empty"]}' validatorMessage='${msg["validation.customerID"]}'>
                         <f:validateLength minimum="1" maximum="2147483647"/>
                     </h:inputText>
-                    <h:outputText value='#{res.get("customer")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("customer")}' rendered='#{!reservationBean.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">#{msg["reservations.product"]}</f:facet>
-                    <h:inputText id="product" value='#{reservation.updateProductID}' rendered='#{reservation.getEditable(res.get("reservationID"))}' required="true" requiredMessage='${msg["validation.productID.empty"]}' validatorMessage='${msg["validation.productID"]}'>
+                    <h:inputText id="product" value='#{reservationBean.updateProductID}' rendered='#{reservationBean.getEditable(res.get("reservationID"))}' required="true" requiredMessage='${msg["validation.productID.empty"]}' validatorMessage='${msg["validation.productID"]}'>
                         <f:validateLength minimum="1" maximum="2147483647"/>
                     </h:inputText>
-                    <h:outputText value='#{res.get("product")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("product")}' rendered='#{!reservationBean.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">#{msg["app.startDate"]}</f:facet>
-                    <h:inputText id="start" value='#{reservation.updateStartDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}' maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
+                    <h:inputText id="start" value='#{reservationBean.updateStartDate}' rendered='#{reservationBean.getEditable(res.get("reservationID"))}' maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
                         <f:validateRegex pattern="^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"/>
                     </h:inputText>
-                    <h:outputText value='#{res.get("startDate")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("startDate")}' rendered='#{!reservationBean.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">#{msg["app.endDate"]}</f:facet>
-                    <h:inputText id="end" value='#{reservation.updateEndDate}' rendered='#{reservation.getEditable(res.get("reservationID"))}' maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
+                    <h:inputText id="end" value='#{reservationBean.updateEndDate}' rendered='#{reservationBean.getEditable(res.get("reservationID"))}' maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
                         <f:validateRegex pattern="^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$" />
                     </h:inputText>
-                    <h:outputText value='#{res.get("endDate")}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:outputText value='#{res.get("endDate")}' rendered='#{!reservationBean.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">#{msg["app.edit"]}</f:facet>
-                    <h:commandLink value = '${msg["app.edit"]}' action='#{reservation.edit(res.get("reservationID"), res.get("customer"), res.get("product"), res.get("startDate"), res.get("endDate"))}' rendered='#{!reservation.getEditable(res.get("reservationID"))}'/>
-                    <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{reservation.update(res.get("reservationID"))}' rendered='#{reservation.getEditable(res.get("reservationID"))}'/>
+                    <h:commandLink value = '${msg["app.edit"]}' action='#{reservationBean.edit(res.get("reservationID"), res.get("customer"), res.get("product"), res.get("startDate"), res.get("endDate"))}' rendered='#{!reservationBean.getEditable(res.get("reservationID"))}'/>
+                    <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{reservationBean.update(res.get("reservationID"))}' rendered='#{reservationBean.getEditable(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">#{msg["app.delete"]}</f:facet>
-                    <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{reservation.deleteF(res.get("reservationID"))}'/>
+                    <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{reservationBean.deleteF(res.get("reservationID"))}'/>
                 </h:column>
                 <h:column>
                     <h:message for="customer" style="color:red"/>

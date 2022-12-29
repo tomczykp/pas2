@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Named
 @SessionScoped
-public class ChosenID implements Serializable {
+public class ChosenIdBean implements Serializable {
     private Integer id;
 
     public Integer getId() {

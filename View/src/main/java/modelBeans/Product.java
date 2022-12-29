@@ -2,7 +2,7 @@ package modelBeans;
 
 import org.json.JSONArray;
 
-public class ProductBean {
+public class Product {
 
     private  int productID;
     private double price;

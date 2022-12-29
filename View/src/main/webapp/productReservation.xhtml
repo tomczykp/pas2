@@ -13,8 +13,8 @@
     </ui:define>
     <ui:define name="content">
     <h:form>
-        <h:dataTable id="table" value="#{product.productReservations(chosenID.id)}" var="res">
-            <f:facet name="header">#{chosenID.id} #{msg["reservations.forproduct"]}</f:facet>
+        <h:dataTable id="table" value="#{productBean.productReservations(chosenIdBean.id)}" var="res">
+            <f:facet name="header">#{chosenIdBean.id} #{msg["reservations.forproduct"]}</f:facet>
             <h:column>
                 <f:facet name="header">#{msg["app.id"]}</f:facet>
                 <h:outputText value='#{res.get("reservationID")}'/>

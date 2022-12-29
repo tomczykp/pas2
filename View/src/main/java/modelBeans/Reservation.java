@@ -1,8 +1,6 @@
 package modelBeans;
 
-import org.json.JSONObject;
-
-public class ReservationBean {
+public class Reservation {
 
     private int reservationID;
     private String startDate;

@@ -15,20 +15,20 @@
     <ui:define name="content">
         <h:form id="createForm">
             <p>ADMIN NAME
-                <h:inputText id="inpusername" value="#{administrator.administratorBean.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
+                <h:inputText id="inpusername" value="#{administratorBean.administrator.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
                     <f:validateRegex pattern="^[a-z0-9_-]{3,15}$"/>
                 </h:inputText>
                 ADMIN PASSWORD
-                <h:inputSecret id="inppassword" value="#{administrator.administratorBean.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
+                <h:inputSecret id="inppassword" value="#{administratorBean.administrator.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
                     <f:validateRegex pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})" />
                 </h:inputSecret>
-                <h:commandLink value='${msg["app.create"]}' action='#{administrator.createAdmin()}' id="create"/>
+                <h:commandLink value='${msg["app.create"]}' action='#{administratorBean.createAdmin()}' id="create"/>
                 <h:message for="inpusername" style="color:red"/>
                 <h:message for="inppassword" style="color:red"/>
             </p>
         </h:form>
         <h:form id="efg" >
-            <p:dataTable id="table" value="#{administrator.administrators}" var="admins">
+            <p:dataTable id="table" value="#{administratorBean.administrators}" var="admins">
                 <f:facet name="header">ADMIN TABLE</f:facet>
                 <h:column>
                     <f:facet name="header">${msg["app.id"]}</f:facet>

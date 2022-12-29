@@ -14,20 +14,20 @@
     <ui:define name="content">
     <h:form>
         <p>
-            <h:outputText value='#{msg["book.client"]} #{chosenID.id}'/>
+            <h:outputText value='#{msg["book.client"]} #{chosenIdBean.id}'/>
         </p>
         <p>${msg["app.startDate"]} (YYYY-MM-DD)
-            <h:inputText id="start" value="#{productCustomer.reservationBean.startDate}" maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
+            <h:inputText id="start" value="#{productCustomerBean.reservation.startDate}" maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
                 <f:validateRegex pattern="^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"/>
             </h:inputText>
             ${msg["app.endDate"]} (YYYY-MM-DD)
-            <h:inputText id="end" value="#{productCustomer.reservationBean.endDate}" maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
+            <h:inputText id="end" value="#{productCustomerBean.reservation.endDate}" maxlength="10" required="true" requiredMessage='${msg["validation.date.empty"]}' validatorMessage='${msg["validation.date"]}'>
                 <f:validateRegex pattern="^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"/>
             </h:inputText>
             <h:message for="start" style="color:red"/>
             <h:message for="end" style="color:red"/>
         </p>
-        <h:dataTable id="table" value="#{productCustomer.products}" var="products">
+        <h:dataTable id="table" value="#{productCustomerBean.products}" var="products">
             <f:facet name="header">${msg["products.table"]}</f:facet>
             <h:column>
                 <f:facet name="header">${msg["app.id"]}</f:facet>
@@ -38,13 +38,13 @@
                 <h:outputText value='#{products.get("price")}'/>
             </h:column>
             <h:column>
-                <h:commandLink value="Book" actionListener='#{productCustomer.fillReservationArray(chosenID.id)}' action='#{productCustomer.createReservation(chosenID.id, products.get("productID"))}'/>
+                <h:commandLink value="Book" actionListener='#{productCustomerBean.fillReservationArray(chosenIdBean.id)}' action='#{productCustomerBean.createReservation(chosenIdBean.id, products.get("productID"))}'/>
             </h:column>
         </h:dataTable>
     </h:form>
     <h:form>
-        <h:dataTable id="res" value="#{productCustomer.reservations}" var = "res">
-            <f:facet name="header">#{msg["customers.client"]} #{chosenID.id} #{msg["app.main.app_name"]}</f:facet>
+        <h:dataTable id="res" value="#{productCustomerBean.reservations}" var = "res">
+            <f:facet name="header">#{msg["customers.client"]} #{chosenIdBean.id} #{msg["app.main.app_name"]}</f:facet>
             <h:column>
                 <f:facet name="header">#{msg["app.id"]}</f:facet>
                 <h:outputText value='#{res.get("reservationID")}'/>
@@ -62,7 +62,7 @@
                 <h:outputText value='#{res.get("endDate")}'/>
             </h:column>
             <h:column>
-                <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{productCustomer.delete(res.get("reservationID"), chosenID.id)}'/>
+                <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{productCustomerBean.delete(res.get("reservationID"), chosenIdBean.id)}'/>
             </h:column>
         </h:dataTable>
     </h:form>

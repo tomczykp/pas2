@@ -23,7 +23,7 @@ public class UserRepository extends InMemoryRepository<Integer, User> {
         @Override
         public User insert (User v) throws Exception {
             for (Map.Entry<Integer, User> i : getMap().entrySet()) {
-                if (Objects.equals(i.getValue().getUsername(), v.getUsername())) {
+                if (Objects.equals(i.getValue().getUsername(), v.getUsername()) && i.getValue().getType().equals(v.getType())) {
                     throw new Exception("Username already exist");
                 }
             }

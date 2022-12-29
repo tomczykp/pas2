@@ -12,7 +12,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
-
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class UserEndpoint {
     private UserManager userManager;
 
     @GET
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/customers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCustomers (@QueryParam("username") String name,
@@ -42,6 +44,7 @@ public class UserEndpoint {
     }
 
     @GET
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/moderators")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllModerators (@QueryParam("username") String name,
@@ -59,6 +62,7 @@ public class UserEndpoint {
     }
 
     @GET
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/administrators")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllAdministrators (@QueryParam("username") String name,
@@ -76,6 +80,7 @@ public class UserEndpoint {
     }
 
     @GET
+    @RolesAllowed({"CUSTOMER", "ADMINISTRATOR"})
     @Path("/customer/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCustomer(@PathParam("id") String id) {
@@ -94,6 +99,7 @@ public class UserEndpoint {
     }
 
     @GET
+    @RolesAllowed({"MODERATOR", "ADMINISTRATOR"})
     @Path("/moderator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getModerator(@PathParam("id") String id) {
@@ -112,6 +118,7 @@ public class UserEndpoint {
     }
 
     @GET
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/administrator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAdministrator(@PathParam("id") String id) {
@@ -137,6 +144,7 @@ public class UserEndpoint {
     }
 
     @GET
+    @RolesAllowed({"CUSTOMER", "ADMINISTRATOR"})
     @Path("/customer/{id}/reservations")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
@@ -161,6 +169,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/customer/{id}/activate")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -183,6 +192,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/customer/{id}/deactivate")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -209,6 +219,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/administrator/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -222,6 +233,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"ADMINISTRATOR"})
     @Path("/moderator/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -235,6 +247,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"ANONYMOUS"})
     @Path("/customer/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -248,6 +261,7 @@ public class UserEndpoint {
     }
 
     @DELETE
+    @RolesAllowed({"CUSTOMSER", "ADMINISTRATOR"})
     @Path("/user/delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete (@PathParam("id") String id) {
@@ -266,6 +280,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"CUSTOMER", "ADMINISTRATOR"})
     @Path("/customer/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -291,6 +306,7 @@ public class UserEndpoint {
     }
 
     @PUT
+    @RolesAllowed({"MODERATOR", "ADMINISTRATOR"})
     @Path("/moderator/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

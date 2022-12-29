@@ -15,12 +15,12 @@
     <h:outputScript library="js" name="scripts.js"/>
     <h:form id="createProduct">
         <p>${msg["products.price"]}
-            <h:inputText id="inputprice" value="#{product.productBean.price}"/>
-            <h:commandLink onclick="return validatePrice(${msg['validation.price']})" value='${msg["app.create"]}' action='#{product.createProduct()}'/>
+            <h:inputText id="inputprice" value="#{productBean.product.price}"/>
+            <h:commandLink onclick="return validatePrice(${msg['validation.price']})" value='${msg["app.create"]}' action='#{productBean.createProduct()}'/>
         </p>
     </h:form>
     <h:form id="tableForm">
-        <h:dataTable id="table" value="#{product.products}" var="p">
+        <h:dataTable id="table" value="#{productBean.products}" var="p">
             <f:facet name="header">${msg["products.table"]}</f:facet>
             <h:column>
                 <f:facet name="header">${msg["app.id"]}</f:facet>
@@ -28,21 +28,21 @@
             </h:column>
             <h:column id = "toChange">
                 <f:facet name="header">${msg["products.price"]}</f:facet>
-                <h:inputText value='#{product.updatePrice}' rendered='#{product.getEditable(p.get("productID"))}' id="change"/>
-                <h:outputText value='#{p.get("price")}' rendered='#{!product.getEditable(p.get("productID"))}'/>
+                <h:inputText value='#{productBean.updatePrice}' rendered='#{productBean.getEditable(p.get("productID"))}' id="change"/>
+                <h:outputText value='#{p.get("price")}' rendered='#{!productBean.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["app.delete"]}</f:facet>
-                <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{product.deleteProduct(p.get("productID"))}'/>
+                <h:commandLink value='${msg["app.delete"]}' onclick="return confirm()" action='#{productBean.deleteProduct(p.get("productID"))}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["app.edit"]}</f:facet>
-                <h:commandLink value = '${msg["app.edit"]}' action='#{product.edit(p.get("productID"), p.get("price"))}' rendered='#{!product.getEditable(p.get("productID"))}'/>
-                <h:commandLink value = '${msg["app.submit"]}' onclick="return validatePrice2(${msg['validation.price']})" action='#{product.update(p.get("productID"))}' rendered='#{product.getEditable(p.get("productID"))}'/>
+                <h:commandLink value = '${msg["app.edit"]}' action='#{productBean.edit(p.get("productID"), p.get("price"))}' rendered='#{!productBean.getEditable(p.get("productID"))}'/>
+                <h:commandLink value = '${msg["app.submit"]}' onclick="return validatePrice2(${msg['validation.price']})" action='#{productBean.update(p.get("productID"))}' rendered='#{productBean.getEditable(p.get("productID"))}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["products.resinfo"]}</f:facet>
-                <h:commandLink value='${msg["products.resinfo"]}' action="productReservation.xhtml" actionListener='#{chosenID.bindValue(p.get("productID"))}'/>
+                <h:commandLink value='${msg["products.resinfo"]}' action="productReservation.xhtml" actionListener='#{chosenIdBean.bindValue(p.get("productID"))}'/>
             </h:column>
         </h:dataTable>
     </h:form>

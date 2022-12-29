@@ -1,10 +1,11 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import modelBeans.ProductBean;
+import modelBeans.Product;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import rest.RestMethods;
+import rest.RestClient;
 
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
@@ -14,11 +15,14 @@ import java.util.Map;
 @Named
 @ManagedBean
 @ViewScoped
-public class Product implements Serializable {
+public class ProductBean implements Serializable {
 
-    private ProductBean productBean;
+    @Inject
+    private JwtStorage jwtStorage;
 
-    private RestMethods restMethods;
+    private Product product;
+
+    private RestClient restMethods;
 
     private JSONArray products;
     private Double updatePrice;
@@ -30,14 +34,14 @@ public class Product implements Serializable {
     private final Map<Integer, Boolean> editable = new HashMap<>();
     private boolean isUpdating = false;
 
-    public Product() {
-        productBean = new ProductBean();
-        restMethods = new RestMethods();
+    public ProductBean() {
+        product = new Product();
+        restMethods = new RestClient();
     }
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(productPrefix);
+        JSONArray arr = restMethods.getAll(productPrefix, jwtStorage.getJwt());
         if (arr != null) {
             this.products = arr;
             this.editable.clear();
@@ -49,38 +53,38 @@ public class Product implements Serializable {
     }
 
     public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(productPrefix + "/" + id);
+        JSONObject obj = restMethods.getOne(productPrefix + "/" + id, jwtStorage.getJwt());
         obj.put("price", this.getUpdatePrice());
-        restMethods.update(obj, productPrefix + "/update");
+        restMethods.update(obj, productPrefix + "/update", jwtStorage.getJwt());
         this.fillArray();
         this.isUpdating = false;
         return "submitProduct";
     }
 
     public String createProduct() {
-        restMethods.createProduct(productBean.getPrice(), productPrefix);
+        restMethods.createProduct(product.getPrice(), productPrefix, jwtStorage.getJwt());
         this.fillArray();
-        this.productBean.setPrice(0);
+        this.product.setPrice(0);
         return "createProduct";
     }
 
     public String deleteProduct(Integer id) {
-        restMethods.delete(productPrefix + "/" + id);
+        restMethods.delete(productPrefix + "/" + id, jwtStorage.getJwt());
         this.fillArray();
-        this.productBean.setPrice(0);
+        this.product.setPrice(0);
         return "deleteProduct";
     }
 
     public JSONArray productReservations(Integer id) {
-        return restMethods.getAll(reservationPrefix + "/product/" + id);
+        return restMethods.getAll(reservationPrefix + "/product/" + id, jwtStorage.getJwt());
     }
 
-    public ProductBean getProductBean() {
-        return productBean;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductBean(ProductBean productBean) {
-        this.productBean = productBean;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public JSONArray getProducts() {

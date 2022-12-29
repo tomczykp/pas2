@@ -12,6 +12,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import javax.annotation.security.RolesAllowed;
+
 @Path("/reservation")
 public class ReservationEndpoint {
 
@@ -23,12 +25,14 @@ public class ReservationEndpoint {
 	private ProductManager productManager;
 
 	@GET
+	@RolesAllowed({"MODERATOR", "ADMINISTRATOR"})
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll () {
 		return Response.ok(reservationManager.getMap().values()).build();
 	}
 
 	@GET
+	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR"})
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get (@PathParam("id") String id) {
@@ -47,6 +51,7 @@ public class ReservationEndpoint {
 	}
 
 	@PUT
+	@RolesAllowed({"CUSTOMER"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response put (@NotNull Reservation r) {
@@ -60,6 +65,7 @@ public class ReservationEndpoint {
 	}
 
 	@DELETE
+	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR"})
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete (@PathParam("id") String id) {
@@ -80,6 +86,7 @@ public class ReservationEndpoint {
 	}
 
 	@DELETE
+	@RolesAllowed({"ADMINISTRATOR"})
 	@Path("/forced/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteF (@PathParam("id") String id) {
@@ -100,6 +107,7 @@ public class ReservationEndpoint {
 	}
 
 	@PUT
+	@RolesAllowed({"MODERATOR", "ADMINISTRATOR"})
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -125,6 +133,7 @@ public class ReservationEndpoint {
 	}
 
 	@GET
+	@RolesAllowed({"CUSTOMER", "ADMINISTRATOR"})
 	@Path("/client/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCustomer(@PathParam("id") String id) {
@@ -143,6 +152,7 @@ public class ReservationEndpoint {
 	}
 
 	@GET
+	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR"})
 	@Path("/product/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProduct(@PathParam("id") String id) {

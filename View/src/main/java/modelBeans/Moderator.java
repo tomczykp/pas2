@@ -2,7 +2,7 @@ package modelBeans;
 
 import java.io.Serializable;
 
-public class ModeratorBean implements Serializable {
+public class Moderator implements Serializable {
 
     private int id;
 

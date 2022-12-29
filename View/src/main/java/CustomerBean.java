@@ -1,10 +1,11 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import modelBeans.CustomerBean;
+import modelBeans.Customer;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import rest.RestMethods;
+import rest.RestClient;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.*;
@@ -12,27 +13,30 @@ import java.util.*;
 @Named
 @ManagedBean
 @ViewScoped
-public class Customer implements Serializable {
+public class CustomerBean implements Serializable {
 
+
+    @Inject
+    private JwtStorage jwtStorage;
     private JSONArray customers;
     private String email;
     private JSONArray foundCustomer;
     private String chosenName;
     private boolean visible = false;
     private String prefix = "http://localhost:8081/rest/api/";
-    private final RestMethods restMethods;
-    private CustomerBean beanCustomer;
+    private final RestClient restMethods;
+    private Customer customer;
     private final Map<Integer, Boolean> editable = new HashMap<>();
     private boolean isUpdating = false;
 
-    public Customer() {
-        restMethods = new RestMethods();
-        beanCustomer = new CustomerBean();
+    public CustomerBean() {
+        restMethods = new RestClient();
+        customer = new Customer();
     }
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(prefix + "customers");
+        JSONArray arr = restMethods.getAll(prefix + "customers", jwtStorage.getJwt());
         if (arr != null) {
             this.customers = arr;
             this.editable.clear();
@@ -44,25 +48,25 @@ public class Customer implements Serializable {
     }
 
     public String createCustomer() {
-        restMethods.putCustomer(beanCustomer.getUsername(), beanCustomer.getPassword(), beanCustomer.getEmail(), "CUSTOMER",  prefix + "customer/create");
+        restMethods.putCustomer(customer.getUsername(), customer.getPassword(), customer.getEmail(), "CUSTOMER",  prefix + "customer/create", jwtStorage.getJwt());
         this.fillArray();
         return "createCustomer";
     }
 
     public String updateCustomer(Integer id, boolean active) {
         if (active) {
-            restMethods.put(prefix + "customer/" + id + "/activate");
+            restMethods.put(prefix + "customer/" + id + "/activate", jwtStorage.getJwt());
         } else {
-            restMethods.put(prefix + "customer/" + id + "/deactivate");
+            restMethods.put(prefix + "customer/" + id + "/deactivate", jwtStorage.getJwt());
         }
         this.fillArray();
         return "activateCustomer";
     }
 
     public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(prefix + "customer/" + id);
+        JSONObject obj = restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt());
         obj.put("email", this.getEmail());
-        restMethods.update(obj, prefix + "customer/update");
+        restMethods.update(obj, prefix + "customer/update", jwtStorage.getJwt());
         this.fillArray();
         this.setEmail("");
         this.isUpdating = false;
@@ -81,7 +85,7 @@ public class Customer implements Serializable {
         if (Objects.equals(this.chosenName, "") || this.chosenName == null) {
             return;
         }
-        this.foundCustomer = restMethods.findByUsername(this.chosenName, this.prefix + "customers");
+        this.foundCustomer = restMethods.findByUsername(this.chosenName, this.prefix + "customers", jwtStorage.getJwt());
         this.chosenName = "";
         this.visible = true;
     }
@@ -93,7 +97,7 @@ public class Customer implements Serializable {
 
 
     public boolean isActive(int id) {
-        return (Boolean) restMethods.getOne(prefix + "customer/" + id).get("active");
+        return (Boolean) restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt()).get("active");
     }
     public JSONArray getCustomers() {
         return customers;
@@ -103,12 +107,12 @@ public class Customer implements Serializable {
         this.customers = customers;
     }
 
-    public CustomerBean getBeanCustomer() {
-        return beanCustomer;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setBeanCustomer(CustomerBean beanCustomer) {
-        this.beanCustomer = beanCustomer;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public boolean getEditable(Integer id) {

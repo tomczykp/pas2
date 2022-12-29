@@ -8,6 +8,8 @@ import app.exceptions.NotFoundException;
 import app.model.*;
 import app.repositories.UserRepository;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.IdentityStore;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;

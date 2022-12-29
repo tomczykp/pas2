@@ -2,7 +2,7 @@ package modelBeans;
 
 import java.io.Serializable;
 
-public class AdministratorBean implements Serializable {
+public class Administrator implements Serializable {
 
     private int id;
 

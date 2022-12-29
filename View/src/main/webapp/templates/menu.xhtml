@@ -6,12 +6,13 @@
                 xmlns:h="http://java.sun.com/jsf/html">
 
     <ul>
-        <li><h:outputLink value="mainMenu.xhtml" >${msg["app.menu.main"]}</h:outputLink></li>
-        <li><h:outputLink value="customer.xhtml" >${msg["app.menu.customers"]}</h:outputLink></li>
-        <li><h:outputLink value="administrator.xhtml" >${msg["app.menu.administrators"]}</h:outputLink></li>
-        <li><h:outputLink value="moderator.xhtml" >${msg["app.menu.moderators"]}</h:outputLink></li>
-        <li><h:outputLink value="product.xhtml" >${msg["app.menu.products"]}</h:outputLink></li>
-        <li><h:outputLink value="reservation.xhtml" >${msg["app.main.app_name"]}</h:outputLink></li>
-        <li><h:outputLink value="filterCustomers.xhtml">${msg["app.menu.filter"]}</h:outputLink></li>
+        <li><h:outputLink value="mainMenu.xhtml">${msg["app.menu.main"]}</h:outputLink></li>
+        <li><h:outputLink value="customer.xhtml" rendered="#{request.isUserInRole('CUSTOMER')}">${msg["app.menu.customers"]}</h:outputLink></li>
+        <li><h:outputLink value="administrator.xhtml" rendered="#{userRole.isUserInRole(['ADMINISTRATOR'])}">${msg["app.menu.administrators"]}</h:outputLink></li>
+        <li><h:outputLink value="moderator.xhtml" rendered="#{userRole.isUserInRole(['MODERATOR', 'ADMINISTRATOR'])}">${msg["app.menu.moderators"]}</h:outputLink></li>
+        <li><h:outputLink value="product.xhtml" rendered="#{userRole.isUserInRole(['CUSTOMER', 'MODERATOR'])}">${msg["app.menu.products"]}</h:outputLink></li>
+        <li><h:outputLink value="reservation.xhtml" rendered="#{userRole.isUserInRole(['CUSTOMER', 'ADMINISTRATOR'])}">${msg["app.main.app_name"]}</h:outputLink></li>
+        <li><h:outputLink value="filterCustomers.xhtml" rendered="#{userRole.isUserInRole(['ADMINISTRATOR'])}">${msg["app.menu.filter"]}</h:outputLink></li>
+        <li><h:outputLink value="login.xhtml">login</h:outputLink> </li>
     </ul>
 </ui:composition>

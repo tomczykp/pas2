@@ -1,10 +1,11 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import modelBeans.ModeratorBean;
+import modelBeans.Moderator;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import rest.RestMethods;
+import rest.RestClient;
 
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
@@ -14,11 +15,14 @@ import java.util.Map;
 @Named
 @ManagedBean
 @ViewScoped
-public class Moderator implements Serializable {
+public class ModeratorBean implements Serializable {
+
+    @Inject
+    private JwtStorage jwtStorage;
 
     private JSONArray moderators;
-    private final RestMethods restMethods;
-    private ModeratorBean moderatorBean;
+    private final RestClient restMethods;
+    private Moderator moderator;
     private Boolean isUpdating = false;
 
     private String email;
@@ -26,14 +30,14 @@ public class Moderator implements Serializable {
 
     private final String prefix = "http://localhost:8081/rest/api/";
 
-    public Moderator() {
-        this.restMethods = new RestMethods();
-        this.moderatorBean = new ModeratorBean();
+    public ModeratorBean() {
+        this.restMethods = new RestClient();
+        this.moderator = new Moderator();
     }
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(prefix + "moderators");
+        JSONArray arr = restMethods.getAll(prefix + "moderators", jwtStorage.getJwt());
         if (arr != null) {
             this.moderators = arr;
             this.editable.clear();
@@ -45,9 +49,9 @@ public class Moderator implements Serializable {
     }
 
     public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(prefix + "moderator/" + id);
+        JSONObject obj = restMethods.getOne(prefix + "moderator/" + id, jwtStorage.getJwt());
         obj.put("email", this.getEmail());
-        restMethods.update(obj, prefix + "moderator/update");
+        restMethods.update(obj, prefix + "moderator/update", jwtStorage.getJwt());
         this.fillArray();
         this.setEmail("");
         this.isUpdating = false;
@@ -63,13 +67,13 @@ public class Moderator implements Serializable {
     }
 
     public String createModerator() {
-        restMethods.putCustomer(moderatorBean.getUsername(), moderatorBean.getPassword(),  moderatorBean.getEmail(), "MODERATOR", prefix + "moderator/create");
+        restMethods.putCustomer(moderator.getUsername(), moderator.getPassword(),  moderator.getEmail(), "MODERATOR", prefix + "moderator/create", jwtStorage.getJwt());
         this.fillArray();
         return "createMod";
     }
 
     public String deleteModerator(Integer id) {
-        restMethods.delete(prefix + id);
+        restMethods.delete(prefix + id, jwtStorage.getJwt());
         this.fillArray();
         return "deleteMod";
     }
@@ -82,12 +86,12 @@ public class Moderator implements Serializable {
         this.moderators = moderators;
     }
 
-    public ModeratorBean getModeratorBean() {
-        return moderatorBean;
+    public Moderator getModerator() {
+        return moderator;
     }
 
-    public void setModeratorBean(ModeratorBean moderatorBean) {
-        this.moderatorBean = moderatorBean;
+    public void setModerator(Moderator moderator) {
+        this.moderator = moderator;
     }
 
     public String getEmail() {

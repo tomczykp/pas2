@@ -6,12 +6,15 @@ import app.managers.ProductManager;
 import app.model.Product;
 import app.model.Reservation;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,12 +26,14 @@ public class ProductEndpoint {
 	private ProductManager manager;
 
 	@GET
+	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR"})
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll () {
 		return Response.ok(manager.getMap().values()).build();
 	}
 
 	@GET
+	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR"})
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get (@PathParam("id") String id) {
@@ -50,6 +55,7 @@ public class ProductEndpoint {
 	}
 
 	@GET
+	@RolesAllowed({"MODERATOR", "ADMINISTRATOR"})
 	@Path("/{id}/reservations")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
@@ -71,6 +77,7 @@ public class ProductEndpoint {
 	}
 
 	@PUT
+	@RolesAllowed({"MODERATOR"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response put (Product p) {
@@ -89,6 +96,7 @@ public class ProductEndpoint {
 	}
 
 	@DELETE
+	@RolesAllowed({"MODERATOR"})
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete (@PathParam("id") String id) {
@@ -109,6 +117,7 @@ public class ProductEndpoint {
 	}
 
 	@PUT
+	@RolesAllowed({"MODERATOR"})
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)

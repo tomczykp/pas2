@@ -15,18 +15,18 @@
     <ui:define name="content">
     <h:form id="createForm" >
         <p>${msg["customers.username"]}
-            <h:inputText id="inpusername" value="#{customer.beanCustomer.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
+            <h:inputText id="inpusername" value="#{customerBean.customer.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
                 <f:validateRegex pattern="^[a-z0-9_-]{3,15}$"/>
             </h:inputText>
             ${msg["customers.password"]}
-            <h:inputSecret id="inppassword" value="#{customer.beanCustomer.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
+            <h:inputSecret id="inppassword" value="#{customerBean.customer.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
                 <f:validateRegex pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})" />
             </h:inputSecret>
             ${msg["customers.email"]}
-            <h:inputText id="inpemail" value="#{customer.beanCustomer.email}" required="true" requiredMessage='${msg["validation.email.empty"]}' validatorMessage='${msg["validation.email"]}'>
+            <h:inputText id="inpemail" value="#{customerBean.customer.email}" required="true" requiredMessage='${msg["validation.email.empty"]}' validatorMessage='${msg["validation.email"]}'>
                 <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
             </h:inputText>
-            <h:commandLink value='${msg["app.create"]}' action='#{customer.createCustomer()}' id="create"/>
+            <h:commandLink value='${msg["app.create"]}' action='#{customerBean.createCustomer()}' id="create"/>
             <h:message for="inpusername" style="color:red"/>
             <h:message for="inppassword" style="color:red"/>
             <h:message for="inpemail" style="color:red"/>
@@ -34,10 +34,10 @@
     </h:form>
     <h:form id="findByName">
         <p>FIND USER </p>
-        <h:inputText id="inp" value="#{customer.chosenName}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}'/>
-        <h:commandLink value="Znajdz" action='#{customer.findByName()}'/>
+        <h:inputText id="inp" value="#{customerBean.chosenName}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}'/>
+        <h:commandLink value="Znajdz" action='#{customerBean.findByName()}'/>
         <h:message for="inp" style="color:red"/>
-        <p:dataTable id="foundTable" value="#{customer.foundCustomer}" var="found" rendered="#{customer.visible}">
+        <p:dataTable id="foundTable" value="#{customerBean.foundCustomer}" var="found" rendered="#{customerBean.visible}">
             <h:column>
                 <f:facet name="header">${msg["customers.username"]}</f:facet>
                 <h:outputText value='#{found.get("username")}'/>
@@ -56,9 +56,9 @@
             </h:column>
         </p:dataTable>
     </h:form>
-    <h:form> <h:commandLink value='hide' action="#{customer.hide()}" rendered="#{customer.visible}"/></h:form>
+    <h:form> <h:commandLink value='hide' action="#{customerBean.hide()}" rendered="#{customerBean.visible}"/></h:form>
     <h:form id="efg" >
-        <p:dataTable id="table" value="#{customer.customers}" var="customers">
+        <p:dataTable id="table" value="#{customerBean.customers}" var="customers">
             <f:facet name="header">${msg["customers.table"]}</f:facet>
             <h:column>
                 <f:facet name="header">${msg["customers.username"]}</f:facet>
@@ -66,10 +66,10 @@
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["customers.email"]}</f:facet>
-                <h:inputText value='#{customer.email}' rendered='#{customer.getEditable(customers.get("customerID"))}' required="true" requiredMessage='${msg["validation.email.change.empty"]}' validatorMessage='${msg["validation.email.change"]}' id="editEmail">
+                <h:inputText value='#{customerBean.email}' rendered='#{customerBean.getEditable(customers.get("customerID"))}' required="true" requiredMessage='${msg["validation.email.change.empty"]}' validatorMessage='${msg["validation.email.change"]}' id="editEmail">
                     <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
                 </h:inputText>
-                <h:outputText value='#{customers.get("email")}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
+                <h:outputText value='#{customers.get("email")}' rendered='#{!customerBean.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["customers.active"]}</f:facet>
@@ -81,20 +81,20 @@
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["customers.activate"]}</f:facet>
-                <h:commandLink value='${msg["customers.activate"]}' action='#{customer.updateCustomer(customers.get("customerID"), true)}'/>
+                <h:commandLink value='${msg["customers.activate"]}' action='#{customerBean.updateCustomer(customers.get("customerID"), true)}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["customers.deactivate"]}</f:facet>
-                <h:commandLink value='${msg["customers.deactivate"]}' action='#{customer.updateCustomer(customers.get("customerID"), false)}'/>
+                <h:commandLink value='${msg["customers.deactivate"]}' action='#{customerBean.updateCustomer(customers.get("customerID"), false)}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["app.edit"]}</f:facet>
-                <h:commandLink value = '${msg["app.edit"]}' action='#{customer.edit(customers.get("customerID"), customers.get("email"))}' rendered='#{!customer.getEditable(customers.get("customerID"))}'/>
-                <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{customer.update(customers.get("customerID"))}' rendered='#{customer.getEditable(customers.get("customerID"))}'/>
+                <h:commandLink value = '${msg["app.edit"]}' action='#{customerBean.edit(customers.get("customerID"), customers.get("email"))}' rendered='#{!customerBean.getEditable(customers.get("customerID"))}'/>
+                <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{customerBean.update(customers.get("customerID"))}' rendered='#{customerBean.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["customers.book"]}</f:facet>
-                <h:commandLink value='${msg["customers.book"]}' action="productCustomer.xhtml" actionListener='#{chosenID.bindValue(customers.get("customerID"))}' rendered='#{customer.isActive(customers.get("customerID"))}'/>
+                <h:commandLink value='${msg["customers.book"]}' action="productCustomer.xhtml" actionListener='#{chosenIdBean.bindValue(customers.get("customerID"))}' rendered='#{customerBean.isActive(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
                 <h:message for="editEmail" style="color:red"/>
