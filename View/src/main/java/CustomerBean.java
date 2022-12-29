@@ -2,7 +2,6 @@ import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import modelBeans.Customer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestClient;
@@ -15,7 +14,6 @@ import java.util.*;
 @ViewScoped
 public class CustomerBean implements Serializable {
 
-
     @Inject
     private JwtStorage jwtStorage;
     private JSONArray customers;
@@ -25,13 +23,11 @@ public class CustomerBean implements Serializable {
     private boolean visible = false;
     private String prefix = "http://localhost:8081/rest/api/";
     private final RestClient restMethods;
-    private Customer customer;
     private final Map<Integer, Boolean> editable = new HashMap<>();
     private boolean isUpdating = false;
 
     public CustomerBean() {
         restMethods = new RestClient();
-        customer = new Customer();
     }
 
     @PostConstruct
@@ -45,12 +41,6 @@ public class CustomerBean implements Serializable {
                 editable.put(Integer.valueOf(obj.get("customerID").toString()), false);
             }
         }
-    }
-
-    public String createCustomer() {
-        restMethods.putCustomer(customer.getUsername(), customer.getPassword(), customer.getEmail(), "CUSTOMER",  prefix + "customer/create", jwtStorage.getJwt());
-        this.fillArray();
-        return "createCustomer";
     }
 
     public String updateCustomer(Integer id, boolean active) {
@@ -105,14 +95,6 @@ public class CustomerBean implements Serializable {
 
     public void setCustomers(JSONArray customers) {
         this.customers = customers;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public boolean getEditable(Integer id) {

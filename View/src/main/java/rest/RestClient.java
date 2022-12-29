@@ -10,6 +10,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 
 public class RestClient {
@@ -19,10 +21,12 @@ public class RestClient {
 
     public JSONArray getAll(String endpointURL, String jwt) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.get()
-                    .setUri(endpointURL)
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .build();
+            RequestBuilder requestBuilder = RequestBuilder.get()
+                    .setUri(endpointURL);
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             HttpResponse response = httpclient.execute(request);
             String responseString = new BasicResponseHandler().handleResponse(response);
             return new JSONArray(responseString);
@@ -33,10 +37,12 @@ public class RestClient {
 
     public JSONObject getOne(String endpointURL, String jwt) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.get()
-                    .setUri(endpointURL)
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .build();
+            RequestBuilder requestBuilder = RequestBuilder.get()
+                    .setUri(endpointURL);
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             HttpResponse response = httpclient.execute(request);
             String responseString = new BasicResponseHandler().handleResponse(response);
             return new JSONObject(responseString);
@@ -72,12 +78,14 @@ public class RestClient {
         }
         JSONObject obj = this.create(username, password, email, type);
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.put()
+            RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .setEntity(new StringEntity(obj.toString()))
-                    .build();
+                    .setEntity(new StringEntity(obj.toString()));
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             httpclient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -89,12 +97,14 @@ public class RestClient {
             return;
         }
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.put()
+            RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                    .setEntity(new StringEntity(customer.toString()))
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .build();
+                    .setEntity(new StringEntity(customer.toString()));
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             httpclient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -103,10 +113,11 @@ public class RestClient {
 
     public void put(String endpointURL, String jwt) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.put()
-                    .setUri(endpointURL)
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .build();
+            RequestBuilder requestBuilder = RequestBuilder.put().setUri(endpointURL);
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             httpclient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -124,12 +135,14 @@ public class RestClient {
         jsonObject.put("customer", customer);
         jsonObject.put("product", product);
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.put()
+            RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .setEntity(new StringEntity(jsonObject.toString()))
-                    .build();
+                    .setEntity(new StringEntity(jsonObject.toString()));
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             httpclient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -145,12 +158,14 @@ public class RestClient {
         jsonObject.put("price", price);
         jsonObject.put("reservations", new JSONArray());
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.put()
+            RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .setEntity(new StringEntity(jsonObject.toString()))
-                    .build();
+                    .setEntity(new StringEntity(jsonObject.toString()));
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             httpclient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -159,10 +174,12 @@ public class RestClient {
 
     public void delete(String endpointURL, String jwt) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.delete()
-                    .setUri(endpointURL)
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .build();
+            RequestBuilder requestBuilder = RequestBuilder.delete().setUri(endpointURL);
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+
+            HttpUriRequest request = requestBuilder.build();
             httpclient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -170,12 +187,15 @@ public class RestClient {
     }
 
     public JSONArray findByUsername(String name, String endpointURL, String jwt) {
+
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpUriRequest request = RequestBuilder.get()
+            RequestBuilder requestBuilder = RequestBuilder.get()
                     .setUri(endpointURL)
-                    .addParameter("username", name)
-                    .setHeader("Authorization", "Bearer " +  jwt)
-                    .build();
+                    .addParameter("username", name);
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
             HttpResponse response = httpclient.execute(request);
             String responseString = new BasicResponseHandler().handleResponse(response);
             return new JSONArray(responseString);
@@ -184,7 +204,7 @@ public class RestClient {
         }
     }
 
-    public JSONObject login(String username, String password, String endpointURL) {
+    public String login(String username, String password, String endpointURL) throws AuthenticationException {
         JSONObject object = new JSONObject();
         object.put("username", username);
         object.put("password", password);
@@ -195,8 +215,11 @@ public class RestClient {
                     .setEntity(new StringEntity(object.toString()))
                     .build();
             HttpResponse response = httpClient.execute(request);
-            String responseString =  new BasicResponseHandler().handleResponse(response);
-            return new JSONObject(responseString);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 401) {
+                throw new AuthenticationException();
+            }
+            return new BasicResponseHandler().handleResponse(response);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

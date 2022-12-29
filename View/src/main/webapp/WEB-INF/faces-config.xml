@@ -57,11 +57,6 @@
             <redirect/>
         </navigation-case>
         <navigation-case>
-            <from-outcome>createCustomer</from-outcome>
-            <to-view-id>/customer.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-        <navigation-case>
             <from-outcome>submitCustomer</from-outcome>
             <to-view-id>/customer.xhtml</to-view-id>
             <redirect/>
@@ -103,6 +98,35 @@
         <navigation-case>
             <from-outcome>submitCustomer</from-outcome>
             <to-view-id>/moderator.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/login.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>logged</from-outcome>
+            <to-view-id>/mainMenu.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>wrongCredentials</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/*</from-view-id>
+        <navigation-case>
+            <from-outcome>logout</from-outcome>
+            <to-view-id>/mainMenu.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/registerCustomer.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>createCustomer</from-outcome>
+            <to-view-id>/registerCustomer.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>

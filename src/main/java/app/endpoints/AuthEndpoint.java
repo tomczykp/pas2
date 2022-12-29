@@ -24,17 +24,13 @@ public class AuthEndpoint {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ANONYMOUS"})
     public Response login(LoginDTO loginDTO) {
         UsernamePasswordCredential usernamePasswordCredential = new UsernamePasswordCredential(loginDTO.username, loginDTO.password);
         CredentialValidationResult credentialValidationResult = inMemoryIdentityStore.validate(usernamePasswordCredential);
         if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
             String jwt = jwtProvider.generateJWT(loginDTO.username, credentialValidationResult.getCallerGroups().iterator().next());
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("jwt", jwt);
-            jsonObject.put("role", jwtProvider.parseJWT(jwt).getBody().get("role", String.class));
-            return Response.ok(jsonObject.toString()).build();
+            return Response.ok(jwt).build();
         }
         return Response.status(401).build();
     }

@@ -15,10 +15,10 @@
     <ui:define name="content">
         <h:form id="loginForm">
             <p>${msg["customers.username"]}
-            <h:inputText id="inpusername" value="#{loginBean.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}'/>
+            <h:inputText id="inpusername" value="#{authenticationBean.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}'/>
             ${msg["customers.password"]}
-            <h:inputSecret id="inppassword" value="#{loginBean.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}'/>
-            <h:commandLink value='login' action='#{loginBean.login()}' id="create"/>
+            <h:inputSecret id="inppassword" value="#{authenticationBean.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}'/>
+            <h:commandLink value='login' action='#{authenticationBean.login()}' id="login"/>
             </p>
         </h:form>
     </ui:define>

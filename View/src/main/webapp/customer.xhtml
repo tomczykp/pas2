@@ -13,25 +13,6 @@
         <ui:include src="./templates/menu.xhtml"/>
     </ui:define>
     <ui:define name="content">
-    <h:form id="createForm" >
-        <p>${msg["customers.username"]}
-            <h:inputText id="inpusername" value="#{customerBean.customer.username}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='#{msg["validation.username"]}'>
-                <f:validateRegex pattern="^[a-z0-9_-]{3,15}$"/>
-            </h:inputText>
-            ${msg["customers.password"]}
-            <h:inputSecret id="inppassword" value="#{customerBean.customer.password}" maxlength="20" required="true" requiredMessage='${msg["validation.password.empty"]}' validatorMessage='${msg["validation.password"]}'>
-                <f:validateRegex pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})" />
-            </h:inputSecret>
-            ${msg["customers.email"]}
-            <h:inputText id="inpemail" value="#{customerBean.customer.email}" required="true" requiredMessage='${msg["validation.email.empty"]}' validatorMessage='${msg["validation.email"]}'>
-                <f:validateRegex pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$" />
-            </h:inputText>
-            <h:commandLink value='${msg["app.create"]}' action='#{customerBean.createCustomer()}' id="create"/>
-            <h:message for="inpusername" style="color:red"/>
-            <h:message for="inppassword" style="color:red"/>
-            <h:message for="inpemail" style="color:red"/>
-        </p>
-    </h:form>
     <h:form id="findByName">
         <p>FIND USER </p>
         <h:inputText id="inp" value="#{customerBean.chosenName}" maxlength="15" required="true" requiredMessage='${msg["validation.username.empty"]}'/>
