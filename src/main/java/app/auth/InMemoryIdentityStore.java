@@ -1,5 +1,7 @@
 package app.auth;
 
+import app.model.Customer;
+import app.model.CustomerType;
 import app.model.User;
 import app.repositories.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -38,6 +40,11 @@ public class InMemoryIdentityStore implements IdentityStore {
         if (users.size() > 0) {
             for (User u : users) {
                 if (user.getCaller().equals(u.getUsername()) && user.getPasswordAsString().equals(u.getPassword())) {
+                    if (u.getType().equals(CustomerType.CUSTOMER)) {
+                        if (!((Customer) u).isActive()) {
+                            return CredentialValidationResult.INVALID_RESULT;
+                        }
+                    }
                     return new CredentialValidationResult(u.getUsername(), new HashSet<>(Collections.singleton(u.getType().toString())));
                 }
             }

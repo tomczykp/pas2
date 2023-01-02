@@ -14,7 +14,7 @@
     <h:body>
         <div>
             <div id = "top">
-                <b>role: #{userRole.role}</b>
+                <b>Hello #{facesContext.externalContext.remoteUser} your role: #{userRole.role}</b>
                 <ui:insert name="top">Top</ui:insert>
             </div>
             <div id="left">

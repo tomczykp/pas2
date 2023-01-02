@@ -18,7 +18,7 @@ function validatePrice2(message) {
     return confirm();
 }
 
-function getFiltered(username, email, active, id) {
+function getFiltered(username, email, active, id, jwt) {
     let table = $("#table");
     table.empty();
     let header = $("<tr></tr>");
@@ -31,6 +31,11 @@ function getFiltered(username, email, active, id) {
     if (filter == null) {
         filter = "";
     }
+    $.ajaxSetup({
+        headers: {
+            'Authorization': "Bearer " + jwt
+        }
+    })
     $.get("http://localhost:8081/rest/api/customers", {username: filter}, function(data) {
        let array = JSON.parse(JSON.stringify(data));
        for(let i = 0; i < array.length; i++) {

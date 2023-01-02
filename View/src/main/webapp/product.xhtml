@@ -13,7 +13,7 @@
     </ui:define>
     <ui:define name="content">
     <h:outputScript library="js" name="scripts.js"/>
-    <h:form id="createProduct">
+    <h:form id="createProduct" rendered="#{userRole.moderator}">
         <p>${msg["products.price"]}
             <h:inputText id="inputprice" value="#{productBean.product.price}"/>
             <h:commandLink onclick="return validatePrice(${msg['validation.price']})" value='${msg["app.create"]}' action='#{productBean.createProduct()}'/>

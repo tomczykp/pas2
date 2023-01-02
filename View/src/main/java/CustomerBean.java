@@ -5,6 +5,8 @@ import jakarta.inject.Named;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestClient;
+
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.*;
@@ -32,7 +34,13 @@ public class CustomerBean implements Serializable {
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(prefix + "customers", jwtStorage.getJwt());
+        JSONArray arr;
+        if (FacesContext.getCurrentInstance().getExternalContext().isUserInRole("CUSTOMER")){
+            String currentUserUsername = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+            arr = restMethods.getAll(prefix + "customers?username=" + currentUserUsername, jwtStorage.getJwt());
+        } else {
+            arr = restMethods.getAll(prefix + "customers", jwtStorage.getJwt());
+        }
         if (arr != null) {
             this.customers = arr;
             this.editable.clear();
@@ -83,8 +91,6 @@ public class CustomerBean implements Serializable {
     public void hide() {
         this.visible = false;
     }
-
-
 
     public boolean isActive(int id) {
         return (Boolean) restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt()).get("active");

@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestClient;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -37,7 +38,13 @@ public class ModeratorBean implements Serializable {
 
     @PostConstruct
     public void fillArray() {
-        JSONArray arr = restMethods.getAll(prefix + "moderators", jwtStorage.getJwt());
+        JSONArray arr;
+        if (FacesContext.getCurrentInstance().getExternalContext().isUserInRole("MODERATOR")){
+            String currentUserUsername = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+            arr = restMethods.getAll(prefix + "moderators?username=" + currentUserUsername, jwtStorage.getJwt());
+        } else {
+            arr = restMethods.getAll(prefix + "moderators", jwtStorage.getJwt());
+        }
         if (arr != null) {
             this.moderators = arr;
             this.editable.clear();

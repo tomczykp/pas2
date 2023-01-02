@@ -44,7 +44,7 @@ public class ProductCustomerBean implements Serializable {
     }
 
     public String createReservation(Integer clientId, Integer productId) {
-        restMethods.createReservation(reservation.getStartDate(), reservation.getEndDate(), clientId, productId, reservationPrefix, jwtStorage.getJwt());
+        restMethods.createReservation(reservation.getStartDate(), reservation.getEndDate(), productId, reservationPrefix, jwtStorage.getJwt());
         this.fillArray();
         this.fillReservationArray(clientId);
         return "book";

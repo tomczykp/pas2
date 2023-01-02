@@ -8,8 +8,8 @@ import app.exceptions.NotFoundException;
 import app.model.*;
 import app.repositories.UserRepository;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.identitystore.IdentityStore;
-
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -19,16 +19,28 @@ public class UserManager {
     @Inject
     UserRepository userRepository;
 
+    @Context
+    private SecurityContext securityContext;
+
     synchronized public AdministratorDTO createAdministrator(User administrator) throws Exception {
-        return new AdministratorDTO((Administrator) userRepository.insert(administrator));
+        if (this.getUserByUsername((u)-> u.getUsername().equals(administrator.getUsername())).isEmpty()) {
+            return new AdministratorDTO((Administrator) userRepository.insert(administrator));
+        }
+        throw new Exception("this username already exists!");
     }
 
     synchronized public ModeratorDTO createModerator(User moderator) throws Exception {
-        return new ModeratorDTO((Moderator) userRepository.insert(moderator));
+        if (this.getUserByUsername((u)-> u.getUsername().equals(moderator.getUsername())).isEmpty()) {
+            return new ModeratorDTO((Moderator) userRepository.insert(moderator));
+        }
+        throw new Exception("this username already exists!");
     }
 
     synchronized public CustomerDTO createCustomer(User customer) throws Exception {
-        return new CustomerDTO((Customer) userRepository.insert(customer));
+        if (this.getUserByUsername((u)-> u.getUsername().equals(customer.getUsername())).isEmpty()) {
+            return new CustomerDTO((Customer) userRepository.insert(customer));
+        }
+        throw new Exception("this username already exists!");
     }
 
     synchronized public void deleteUser(int id) {
@@ -63,6 +75,15 @@ public class UserManager {
         userRepository.modifyAdministrator(id, func);
     }
 
+    public boolean changePassword(String oldPassword, String newPassword) throws Exception {
+        User user = this.getUserFromServerContext();
+        if (!user.getPassword().equals(oldPassword)) {
+            throw new Exception("Wrong password!");
+        }
+        user.setPassword(newPassword);
+        return true;
+    }
+
     public Map<Integer, CustomerDTO> getCustomers(Predicate<User> predicate) {
         try {
             HashMap<Integer, CustomerDTO> res = new HashMap<>();
@@ -82,6 +103,16 @@ public class UserManager {
             for (Map.Entry<Integer, User> entry : userRepository.get(predicate).entrySet()) {
                 res.put(entry.getKey(), new ModeratorDTO((Moderator) entry.getValue()));
             }
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map<Integer, User> getUserByUsername(Predicate<User> predicate) {
+        try {
+            HashMap<Integer, User> res = new HashMap<>(userRepository.get(predicate));
             return res;
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,5 +161,9 @@ public class UserManager {
             }
         }
         return res;
+    }
+
+    public User getUserFromServerContext() {
+        return this.getUserByUsername((u)-> u.getUsername().equals(securityContext.getUserPrincipal().getName())).entrySet().iterator().next().getValue();
     }
 }

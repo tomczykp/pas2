@@ -1,6 +1,7 @@
 package app.endpoints;
 
 import app.dto.AdministratorDTO;
+import app.dto.ChangePasswordDTO;
 import app.dto.CustomerDTO;
 import app.dto.ModeratorDTO;
 import app.exceptions.NotFoundException;
@@ -25,7 +26,7 @@ public class UserEndpoint {
     private UserManager userManager;
 
     @GET
-    @RolesAllowed({"ADMINISTRATOR"})
+    @RolesAllowed({"ADMINISTRATOR", "CUSTOMER"})
     @Path("/customers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCustomers (@QueryParam("username") String name,
@@ -43,7 +44,7 @@ public class UserEndpoint {
     }
 
     @GET
-    @RolesAllowed({"ADMINISTRATOR"})
+    @RolesAllowed({"ADMINISTRATOR", "MODERATOR"})
     @Path("/moderators")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllModerators (@QueryParam("username") String name,
@@ -301,6 +302,19 @@ public class UserEndpoint {
             return Response.ok(
                     new JSONObject().put("status", e.getMessage())
                             .toString()).status(409).build();
+        }
+    }
+
+    @PUT
+    @RolesAllowed({"MODERATOR", "ADMINISTRATOR", "CUSTOMER"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/passwordChange")
+    public Response changePassword(@NotNull ChangePasswordDTO changePasswordDTO) {
+        try {
+            this.userManager.changePassword(changePasswordDTO.oldPassword, changePasswordDTO.newPassword);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.ok(new JSONObject().put("status", e.getMessage())).status(400).build();
         }
     }
 

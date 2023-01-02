@@ -11,6 +11,7 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
+import javax.security.enterprise.authentication.mechanism.http.AutoApplySession;
 
 @ApplicationScoped
 @DeclareRoles({"CUSTOMER", "MODERATOR", "ADMINISTRATOR", "ANONYMOUS"})

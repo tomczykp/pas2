@@ -2,7 +2,6 @@ import jakarta.annotation.ManagedBean;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import rest.RestClient;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -39,7 +38,7 @@ public class AuthenticationBean implements Serializable {
             this.jwtStorage.setJwt(jwt);
             return "logged";
         } catch (AuthenticationException e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Wrong credentials!"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Wrong credentials, or your account is inactive!"));
             return "wrongCredentials";
         }
     }

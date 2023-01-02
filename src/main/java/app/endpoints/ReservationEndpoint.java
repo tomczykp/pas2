@@ -1,18 +1,23 @@
 package app.endpoints;
 
+import app.dto.SelfReservationDTO;
 import app.exceptions.NotFoundException;
 import app.managers.ProductManager;
 import app.managers.ReservationManager;
 import app.managers.UserManager;
 import app.model.Reservation;
+import app.model.User;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
+import javax.faces.context.FacesContext;
 
 @Path("/reservation")
 public class ReservationEndpoint {
@@ -54,14 +59,18 @@ public class ReservationEndpoint {
 	@RolesAllowed({"CUSTOMER"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response put (@NotNull Reservation r) {
+	public Response put (@NotNull SelfReservationDTO r) {
 		try {
-			Reservation reservation = reservationManager.create(r);
+			User user = userManager.getUserFromServerContext();
+			if (user == null) {
+				return Response.status(409).build();
+			}
+			Reservation res = new Reservation(r.startDate, r.endDate, user.getUserID(), r.getProduct());
+			Reservation reservation = reservationManager.create(res);
 			return Response.ok(reservation).build();
 		} catch (Exception e) {
-			e.printStackTrace();
+			return Response.status(409).build();
 		}
-		return null;
 	}
 
 	@DELETE

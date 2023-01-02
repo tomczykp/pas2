@@ -17,12 +17,12 @@
         <h:outputScript library="js" name="scripts.js"/>
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                getFiltered('${msg["customers.username"]}','${msg["customers.email"]}', '${msg["customers.active"]}', '${msg["app.id"]}');
+                getFiltered('${msg["customers.username"]}','${msg["customers.email"]}', '${msg["customers.active"]}', '${msg["app.id"]}', '${jwtStorage.jwt}');
             });
         </script>
         <h:form id="form">
             <p>${msg["customers.filter"]}
-                <h:inputText id="inputFilterData" maxlength="15" onkeyup="getFiltered(${msg['customers.username.comas']}, ${msg['customers.email.comas']}, ${msg['customers.active.comas']}, ${msg['app.id.comas']})" />
+                <h:inputText id="inputFilterData" maxlength="15" onkeyup="getFiltered(${msg['customers.username.comas']}, ${msg['customers.email.comas']}, ${msg['customers.active.comas']}, ${msg['app.id.comas']}, '${jwtStorage.jwt}')" />
             </p>
         </h:form>
         <table id="table">

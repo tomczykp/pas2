@@ -1,33 +1,57 @@
 package rest;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.*;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.methods.*;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import javax.naming.AuthenticationException;
 import java.io.IOException;
+import java.net.URI;
 
 public class RestClient {
 
     public RestClient() {
     }
 
+    public CloseableHttpClient createHttpClientCustom() {
+
+        String[] methods = new String[]{"GET", "POST", "HEAD", "DELETE", "PUT"};
+        return HttpClients.custom().setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).setRedirectStrategy(new DefaultRedirectStrategy(methods) {
+
+            @Override
+            public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
+                final URI uri = getLocationURI(request, response, context);
+                final String method = request.getRequestLine().getMethod();
+                if (method.equalsIgnoreCase(HttpHead.METHOD_NAME)) {
+                    return new HttpHead(uri);
+                } else if (method.equalsIgnoreCase(HttpGet.METHOD_NAME)) {
+                    return new HttpGet(uri);
+                } else {
+                    final int status = response.getStatusLine().getStatusCode();
+                    if (status == HttpStatus.SC_TEMPORARY_REDIRECT || status == HttpStatus.SC_MOVED_TEMPORARILY) { //HttpStatus.SC_MOVED_TEMPORARILY == 302
+                        return RequestBuilder.copy(request).setUri(uri).build();
+                    } else {
+                        return new HttpGet(uri);
+                    }
+                }
+            }
+        }).build();
+    }
+
     public JSONArray getAll(String endpointURL, String jwt) {
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.get()
                     .setUri(endpointURL);
             if (!jwt.equals("")) {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            HttpResponse response = httpclient.execute(request);
+            HttpResponse response = httpClient.execute(request);
             String responseString = new BasicResponseHandler().handleResponse(response);
             return new JSONArray(responseString);
         } catch (IOException e) {
@@ -36,14 +60,14 @@ public class RestClient {
     }
 
     public JSONObject getOne(String endpointURL, String jwt) {
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.get()
                     .setUri(endpointURL);
             if (!jwt.equals("")) {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            HttpResponse response = httpclient.execute(request);
+            HttpResponse response = httpClient.execute(request);
             String responseString = new BasicResponseHandler().handleResponse(response);
             return new JSONObject(responseString);
         } catch (IOException e) {
@@ -77,7 +101,7 @@ public class RestClient {
             return;
         }
         JSONObject obj = this.create(username, password, email, type);
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -86,7 +110,7 @@ public class RestClient {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            httpclient.execute(request);
+            httpClient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -96,7 +120,7 @@ public class RestClient {
         if (customer == null) {
             return;
         }
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -105,36 +129,36 @@ public class RestClient {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            httpclient.execute(request);
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMETHOD: " + request.getMethod() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            httpClient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void put(String endpointURL, String jwt) {
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.put().setUri(endpointURL);
             if (!jwt.equals("")) {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            httpclient.execute(request);
+            httpClient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void createReservation(String startDate, String endDate, Integer customer, Integer product, String endpointURL, String jwt) {
-        if (customer == null || product == null || startDate == null || startDate.equals("")) {
+    public void createReservation(String startDate, String endDate, Integer product, String endpointURL, String jwt) {
+        if (product == null || startDate == null || startDate.equals("")) {
             return;
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("reservationID", 1);
         jsonObject.put("startDate", startDate);
         jsonObject.put("endDate", endDate);
-        jsonObject.put("customer", customer);
         jsonObject.put("product", product);
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -143,7 +167,7 @@ public class RestClient {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            httpclient.execute(request);
+            httpClient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -157,7 +181,7 @@ public class RestClient {
         jsonObject.put("productID", 1);
         jsonObject.put("price", price);
         jsonObject.put("reservations", new JSONArray());
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.put()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -166,21 +190,21 @@ public class RestClient {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            httpclient.execute(request);
+            httpClient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void delete(String endpointURL, String jwt) {
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.delete().setUri(endpointURL);
             if (!jwt.equals("")) {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
 
             HttpUriRequest request = requestBuilder.build();
-            httpclient.execute(request);
+            httpClient.execute(request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -188,7 +212,7 @@ public class RestClient {
 
     public JSONArray findByUsername(String name, String endpointURL, String jwt) {
 
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.get()
                     .setUri(endpointURL)
                     .addParameter("username", name);
@@ -196,7 +220,7 @@ public class RestClient {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            HttpResponse response = httpclient.execute(request);
+            HttpResponse response = httpClient.execute(request);
             String responseString = new BasicResponseHandler().handleResponse(response);
             return new JSONArray(responseString);
         } catch (IOException e) {
@@ -208,7 +232,7 @@ public class RestClient {
         JSONObject object = new JSONObject();
         object.put("username", username);
         object.put("password", password);
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             HttpUriRequest request = RequestBuilder.post()
                     .setUri(endpointURL)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -220,6 +244,29 @@ public class RestClient {
                 throw new AuthenticationException();
             }
             return new BasicResponseHandler().handleResponse(response);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void changePassword(String oldPassword, String newPassword, String endpointURL, String jwt) throws Exception {
+        JSONObject object = new JSONObject();
+        object.put("oldPassword", oldPassword);
+        object.put("newPassword", newPassword);
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
+            RequestBuilder requestBuilder = RequestBuilder.put()
+                    .setUri(endpointURL)
+                    .setHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                    .setEntity(new StringEntity(object.toString()));
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 400) {
+                throw new Exception();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
