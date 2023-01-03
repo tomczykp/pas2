@@ -1,13 +1,18 @@
 package app.managers;
 
 import app.FunctionThrows;
+import app.auth.JwsProvider;
+import app.dto.SelfReservationDTO;
+import app.exceptions.InvalidJWSException;
 import app.exceptions.NotFoundException;
 import app.model.Customer;
 import app.model.Reservation;
 import app.repositories.ProductRepository;
 import app.repositories.ReservationRepository;
 import app.repositories.UserRepository;
+import com.nimbusds.jose.JOSEException;
 import jakarta.inject.Inject;
+import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -25,6 +30,8 @@ public class ReservationManager {
 
 	@Inject
 	public ProductRepository productRepository;
+
+	private JwsProvider jwsProvider = new JwsProvider();
 
 	synchronized public Reservation create (Reservation r) throws Exception {
 		if (r.getStartDate().isBefore(LocalDate.now()) || r.getEndDate().isBefore(LocalDate.now()))
@@ -55,8 +62,16 @@ public class ReservationManager {
 		reservationRepository.delete(id);
 	}
 
-	public Reservation modify (int id, FunctionThrows<Reservation> func) throws Exception {
-		return reservationRepository.modify(id, func);
+	public Reservation modify (int id, FunctionThrows<Reservation> func, String jws, Reservation reservation) throws Exception {
+		if (this.jwsProvider.verify(jws)) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("id", reservation.getReservationID());
+			String newJwt = this.jwsProvider.generateJws(jsonObject.toString());
+			if (newJwt.equals(jws)) {
+				return reservationRepository.modify(id, func);
+			}
+		}
+		throw new InvalidJWSException();
 	}
 
 	public Reservation get (int id) throws NotFoundException {
@@ -89,5 +104,12 @@ public class ReservationManager {
 
 	public List<Reservation> getProductReservations(int id) throws Exception {
 		return productRepository.get(id).getReservations();
+	}
+
+	public String getJwsFromReservation(int id) throws NotFoundException, JOSEException {
+		Reservation reservation = this.reservationRepository.get(id);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("id", reservation.getReservationID());
+		return this.jwsProvider.generateJws(jsonObject.toString());
 	}
 }

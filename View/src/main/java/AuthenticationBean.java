@@ -31,15 +31,19 @@ public class AuthenticationBean implements Serializable {
 
     public String login() {
         try {
-            request.logout();
-        } catch (ServletException e) {}
-        try {
             String jwt = this.restClient.login(this.username, this.password, "http://localhost:8081/rest/api/login");
+            try {
+                request.logout();
+            } catch (ServletException ignored) {}
             this.jwtStorage.setJwt(jwt);
             return "logged";
-        } catch (AuthenticationException e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Wrong credentials, or your account is inactive!"));
-            return "wrongCredentials";
+        } catch (Exception e) {
+            if (e.getMessage().equals("Wrong credentials!")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+                return "exception";
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+            return "exception";
         }
     }
 

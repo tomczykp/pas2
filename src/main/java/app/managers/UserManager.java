@@ -1,15 +1,21 @@
 package app.managers;
 
 import app.FunctionThrows;
+import app.auth.JwsProvider;
 import app.dto.AdministratorDTO;
 import app.dto.CustomerDTO;
 import app.dto.ModeratorDTO;
+import app.exceptions.InvalidJWSException;
 import app.exceptions.NotFoundException;
+import app.exceptions.UnmachingPasswordsException;
 import app.model.*;
 import app.repositories.UserRepository;
+import com.nimbusds.jose.JOSEException;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -18,6 +24,8 @@ public class UserManager {
 
     @Inject
     UserRepository userRepository;
+
+    private JwsProvider jwsProvider = new JwsProvider();
 
     @Context
     private SecurityContext securityContext;
@@ -63,22 +71,43 @@ public class UserManager {
         userRepository.modify(id, func);
     }
 
-    public void modifyCustomer(int id, FunctionThrows<Customer> func) throws Exception {
-        userRepository.modifyCustomer(id, func);
+    public void modifyCustomer(int id, FunctionThrows<Customer> func, String jws, CustomerDTO newCustomer) throws Exception {
+        if (this.jwsProvider.verify(jws)) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userID", newCustomer.customerID);
+            jsonObject.put("username", newCustomer.username);
+            jsonObject.put("active", newCustomer.active);
+            String newJws = this.jwsProvider.generateJws(jsonObject.toString());
+            if (newJws.equals(jws)) {
+                userRepository.modifyCustomer(id, func);
+                return;
+            }
+        }
+        throw new InvalidJWSException();
     }
 
-    public void modifyModerator(int id, FunctionThrows<Moderator> func) throws Exception {
-        userRepository.modifyModerator(id, func);
+    public void modifyModerator(int id, FunctionThrows<Moderator> func, String jws, ModeratorDTO moderatorDTO) throws Exception {
+        if (this.jwsProvider.verify(jws)) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userID", moderatorDTO.moderatorID);
+            jsonObject.put("username", moderatorDTO.username);
+            String newJws = this.jwsProvider.generateJws(jsonObject.toString());
+            if (newJws.equals(jws)) {
+                userRepository.modifyModerator(id, func);
+
+            }
+        }
+        throw new InvalidJWSException();
     }
 
     public void modifyAdministrator(int id, FunctionThrows<Administrator> func) throws Exception {
         userRepository.modifyAdministrator(id, func);
     }
 
-    public boolean changePassword(String oldPassword, String newPassword) throws Exception {
+    public boolean changePassword(String oldPassword, String newPassword) throws UnmachingPasswordsException {
         User user = this.getUserFromServerContext();
         if (!user.getPassword().equals(oldPassword)) {
-            throw new Exception("Wrong password!");
+            throw new UnmachingPasswordsException();
         }
         user.setPassword(newPassword);
         return true;
@@ -165,5 +194,16 @@ public class UserManager {
 
     public User getUserFromServerContext() {
         return this.getUserByUsername((u)-> u.getUsername().equals(securityContext.getUserPrincipal().getName())).entrySet().iterator().next().getValue();
+    }
+
+    public String getJwsFromUser(int id) throws NotFoundException, JOSEException {
+        User user = this.userRepository.get(id);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userID", user.getUserID());
+        jsonObject.put("username", user.getUsername());
+        if (user.getType().equals(CustomerType.CUSTOMER)) {
+            jsonObject.put("active", ((Customer) user).isActive());
+        }
+        return this.jwsProvider.generateJws(jsonObject.toString());
     }
 }

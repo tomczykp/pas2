@@ -2,12 +2,16 @@ import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.apache.http.HttpResponse;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestClient;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -20,6 +24,8 @@ public class CustomerBean implements Serializable {
     private JwtStorage jwtStorage;
     private JSONArray customers;
     private String email;
+
+    private String username;
     private JSONArray foundCustomer;
     private String chosenName;
     private boolean visible = false;
@@ -51,7 +57,7 @@ public class CustomerBean implements Serializable {
         }
     }
 
-    public String updateCustomer(Integer id, boolean active) {
+    public String activate(Integer id, boolean active) {
         if (active) {
             restMethods.put(prefix + "customer/" + id + "/activate", jwtStorage.getJwt());
         } else {
@@ -61,19 +67,31 @@ public class CustomerBean implements Serializable {
         return "activateCustomer";
     }
 
-    public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt());
+    public String update(Integer id) throws IOException {
+        HttpResponse response = restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt());
+        String jws = response.getFirstHeader("ETag").getValue();
+        JSONObject obj = new JSONObject(new BasicResponseHandler().handleResponse(response));
         obj.put("email", this.getEmail());
-        restMethods.update(obj, prefix + "customer/update", jwtStorage.getJwt());
+        obj.put("username", this.getUsername());
+        try {
+            restMethods.update(obj, prefix + "customer/update", jwtStorage.getJwt(), jws);
+        } catch (Exception e) {
+            if (e.getMessage().contains("JWS")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+                return "";
+            }
+        }
         this.fillArray();
         this.setEmail("");
+        this.setUsername("");
         this.isUpdating = false;
         return "submitCustomer";
     }
 
-    public void edit(Integer id, String email) {
+    public void edit(Integer id, String email, String username) {
         if (!isUpdating) {
             this.email = email;
+            this.username = username;
             this.editable.replace(id, true);
             isUpdating = true;
         }
@@ -92,8 +110,10 @@ public class CustomerBean implements Serializable {
         this.visible = false;
     }
 
-    public boolean isActive(int id) {
-        return (Boolean) restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt()).get("active");
+    public boolean isActive(int id) throws IOException {
+        HttpResponse response = restMethods.getOne(prefix + "customer/" + id, jwtStorage.getJwt());
+        JSONObject obj = new JSONObject(new BasicResponseHandler().handleResponse(response));
+        return (Boolean) obj.get("active");
     }
     public JSONArray getCustomers() {
         return customers;
@@ -113,6 +133,14 @@ public class CustomerBean implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public JSONArray getFoundCustomer() {

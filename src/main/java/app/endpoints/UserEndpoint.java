@@ -1,19 +1,26 @@
 package app.endpoints;
 
+import app.auth.JwsProvider;
 import app.dto.AdministratorDTO;
 import app.dto.ChangePasswordDTO;
 import app.dto.CustomerDTO;
 import app.dto.ModeratorDTO;
+import app.exceptions.InvalidJWSException;
 import app.exceptions.NotFoundException;
+import app.exceptions.UnmachingPasswordsException;
 import app.managers.UserManager;
 import app.model.*;
+import com.nimbusds.jose.JOSEException;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +37,7 @@ public class UserEndpoint {
     @Path("/customers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCustomers (@QueryParam("username") String name,
-                                     @QueryParam("exact") String exact) {
+                                     @QueryParam("exact") String exact){
         Map<Integer, CustomerDTO> data;
         if (Objects.equals(name, "") || name == null) {
             data = userManager.getCustomerMap();
@@ -41,6 +48,15 @@ public class UserEndpoint {
             data = userManager.getCustomers((User c) -> Objects.equals(c.getUsername(), name));
         }
         return Response.ok(data.values()).build();
+    }
+
+    @GET
+//    @RolesAllowed({"ADMINISTRATOR", "MODERATOR", "CUSTOMER"})
+    @PermitAll
+    @Path("/customer/jws")
+    public Response getJwsCustomer(@QueryParam("id") int id) throws Exception{
+        String payload = this.userManager.getJwsFromUser(id);
+        return Response.ok().header("ETag", payload).build();
     }
 
     @GET
@@ -83,10 +99,11 @@ public class UserEndpoint {
     @RolesAllowed({"CUSTOMER", "ADMINISTRATOR"})
     @Path("/customer/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCustomer(@PathParam("id") String id) {
+    public Response getCustomer(@PathParam("id") int id) {
         try {
-            Customer customer = userManager.getCustomer(Integer.parseInt(id));
-            return Response.ok(new CustomerDTO(customer)).build();
+            Customer customer = userManager.getCustomer(id);
+            String payload = userManager.getJwsFromUser(id);
+            return Response.ok(new CustomerDTO(customer)).header("ETag", payload).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
         } catch (app.exceptions.NotFoundException e) {
@@ -102,10 +119,11 @@ public class UserEndpoint {
     @RolesAllowed({"MODERATOR", "ADMINISTRATOR"})
     @Path("/moderator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getModerator(@PathParam("id") String id) {
+    public Response getModerator(@PathParam("id") int id) {
         try {
-            Moderator moderator = userManager.getModerator(Integer.parseInt(id));
-            return Response.ok(new ModeratorDTO(moderator)).build();
+            Moderator moderator = userManager.getModerator(id);
+            String payload = userManager.getJwsFromUser(id);
+            return Response.ok(new ModeratorDTO(moderator)).header("ETag", payload).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
         } catch (app.exceptions.NotFoundException e) {
@@ -256,7 +274,7 @@ public class UserEndpoint {
             CustomerDTO customer = userManager.createCustomer(newCustomer);
             return Response.ok(customer).build();
         } catch (Exception e) {
-            return Response.ok(e).status(409).build();
+            return Response.ok(e).status(400).build();
         }
     }
 
@@ -284,18 +302,22 @@ public class UserEndpoint {
     @Path("/customer/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCustomer (@NotNull CustomerDTO newCustomer) {
+    public Response updateCustomer (@NotNull CustomerDTO newCustomer, @Context HttpServletRequest request) {
         try {
-
+            String jws = request.getHeader("If-Match");
+            if (jws == null) {
+                return Response.status(400).build();
+            }
             int t = newCustomer.customerID;
             userManager.modifyCustomer(t,
                     (Customer current) -> current
                             .setActive(newCustomer.active)
-                            .setEmail(newCustomer.email));
-
+                            .setEmail(newCustomer.email), jws, newCustomer);
             return Response.ok().build();
+        } catch (InvalidJWSException e) {
+            return Response.status(400).build();
         } catch (NumberFormatException e) {
-            return Response.ok(e).status(406).build();
+            return Response.status(406).build();
         } catch (app.exceptions.NotFoundException e) {
             return Response.ok(new JSONObject().put("status", "customer not found").toString()).status(404).build();
         } catch (Exception e) {
@@ -313,8 +335,8 @@ public class UserEndpoint {
         try {
             this.userManager.changePassword(changePasswordDTO.oldPassword, changePasswordDTO.newPassword);
             return Response.ok().build();
-        } catch (Exception e) {
-            return Response.ok(new JSONObject().put("status", e.getMessage())).status(400).build();
+        } catch (UnmachingPasswordsException e) {
+            return Response.status(400).build();
         }
     }
 
@@ -323,14 +345,20 @@ public class UserEndpoint {
     @Path("/moderator/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateModerator (@NotNull ModeratorDTO newModerator) {
+    public Response updateModerator (@NotNull ModeratorDTO newModerator, @Context HttpServletRequest request) {
+        String jws = request.getHeader("If-Match");
+        if (jws == null) {
+            return Response.status(400).build();
+        }
         try {
             int t = newModerator.moderatorID;
             userManager.modifyModerator(t,
                     (Moderator current) -> current
-                            .setEmail(newModerator.email));
+                            .setEmail(newModerator.email), jws, newModerator);
 
             return Response.ok().build();
+        } catch (InvalidJWSException e) {
+            return Response.status(400).build();
         } catch (NumberFormatException e) {
             return Response.ok(e).status(406).build();
         } catch (NotFoundException e) {

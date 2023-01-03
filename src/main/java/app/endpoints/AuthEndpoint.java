@@ -3,6 +3,7 @@ package app.endpoints;
 import app.auth.InMemoryIdentityStore;
 import app.dto.LoginDTO;
 import app.auth.JwtProvider;
+import app.exceptions.InactiveClientException;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
@@ -34,10 +35,14 @@ public class AuthEndpoint {
     @RolesAllowed({"ANONYMOUS"})
     public Response login(@NotNull LoginDTO loginDTO) {
         UsernamePasswordCredential usernamePasswordCredential = new UsernamePasswordCredential(loginDTO.username, loginDTO.password);
-        CredentialValidationResult credentialValidationResult = inMemoryIdentityStore.validate(usernamePasswordCredential);
-        if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
-            String jwt = jwtProvider.generateJWT(loginDTO.username, credentialValidationResult.getCallerGroups().iterator().next());
-            return Response.ok(jwt).build();
+        try {
+            CredentialValidationResult credentialValidationResult = inMemoryIdentityStore.validate(usernamePasswordCredential);
+            if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
+                String jwt = jwtProvider.generateJWT(loginDTO.username, credentialValidationResult.getCallerGroups().iterator().next());
+                return Response.ok(jwt).build();
+            }
+        } catch (InactiveClientException e) {
+            return Response.status(400).build();
         }
         return Response.status(401).build();
     }

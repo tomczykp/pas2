@@ -2,11 +2,16 @@ import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.apache.http.HttpResponse;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestClient;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,13 +58,19 @@ public class ReservationBean implements Serializable {
             return "deleteReservation";
     }
 
-    public String update(Integer id) {
-        JSONObject obj = rest.getOne(reservationPrefix + "/" + id, jwtStorage.getJwt());
+    public String update(Integer id) throws IOException {
+        HttpResponse response = rest.getOne(reservationPrefix + "/" + id, jwtStorage.getJwt());
+        String jws = response.getFirstHeader("ETag").getValue();
+        JSONObject obj = new JSONObject(new BasicResponseHandler().handleResponse(response));
         obj.put("customer", this.getUpdateCustomerID());
         obj.put("product", this.getUpdateProductID());
         obj.put("startDate", this.getUpdateStartDate());
         obj.put("endDate", this.getUpdateEndDate());
-        rest.update(obj, reservationPrefix + "/update", jwtStorage.getJwt());
+        try {
+            rest.update(obj, reservationPrefix + "/update", jwtStorage.getJwt(), jws);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+        }
         this.fillArray();
         this.setUpdateCustomerID(0);
         this.setUpdateProductID(0);

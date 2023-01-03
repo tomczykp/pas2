@@ -43,7 +43,9 @@
             <f:facet name="header">${msg["customers.table"]}</f:facet>
             <h:column>
                 <f:facet name="header">${msg["customers.username"]}</f:facet>
-                <h:outputText value='#{customers.get("username")}'/>
+                <h:inputText value='#{customerBean.username}' rendered='#{customerBean.getEditable(customers.get("customerID"))}' required="true" requiredMessage='${msg["validation.username.empty"]}' validatorMessage='${msg["validation.username"]}' id="editUsername">
+                </h:inputText>
+                <h:outputText value='#{customers.get("username")}' rendered='#{!customerBean.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column>
                 <f:facet name="header">${msg["customers.email"]}</f:facet>
@@ -62,15 +64,15 @@
             </h:column>
             <h:column rendered="#{userRole.administrator}">
                 <f:facet name="header">${msg["customers.activate"]}</f:facet>
-                <h:commandLink value='${msg["customers.activate"]}' action='#{customerBean.updateCustomer(customers.get("customerID"), true)}'/>
+                <h:commandLink value='${msg["customers.activate"]}' action='#{customerBean.activate(customers.get("customerID"), true)}'/>
             </h:column>
             <h:column rendered="#{userRole.administrator}">
                 <f:facet name="header">${msg["customers.deactivate"]}</f:facet>
-                <h:commandLink value='${msg["customers.deactivate"]}' action='#{customerBean.updateCustomer(customers.get("customerID"), false)}'/>
+                <h:commandLink value='${msg["customers.deactivate"]}' action='#{customerBean.activate(customers.get("customerID"), false)}'/>
             </h:column>
             <h:column rendered="#{userRole.customer}">
                 <f:facet name="header">${msg["app.edit"]}</f:facet>
-                <h:commandLink value = '${msg["app.edit"]}' action='#{customerBean.edit(customers.get("customerID"), customers.get("email"))}' rendered='#{!customerBean.getEditable(customers.get("customerID"))}'/>
+                <h:commandLink value = '${msg["app.edit"]}' action='#{customerBean.edit(customers.get("customerID"), customers.get("email"), customers.get("username"))}' rendered='#{!customerBean.getEditable(customers.get("customerID"))}'/>
                 <h:commandLink value = '${msg["app.submit"]}' onclick="return confirm()" action='#{customerBean.update(customers.get("customerID"))}' rendered='#{customerBean.getEditable(customers.get("customerID"))}'/>
             </h:column>
             <h:column rendered="#{userRole.customer}">

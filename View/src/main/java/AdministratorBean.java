@@ -37,7 +37,11 @@ public class AdministratorBean implements Serializable {
     }
 
     public String createAdmin() {
-        restMethods.putCustomer(administrator.getUsername(), administrator.getPassword(),  "", "ADMINISTRATOR", prefix + "administrator/create", jwtStorage.getJwt());
+        try {
+            restMethods.putCustomer(administrator.getUsername(), administrator.getPassword(), "", "ADMINISTRATOR", prefix + "administrator/create", jwtStorage.getJwt());
+        } catch (Exception e) {
+
+        }
         this.fillArray();
         return "createAdmin";
     }

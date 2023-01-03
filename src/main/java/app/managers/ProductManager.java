@@ -1,12 +1,15 @@
 package app.managers;
 
 import app.FunctionThrows;
+import app.auth.JwsProvider;
 import app.dto.ProductDTO;
+import app.exceptions.InvalidJWSException;
 import app.exceptions.NotFoundException;
 import app.model.Product;
 import app.repositories.ProductRepository;
+import com.nimbusds.jose.JOSEException;
 import jakarta.inject.Inject;
-
+import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -15,6 +18,8 @@ public class ProductManager {
 
 	@Inject
 	public ProductRepository productRepository;
+
+	private JwsProvider jwsProvider = new JwsProvider();
 
 	synchronized public ProductDTO create (Product product) {
 		return new ProductDTO(productRepository.insert(product));
@@ -28,8 +33,16 @@ public class ProductManager {
 			throw new Exception("cannot delete product with ongoing reservations");
 	}
 
-	public Product modify (int id, FunctionThrows<Product> func) throws Exception {
-		return productRepository.modify(id, func);
+	public Product modify (int id, FunctionThrows<Product> func, String jws, ProductDTO productDTO) throws Exception {
+		if (this.jwsProvider.verify(jws)) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("id", productDTO.productID);
+			String newJwt = this.jwsProvider.generateJws(jsonObject.toString());
+			if (newJwt.equals(jws)) {
+				return productRepository.modify(id, func);
+			}
+		}
+		throw new InvalidJWSException();
 	}
 
 	public Product get (int id) throws NotFoundException {
@@ -59,4 +72,10 @@ public class ProductManager {
 		return productRepository.getLenght();
 	}
 
+	public String getJwsFromProduct(int id) throws NotFoundException, JOSEException {
+		Product product = productRepository.get(id);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("id", product.getProductID());
+		return jwsProvider.generateJws(jsonObject.toString());
+	}
 }

@@ -126,7 +126,30 @@
         <from-view-id>/registerCustomer.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>createCustomer</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>exception</from-outcome>
             <to-view-id>/registerCustomer.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/login.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>exception</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/changePassword.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>wrongPasswords</from-outcome>
+            <to-view-id>/changePassword.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>changed</from-outcome>
+            <to-view-id>/changePassword.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>

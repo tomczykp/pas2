@@ -1,7 +1,6 @@
 package rest;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.*;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.StringEntity;
@@ -9,7 +8,6 @@ import org.apache.http.impl.client.*;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.net.URI;
 
@@ -59,7 +57,7 @@ public class RestClient {
         }
     }
 
-    public JSONObject getOne(String endpointURL, String jwt) {
+    public HttpResponse getOne(String endpointURL, String jwt) {
         try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
             RequestBuilder requestBuilder = RequestBuilder.get()
                     .setUri(endpointURL);
@@ -68,8 +66,7 @@ public class RestClient {
             }
             HttpUriRequest request = requestBuilder.build();
             HttpResponse response = httpClient.execute(request);
-            String responseString = new BasicResponseHandler().handleResponse(response);
-            return new JSONObject(responseString);
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -96,7 +93,7 @@ public class RestClient {
         return obj;
     }
 
-    public void putCustomer(String username, String password, String email, String type, String endpointURL, String jwt) {
+    public void putCustomer(String username, String password, String email, String type, String endpointURL, String jwt) throws Exception {
         if (username == null || username.equals("")) {
             return;
         }
@@ -110,13 +107,16 @@ public class RestClient {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
             HttpUriRequest request = requestBuilder.build();
-            httpClient.execute(request);
+            HttpResponse response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() == 400) {
+                throw new Exception("Username already exist!");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void update(JSONObject customer, String endpointURL, String jwt) {
+    public void update(JSONObject customer, String endpointURL, String jwt, String jws) throws Exception{
         if (customer == null) {
             return;
         }
@@ -128,9 +128,14 @@ public class RestClient {
             if (!jwt.equals("")) {
                 requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
             }
+            if (!jws.equals("")) {
+                requestBuilder.setHeader("If-Match", jws);
+            }
             HttpUriRequest request = requestBuilder.build();
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMETHOD: " + request.getMethod() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-            httpClient.execute(request);
+            HttpResponse response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() == 400) {
+                throw new Exception("JWS hasn't been provided or is invalid!");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -228,7 +233,7 @@ public class RestClient {
         }
     }
 
-    public String login(String username, String password, String endpointURL) throws AuthenticationException {
+    public String login(String username, String password, String endpointURL) throws Exception {
         JSONObject object = new JSONObject();
         object.put("username", username);
         object.put("password", password);
@@ -240,8 +245,9 @@ public class RestClient {
                     .build();
             HttpResponse response = httpClient.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 401) {
-                throw new AuthenticationException();
+            switch (statusCode) {
+                case 401 -> throw new Exception("Wrong credentials!");
+                case 400 -> throw new Exception("Inactive account!");
             }
             return new BasicResponseHandler().handleResponse(response);
         } catch (IOException e) {
@@ -265,8 +271,23 @@ public class RestClient {
             HttpResponse response = httpClient.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 400) {
-                throw new Exception();
+                throw new Exception("Old password is wrong!");
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getJws(String endpointURL, String jwt) {
+        try (CloseableHttpClient httpClient = this.createHttpClientCustom()) {
+            RequestBuilder requestBuilder = RequestBuilder.get()
+                    .setUri(endpointURL);
+            if (!jwt.equals("")) {
+                requestBuilder.setHeader("Authorization", "Bearer " +  jwt);
+            }
+            HttpUriRequest request = requestBuilder.build();
+            HttpResponse response = httpClient.execute(request);
+            return response.getFirstHeader("ETag").getValue();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

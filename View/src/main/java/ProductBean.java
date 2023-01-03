@@ -3,11 +3,16 @@ import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import modelBeans.Product;
+import org.apache.http.HttpResponse;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.RestClient;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,10 +57,16 @@ public class ProductBean implements Serializable {
         }
     }
 
-    public String update(Integer id) {
-        JSONObject obj = restMethods.getOne(productPrefix + "/" + id, jwtStorage.getJwt());
+    public String update(Integer id) throws IOException {
+        HttpResponse response = restMethods.getOne(productPrefix + "/" + id, jwtStorage.getJwt());
+        String jws = response.getFirstHeader("ETag").getValue();
+        JSONObject obj = new JSONObject(new BasicResponseHandler().handleResponse(response));
         obj.put("price", this.getUpdatePrice());
-        restMethods.update(obj, productPrefix + "/update", jwtStorage.getJwt());
+        try {
+            restMethods.update(obj, productPrefix + "/update", jwtStorage.getJwt(), jws);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+        }
         this.fillArray();
         this.isUpdating = false;
         return "submitProduct";

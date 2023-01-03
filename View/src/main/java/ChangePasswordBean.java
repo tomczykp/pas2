@@ -21,13 +21,19 @@ public class ChangePasswordBean implements Serializable {
     private String newPassword;
     private String newPasswordRepeat;
 
-    public void changePassword() throws Exception {
+    public String changePassword() {
         this.restClient = new RestClient();
         if (!this.newPassword.equals(this.newPasswordRepeat)) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Given passwords are diferent!"));
-            return;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Given new passwords are diferent!"));
+            return "wrongPasswords";
         }
-        this.restClient.changePassword(this.oldPassword, this.newPassword, "http://localhost:8081/rest/api/passwordChange", this.jwtStorage.getJwt());
+        try {
+            this.restClient.changePassword(this.oldPassword, this.newPassword, "http://localhost:8081/rest/api/passwordChange", this.jwtStorage.getJwt());
+            return "changed";
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+            return "wrongPasswords";
+        }
     }
 
     public String getOldPassword() {

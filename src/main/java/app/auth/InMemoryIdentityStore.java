@@ -1,5 +1,6 @@
 package app.auth;
 
+import app.exceptions.InactiveClientException;
 import app.model.Customer;
 import app.model.CustomerType;
 import app.model.User;
@@ -33,7 +34,7 @@ public class InMemoryIdentityStore implements IdentityStore {
         return new HashSet<>(Collections.singleton(user.getType().toString()));
     }
 
-    public CredentialValidationResult validate(UsernamePasswordCredential credential) {
+    public CredentialValidationResult validate(UsernamePasswordCredential credential) throws InactiveClientException {
 
         UsernamePasswordCredential user = credential;
         List<User> users = new ArrayList<>(userRepository.getMap().values());
@@ -42,7 +43,7 @@ public class InMemoryIdentityStore implements IdentityStore {
                 if (user.getCaller().equals(u.getUsername()) && user.getPasswordAsString().equals(u.getPassword())) {
                     if (u.getType().equals(CustomerType.CUSTOMER)) {
                         if (!((Customer) u).isActive()) {
-                            return CredentialValidationResult.INVALID_RESULT;
+                            throw new InactiveClientException();
                         }
                     }
                     return new CredentialValidationResult(u.getUsername(), new HashSet<>(Collections.singleton(u.getType().toString())));

@@ -13,9 +13,9 @@
         <tr><td><h:outputLink value="product.xhtml" rendered="#{userRole.administrator || userRole.moderator}">${msg["app.menu.products"]}</h:outputLink></td></tr>
         <tr><td><h:outputLink value="reservation.xhtml" rendered="#{userRole.administrator}">${msg["app.main.app_name"]}</h:outputLink></td></tr>
         <tr><td><h:outputLink value="filterCustomers.xhtml" rendered="#{userRole.administrator}">${msg["app.menu.filter"]}</h:outputLink></td></tr>
+        <tr><td><h:outputLink value="changePassword.xhtml" rendered="#{!userRole.anonymous}">CHANGE PASSWORD</h:outputLink></td></tr>
         <tr><td><h:outputLink value="login.xhtml" rendered="#{userRole.anonymous}">login</h:outputLink></td></tr>
         <tr><td><h:outputLink value="registerCustomer.xhtml" rendered="#{userRole.anonymous}">register</h:outputLink></td></tr>
         <tr><td><h:form><h:commandLink value="logout" action="#{authenticationBean.logout()}" rendered="#{!userRole.anonymous}"/></h:form></td></tr>
-        <tr><td><h:outputLink value="changePassword.xhtml" rendered="#{!userRole.anonymous}">change password</h:outputLink></td></tr>
     </table>
 </ui:composition>
