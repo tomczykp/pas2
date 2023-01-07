@@ -1,32 +1,27 @@
 package app.model;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Customer {
-
-	private int customerID;
-
-	private String username;
-
-	private String password;
-
+@XmlRootElement
+public class Customer extends User {
+	@XmlElement
 	private String email;
-
+	@XmlElement
 	private boolean isActive;
-
+	@XmlElement
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	public Customer () {}
 
 	public Customer (String u, String e, String p) {
+		super(u, p, CustomerType.CUSTOMER);
 		email = e;
-		username = u;
-		password = p;
 		isActive = true;
 	}
 
@@ -57,16 +52,16 @@ public class Customer {
 		if (!(o instanceof Customer customer)) return false;
 
 		return new EqualsBuilder()
-				.append(customerID, customer.customerID)
-				.append(username, customer.username)
+				.append(super.getUserID(), customer.getUserID())
+				.append(super.getUsername(), customer.getUsername())
 				.append(email, customer.email).isEquals();
 	}
 
 	@Override
 	public int hashCode () {
 		return new HashCodeBuilder(17, 37)
-				.append(customerID)
-				.append(username)
+				.append(super.getUserID())
+				.append(super.getUsername())
 				.append(email).toHashCode();
 	}
 
@@ -74,32 +69,6 @@ public class Customer {
 		reservations.add(reservation);
 	}
 
-	public int getCustomerID () {
-		return customerID;
-	}
-
-	public Customer setCustomerID (int customerID) {
-		this.customerID = customerID;
-		return this;
-	}
-
-	public String getUsername () {
-		return username;
-	}
-
-	public Customer setPassword (String password) {
-		this.password = password;
-		return this;
-	}
-
-	public Customer setUsername (String username) {
-		this.username = username;
-		return this;
-	}
-
-	public String getPassword () {
-		return password;
-	}
 
 	public String getEmail () {
 		return email;
@@ -118,5 +87,4 @@ public class Customer {
 		isActive = active;
 		return this;
 	}
-
 }

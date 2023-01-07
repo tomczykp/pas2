@@ -1,0 +1,40 @@
+<section [style.background-image]="'url(/assets/background.jpg)'" class="vh-100">
+  <ngb-alert (closed)="wrongCredentials = false" *ngIf="wrongCredentials" [dismissible]="true" class="alert alert-success alert-dismissible fade show"
+             role="alert" type="success">
+    <strong>Wrong credentials</strong> Given username or login are wrong.
+  </ngb-alert>
+  <ngb-alert (closed)=" accountInactive = false" *ngIf="accountInactive" [dismissible]="true" class="alert alert-success alert-dismissible fade show"
+             role="alert" type="success">
+    <strong>Your account is inactive</strong> Wait for administrator to activate your account.
+  </ngb-alert>
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card text-white" style="border-radius: 1rem; background-color: rgba(105,105,105, 0.8);">
+            <div class="card-body p-5 text-center">
+              <div class="mb-md-5 mt-md-4 pb-5">
+                <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                <p class="text-white-50 mb-5">Please enter your login and password!</p>
+                <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" autocomplete="off" class="form" role="form">
+                <div class="form-outline form-white mb-4">
+                  <input type="username" class="form-control form-control-lg" formControlName="username" id="username"/>
+                  <label class="form-label" for="username">Username</label>
+                </div>
+                <div class="form-outline form-white mb-4">
+                  <input type="password" class="form-control form-control-lg" formControlName="password" id="password"/>
+                  <label class="form-label" for="password">Password</label>
+                </div>
+                <input class="btn btn-lg btn-dark btn-block mt-3" name="recover-submit" type="submit"
+                value="Login">
+              </form>
+                </div>
+              <div>
+                <p class="mb-0">Don't have an account? <a href="/" class="text-white-50 fw-bold">Sign Up</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
