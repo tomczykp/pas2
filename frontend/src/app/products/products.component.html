@@ -1,1 +1,45 @@
-<p>products works!</p>
+<div>
+    <ngb-alert (closed)="allocationCreationSuccesful = false" *ngIf="allocationCreationSuccesful" [dismissible]="true" class="alert alert-success alert-dismissible fade show"
+             role="alert" type="success">
+    <strong>Allocation has been created.</strong>
+  </ngb-alert>
+  <ngb-alert (closed)="allocationCreationError = false" *ngIf="allocationCreationError" [dismissible]="true" class="alert alert-dangeralert-dismissible fade show"
+             role="alert" type="danger">
+    <strong>Allocation creation error!</strong>
+  </ngb-alert>
+    <div class="card m-3">
+        <div class="table-responsive">
+        <table [dataSource]="dataSource" class="table mb-0 bg-light table-hover table-striped text-center align-middle"
+                mat-table>
+            <ng-container matColumnDef="ID">
+            <th *matHeaderCellDef class="align-middle" mat-header-cell
+                style="font-size: large; font-weight: bold; color: black; text-align: center">ID
+            </th>
+            <td *matCellDef="let element" mat-cell>{{element.productID}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="Price">
+            <th *matHeaderCellDef class="align-middle" mat-header-cell
+                style="font-size: large; font-weight: bold; color: black; text-align: center">Price
+            </th>
+            <td *matCellDef="let element" mat-cell>{{element.price}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="Allocate">
+            <th *matHeaderCellDef class="align-middle" mat-header-cell
+                style="font-size: large; font-weight: bold; color: black; text-align: center">Allocate
+            </th>
+            <td *matCellDef="let element" mat-cell>
+                <i class="bi bi-bag-plus" (click) = "openDialog(element.productID)"
+                style="font-size: 30px; color: blue;"></i>
+            </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="displayColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayColumns;" mat-row></tr>
+        </table>
+        </div>
+        <mat-paginator #paginator [pageSizeOptions]="[5,10,15]" [pageSize]="10" class="bg-light"
+                    showFirstLastButtons></mat-paginator>
+    </div>
+</div>

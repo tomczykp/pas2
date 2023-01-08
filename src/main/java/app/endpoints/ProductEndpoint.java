@@ -27,7 +27,7 @@ public class ProductEndpoint {
 	private ProductManager manager;
 
 	@GET
-	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR"})
+	@RolesAllowed({"CUSTOMER", "MODERATOR", "ADMINISTRATOR", "ANONYMOUS"})
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll () {
 		return Response.ok(manager.getMap().values()).build();

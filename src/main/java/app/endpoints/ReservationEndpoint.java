@@ -71,6 +71,7 @@ public class ReservationEndpoint {
 			Reservation reservation = reservationManager.create(res);
 			return Response.ok(reservation).build();
 		} catch (Exception e) {
+			System.out.println(e);
 			return Response.status(409).build();
 		}
 	}

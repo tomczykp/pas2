@@ -18,7 +18,6 @@ export class LoginComponent implements OnInit {
 
   wrongCredentials = false;
   accountInactive = false;
-  registerSuccessful = false;
   logoutSuccessful = false;
 
   constructor(private client: Client,
@@ -40,7 +39,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     let params = this.route.snapshot.queryParamMap;
-    this.wrongCredentials = params.has('')
+    this.logoutSuccessful = params.has('logout-success');
   }
 
   onSubmit() {
@@ -63,7 +62,6 @@ export class LoginComponent implements OnInit {
             this.wrongCredentials = true;
           }
           this.logoutSuccessful = false;
-          this.registerSuccessful = false;
         });
       }
     }

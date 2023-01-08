@@ -51,15 +51,6 @@ public class UserEndpoint {
     }
 
     @GET
-//    @RolesAllowed({"ADMINISTRATOR", "MODERATOR", "CUSTOMER"})
-    @PermitAll
-    @Path("/customer/jws")
-    public Response getJwsCustomer(@QueryParam("id") int id) throws Exception{
-        String payload = this.userManager.getJwsFromUser(id);
-        return Response.ok().header("ETag", payload).build();
-    }
-
-    @GET
     @RolesAllowed({"ADMINISTRATOR", "MODERATOR"})
     @Path("/moderators")
     @Produces(MediaType.APPLICATION_JSON)
@@ -163,11 +154,17 @@ public class UserEndpoint {
 
     @GET
     @RolesAllowed({"CUSTOMER", "ADMINISTRATOR"})
-    @Path("/customer/{id}/reservations")
+    @Path("/customer/reservations")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReservations (@PathParam("id") String id, @QueryParam("past") boolean fromPast) {
+    public Response getReservations (@QueryParam("id") Integer id, @QueryParam("past") boolean fromPast) {
         try {
-            Customer customer = userManager.getCustomer(Integer.parseInt(id));
+            int customerID;
+            if (id == null) {
+                customerID = this.userManager.getUserFromServerContext().getUserID();
+            } else {
+                customerID = id;
+            }
+            Customer customer = userManager.getCustomer(customerID);
             List<Reservation> res;
             if (fromPast)
                 res = customer.getPastReservations();

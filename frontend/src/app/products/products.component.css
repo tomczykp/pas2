@@ -1,0 +1,8 @@
+.blur{
+    position:absolute;
+    width: 104%;
+    height: 104%;
+    top: -2%;
+    left: -2%;
+    filter: blur(5px);
+}

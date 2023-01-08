@@ -19,12 +19,13 @@ export class NavComponent implements OnInit {
       this.authenticated = change;
       if (this.authenticated) {
         this.role = this.client.getRole().toLocaleLowerCase();
+      } else {
+        this.role = "anonymous";
       }
     })
   }
 
   onLogout() {
-    this.role = "anonymous";
     this.client.logout();
   }
 }
